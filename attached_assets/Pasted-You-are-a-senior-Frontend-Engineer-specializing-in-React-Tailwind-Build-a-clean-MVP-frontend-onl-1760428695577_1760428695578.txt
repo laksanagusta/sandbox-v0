@@ -1,0 +1,63 @@
+You are a senior Frontend Engineer specializing in React + Tailwind. Build a clean MVP (frontend-only, no DB) for a “Sistem Pembuatan Kwitansi PNS”.
+
+## Tech & Setup
+- React (Vite) + Tailwind for styling.
+- State management with React hooks only (no external store).
+- Backend upload endpoint: POST http://localhost:3000/upload (multipart/form-data with key `files`).
+- Print final payload to console on “Simpan / Export” (simulate submit).
+
+## Components (separate files)
+1) UploadForm.jsx
+   - Multiple file input (PDF/JPG/PNG), button “Upload & Parse”.
+   - POST selected files to `/upload`.
+   - Expect a JSON array response like:
+     [
+       {"name":"Riska","type":"accomodation","subtype":"hotel","amount":"5000","total_night":"2"},
+       {"name":"Riska","type":"transport","subtype":"flight","amount":"40000000"}
+     ]
+   - Validate response is an array; forward data to parent via `onUploaded(data)`.
+
+2) ActivityForm.jsx
+   - Three inputs above the table:
+     - tanggal mulai kegiatan → `start_date` (date)
+     - tanggal selesai kegiatan → `end_date` (date)
+     - tujuan kegiatan → `destination` (text)
+   - Controlled inputs. `onChange(updatedActivity)` to parent.
+
+3) EditableTable.jsx
+   - Render editable rows for the uploaded JSON:
+     - Editable fields: `name`, `type`, `subtype`, `amount`, `total_night`.
+     - If `type` === "transport" (case-insensitive), show extra dropdown `transport_detail` with options:
+       - transport_asal
+       - transport_daerah
+       - transport_darat
+   - Include Add Row and Delete Row actions.
+   - Compute and display total `amount` (numeric sum).
+   - All fields controlled; propagate changes via `setRows(nextRows)`.
+
+## App behavior
+- Keep `activity` and `transactions` state at App level.
+- After upload, normalize missing keys (default empty string) and store as `transactions`.
+- On “Simpan / Export” button (in header), `console.log({ activity, transactions })` and alert user that data was printed.
+- Layout:
+  - Header with title “MVP Kwitansi PNS” + primary button “Simpan / Export”.
+  - Card sections: Upload → Activity → Table.
+  - Tailwind classes for compact, tidy look (rounded cards, inputs, buttons).
+
+## Styling & Quality
+- Tailwind utility classes; small, readable design.
+- Clean code, functional components, prop-driven, easy to extend.
+- Light input validation/errors (e.g., empty file selection, non-OK fetch).
+
+## Deliverables
+- Files: index.html, tailwind/postcss config, src/main.jsx, src/index.css, src/App.jsx, src/components/{UploadForm.jsx,EditableTable.jsx,ActivityForm.jsx}, src/lib/utils.js
+- Ready to run in a fresh Vite project.
+- Include Indonesian labels as in spec.
+
+## Extra details to implement
+- `amount` numeric handling (strip non-digits for sum when needed).
+- Total amount display (formatted “Rp 1.234.567”).
+- Graceful error states on upload (network/format).
+
+Output:
+- Provide the complete code for all files in one response, clearly separated by filenames, so it can be copy-pasted into a Vite project.
