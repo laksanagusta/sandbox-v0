@@ -66,9 +66,9 @@ export default function KwitansiPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-50 w-full border-b bg-card shadow-sm">
+    <div className="bg-background">
+      {/* Header with Title and Save Button */}
+      <div className="border-b bg-card sticky top-16 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <h1 className="text-xl font-semibold" data-testid="text-title">
@@ -80,21 +80,27 @@ export default function KwitansiPage() {
             </Button>
           </div>
         </div>
-      </header>
+      </div>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
           {/* Upload Section */}
-          <UploadForm onUploaded={handleUploaded} />
+          <div id="upload">
+            <UploadForm onUploaded={handleUploaded} />
+          </div>
 
           {/* Activity Form Section */}
-          <ActivityForm activity={activity} onChange={setActivity} />
+          <div id="activity">
+            <ActivityForm activity={activity} onChange={setActivity} />
+          </div>
 
           {/* Editable Table Section */}
-          <EditableTable rows={transactions} setRows={setTransactions} />
+          <div id="transactions">
+            <EditableTable rows={transactions} setRows={setTransactions} />
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }
