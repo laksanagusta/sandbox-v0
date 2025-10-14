@@ -66,12 +66,13 @@ export default function KwitansiPage() {
   };
 
   return (
-    <div className="bg-background">
-      {/* Header with Title and Save Button */}
-      <div className="border-b bg-card sticky top-16 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <h1 className="text-xl font-semibold" data-testid="text-title">
+    <div className="bg-background min-h-screen">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-6">
+          {/* Header with Title and Save Button */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <h1 className="text-2xl font-semibold" data-testid="text-title">
               MVP Kwitansi PNS
             </h1>
             <Button onClick={handleSaveExport} data-testid="button-save-export">
@@ -79,12 +80,7 @@ export default function KwitansiPage() {
               Simpan / Export
             </Button>
           </div>
-        </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-6">
           {/* Upload Section */}
           <div id="upload">
             <UploadForm onUploaded={handleUploaded} />
