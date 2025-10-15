@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { Save } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import UploadForm from '@/components/UploadForm';
-import ActivityForm from '@/components/ActivityForm';
-import EditableTable from '@/components/EditableTable';
-import { useToast } from '@/hooks/use-toast';
+import { useState } from "react";
+import { Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import UploadForm from "@/components/UploadForm";
+import ActivityForm from "@/components/ActivityForm";
+import EditableTable from "@/components/EditableTable";
+import { useToast } from "@/hooks/use-toast";
+import { EditableRow, TransactionDTO } from "@shared/types";
 
 interface ActivityData {
   start_date: string;
@@ -12,57 +13,87 @@ interface ActivityData {
   destination: string;
 }
 
-interface Transaction {
-  name: string;
-  type: string;
-  subtype: string;
-  amount: string;
-  total_night: string;
-  transport_detail?: string;
-}
-
 export default function KwitansiPage() {
   const { toast } = useToast();
   const [activity, setActivity] = useState<ActivityData>({
-    start_date: '',
-    end_date: '',
-    destination: '',
+    start_date: "",
+    end_date: "",
+    destination: "",
   });
 
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [tableRows, setTableRows] = useState<EditableRow[]>([]);
+  const [description, setDescription] = useState("");
 
   const handleUploaded = (data: any[]) => {
     // Normalize data - ensure all required fields exist with defaults
-    const normalized = data.map(item => ({
-      name: item.name || '',
-      type: item.type || '',
-      subtype: item.subtype || '',
-      amount: item.amount || '',
-      total_night: item.total_night || '',
-      transport_detail: item.transport_detail || '',
+    const normalized = data.map((item, index) => ({
+      id: String(index),
+      description: item.description || "",
+      name: item.name || "",
+      type: item.type || "",
+      subtype: item.subtype || "",
+      amount: item.amount || 0,
+      total_night: item.total_night || "",
+      subtotal: item.subtotal || 0, // Tambahkan subtotal
+      transport_detail: item.transport_detail || "",
     }));
-    
-    setTransactions(normalized);
+
+    setTableRows(normalized);
     toast({
-      title: 'Berhasil!',
+      title: "Berhasil!",
       description: `${normalized.length} transaksi berhasil dimuat dari file.`,
     });
   };
 
-  const handleSaveExport = () => {
-    const payload = {
-      activity,
-      transactions,
-    };
+  const handleSaveExport = async () => {
+    const transactionsDTO: TransactionDTO[] = tableRows.map((row) => ({
+      name: row.name,
+      type: row.type,
+      subtype: row.subtype,
+      amount: row.amount,
+      total_night: parseInt(row.total_night) || undefined,
+      subtotal: row.subtotal,
+    }));
 
-    console.log('=== DATA KWITANSI ===');
-    console.log(JSON.stringify(payload, null, 2));
-    console.log('====================');
+    const payload = { transactions: transactionsDTO };
 
-    toast({
-      title: 'Data Tersimpan!',
-      description: 'Data telah dicetak ke console. Buka DevTools untuk melihat.',
-    });
+    try {
+      const response = await fetch("http://localhost:5002/api/report/excel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        throw new Error("Gagal mengirim data ke API atau menerima file Excel.");
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "recap_transactions.xlsx"; // Nama file yang akan diunduh
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+
+      toast({
+        title: "Berhasil!",
+        description: "File Excel berhasil diunduh.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat mengunduh file Excel.",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -93,7 +124,7 @@ export default function KwitansiPage() {
 
           {/* Editable Table Section */}
           <div id="transactions">
-            <EditableTable rows={transactions} setRows={setTransactions} />
+            <EditableTable rows={tableRows} setRows={setTableRows} />
           </div>
         </div>
       </div>

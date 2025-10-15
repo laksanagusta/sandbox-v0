@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Upload, FileText, X, CheckCircle2, AlertCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { useState } from "react";
+import { Upload, FileText, X, CheckCircle2, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 interface UploadFormProps {
   onUploaded: (data: any[]) => void;
@@ -16,17 +16,19 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const selectedFiles = Array.from(e.target.files);
-      const validFiles = selectedFiles.filter(file => {
-        const ext = file.name.toLowerCase().split('.').pop();
-        return ['pdf', 'jpg', 'jpeg', 'png'].includes(ext || '');
+      const validFiles = selectedFiles.filter((file) => {
+        const ext = file.name.toLowerCase().split(".").pop();
+        return ["pdf", "jpg", "jpeg", "png"].includes(ext || "");
       });
-      
+
       if (validFiles.length !== selectedFiles.length) {
-        setError('Beberapa file ditolak. Hanya PDF, JPG, dan PNG yang diperbolehkan.');
+        setError(
+          "Beberapa file ditolak. Hanya PDF, JPG, dan PNG yang diperbolehkan."
+        );
       } else {
         setError(null);
       }
-      
+
       setFiles(validFiles);
       setSuccess(false);
     }
@@ -39,7 +41,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
 
   const handleUpload = async () => {
     if (files.length === 0) {
-      setError('Silakan pilih file terlebih dahulu');
+      setError("Silakan pilih file terlebih dahulu");
       return;
     }
 
@@ -48,29 +50,31 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
 
     try {
       const formData = new FormData();
-      files.forEach(file => {
-        formData.append('files', file);
+      files.forEach((file) => {
+        formData.append("file", file);
       });
 
-      const response = await fetch('/upload', {
-        method: 'POST',
+      const response = await fetch("http://localhost:5002/api/upload", {
+        method: "POST",
         body: formData,
       });
 
       if (!response.ok) {
-        throw new Error('Upload gagal. Silakan coba lagi.');
+        throw new Error("Upload gagal. Silakan coba lagi.");
       }
 
       const data = await response.json();
 
       if (!Array.isArray(data)) {
-        throw new Error('Format response tidak valid');
+        throw new Error("Format response tidak valid");
       }
 
       setSuccess(true);
       onUploaded(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Terjadi kesalahan saat upload');
+      setError(
+        err instanceof Error ? err.message : "Terjadi kesalahan saat upload"
+      );
       setSuccess(false);
     } finally {
       setUploading(false);
@@ -80,16 +84,20 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
   return (
     <Card className="p-6">
       <h2 className="text-lg font-semibold mb-4">Upload Dokumen</h2>
-      
+
       <div className="space-y-4">
         <div>
-          <label 
-            htmlFor="file-upload" 
+          <label
+            htmlFor="file-upload"
             className={`
               flex flex-col items-center justify-center w-full h-32 
               border-2 border-dashed rounded-lg cursor-pointer
               transition-colors
-              ${success ? 'border-chart-2 bg-chart-2/5' : 'border-input hover:border-primary/50 bg-muted/30'}
+              ${
+                success
+                  ? "border-chart-2 bg-chart-2/5"
+                  : "border-input hover:border-primary/50 bg-muted/30"
+              }
             `}
             data-testid="label-file-upload"
           >
@@ -97,23 +105,28 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
               {success ? (
                 <>
                   <CheckCircle2 className="w-8 h-8 mb-2 text-chart-2" />
-                  <p className="text-sm text-chart-2 font-medium">File berhasil diupload!</p>
+                  <p className="text-sm text-chart-2 font-medium">
+                    File berhasil diupload!
+                  </p>
                 </>
               ) : (
                 <>
                   <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    <span className="font-medium">Klik untuk upload</span> atau drag & drop
+                    <span className="font-medium">Klik untuk upload</span> atau
+                    drag & drop
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">PDF, JPG, atau PNG</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    PDF, JPG, atau PNG
+                  </p>
                 </>
               )}
             </div>
-            <input 
-              id="file-upload" 
-              type="file" 
-              className="hidden" 
-              multiple 
+            <input
+              id="file-upload"
+              type="file"
+              className="hidden"
+              multiple
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={handleFileChange}
               data-testid="input-file"
@@ -123,11 +136,13 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
 
         {files.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium">File yang dipilih ({files.length}):</p>
+            <p className="text-sm font-medium">
+              File yang dipilih ({files.length}):
+            </p>
             <div className="space-y-1">
               {files.map((file, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="flex items-center justify-between p-2 bg-muted/50 rounded-md text-sm"
                   data-testid={`file-item-${index}`}
                 >
@@ -154,14 +169,17 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
         )}
 
         {error && (
-          <div className="flex items-start gap-2 p-3 bg-destructive/10 text-destructive rounded-md" data-testid="error-message">
+          <div
+            className="flex items-start gap-2 p-3 bg-destructive/10 text-destructive rounded-md"
+            data-testid="error-message"
+          >
             <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
             <p className="text-sm">{error}</p>
           </div>
         )}
 
-        <Button 
-          onClick={handleUpload} 
+        <Button
+          onClick={handleUpload}
           disabled={files.length === 0 || uploading}
           className="w-full sm:w-auto"
           data-testid="button-upload"
