@@ -6,6 +6,9 @@ import ActivityForm from "@/components/ActivityForm";
 import EditableTable from "@/components/EditableTable";
 import { useToast } from "@/hooks/use-toast";
 import { EditableRow, TransactionDTO } from "@shared/types";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
+import { PaymentType } from "@shared/types";
 
 interface ActivityData {
   start_date: string;
@@ -20,6 +23,9 @@ export default function KwitansiPage() {
     end_date: "",
     destination: "",
   });
+  const [activityErrors, setActivityErrors] = useState<
+    Partial<Record<keyof ActivityData, string>>
+  >({});
 
   const [tableRows, setTableRows] = useState<EditableRow[]>([]);
   const [description, setDescription] = useState("");
@@ -36,6 +42,7 @@ export default function KwitansiPage() {
       total_night: item.total_night || "",
       subtotal: item.subtotal || 0, // Tambahkan subtotal
       transport_detail: item.transport_detail || "",
+      payment_type: (item.payment_type || "uang muka") as PaymentType, // Default value and cast
     }));
 
     setTableRows(normalized);
@@ -53,9 +60,61 @@ export default function KwitansiPage() {
       amount: row.amount,
       total_night: parseInt(row.total_night) || undefined,
       subtotal: row.subtotal,
+      payment_type: row.payment_type,
     }));
 
-    const payload = { transactions: transactionsDTO };
+    const newErrors: Partial<Record<keyof ActivityData, string>> = {};
+
+    if (!activity.start_date) {
+      newErrors.start_date = "Tanggal mulai kegiatan harus diisi.";
+    }
+    if (!activity.end_date) {
+      newErrors.end_date = "Tanggal selesai kegiatan harus diisi.";
+    }
+    if (!activity.destination) {
+      newErrors.destination = "Tujuan kegiatan harus diisi.";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setActivityErrors(newErrors);
+      toast({
+        title: "Error",
+        description: "Harap lengkapi semua field kegiatan yang wajib diisi.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (new Date(activity.start_date) > new Date(activity.end_date)) {
+      setActivityErrors((prevErrors) => ({
+        ...prevErrors,
+        start_date:
+          "Tanggal mulai kegiatan tidak boleh lebih besar dari tanggal selesai kegiatan.",
+        end_date:
+          "Tanggal selesai kegiatan tidak boleh lebih kecil dari tanggal mulai kegiatan.",
+      }));
+      toast({
+        title: "Error",
+        description:
+          "Tanggal mulai kegiatan tidak boleh lebih besar dari tanggal selesai kegiatan.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const formattedActivity = {
+      start_date: format(new Date(activity.start_date), "dd MMMM yyyy", {
+        locale: id,
+      }),
+      end_date: format(new Date(activity.end_date), "dd MMMM yyyy", {
+        locale: id,
+      }),
+    };
+
+    const payload = {
+      transactions: transactionsDTO,
+      ...formattedActivity,
+    };
 
     try {
       const response = await fetch("http://localhost:5002/api/report/excel", {
@@ -104,7 +163,7 @@ export default function KwitansiPage() {
           {/* Header with Title and Save Button */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-2xl font-semibold" data-testid="text-title">
-              MVP Kwitansi PNS
+              Kwitansi
             </h1>
             <Button onClick={handleSaveExport} data-testid="button-save-export">
               <Save className="w-4 h-4 mr-2" />
@@ -119,7 +178,11 @@ export default function KwitansiPage() {
 
           {/* Activity Form Section */}
           <div id="activity">
-            <ActivityForm activity={activity} onChange={setActivity} />
+            <ActivityForm
+              activity={activity}
+              onChange={setActivity}
+              errors={activityErrors}
+            />
           </div>
 
           {/* Editable Table Section */}

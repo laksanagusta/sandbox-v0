@@ -1,6 +1,6 @@
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card } from '@/components/ui/card';
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 
 interface ActivityData {
   start_date: string;
@@ -11,9 +11,14 @@ interface ActivityData {
 interface ActivityFormProps {
   activity: ActivityData;
   onChange: (activity: ActivityData) => void;
+  errors?: Partial<Record<keyof ActivityData, string>>; // Add errors prop
 }
 
-export default function ActivityForm({ activity, onChange }: ActivityFormProps) {
+export default function ActivityForm({
+  activity,
+  onChange,
+  errors,
+}: ActivityFormProps) {
   const handleChange = (field: keyof ActivityData, value: string) => {
     onChange({
       ...activity,
@@ -24,7 +29,7 @@ export default function ActivityForm({ activity, onChange }: ActivityFormProps) 
   return (
     <Card className="p-6">
       <h2 className="text-lg font-semibold mb-4">Detail Kegiatan</h2>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="start_date" className="text-sm font-medium">
@@ -34,10 +39,17 @@ export default function ActivityForm({ activity, onChange }: ActivityFormProps) 
             id="start_date"
             type="date"
             value={activity.start_date}
-            onChange={(e) => handleChange('start_date', e.target.value)}
-            className="w-full"
+            onChange={(e) => handleChange("start_date", e.target.value)}
+            className={`w-full ${
+              errors?.start_date
+                ? "border-destructive focus-visible:ring-destructive"
+                : ""
+            }`}
             data-testid="input-start-date"
           />
+          {errors?.start_date && (
+            <p className="text-sm text-destructive">{errors.start_date}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -48,10 +60,17 @@ export default function ActivityForm({ activity, onChange }: ActivityFormProps) 
             id="end_date"
             type="date"
             value={activity.end_date}
-            onChange={(e) => handleChange('end_date', e.target.value)}
-            className="w-full"
+            onChange={(e) => handleChange("end_date", e.target.value)}
+            className={`w-full ${
+              errors?.end_date
+                ? "border-destructive focus-visible:ring-destructive"
+                : ""
+            }`}
             data-testid="input-end-date"
           />
+          {errors?.end_date && (
+            <p className="text-sm text-destructive">{errors.end_date}</p>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -62,11 +81,18 @@ export default function ActivityForm({ activity, onChange }: ActivityFormProps) 
             id="destination"
             type="text"
             value={activity.destination}
-            onChange={(e) => handleChange('destination', e.target.value)}
+            onChange={(e) => handleChange("destination", e.target.value)}
             placeholder="Contoh: Jakarta"
-            className="w-full"
+            className={`w-full ${
+              errors?.destination
+                ? "border-destructive focus-visible:ring-destructive"
+                : ""
+            }`}
             data-testid="input-destination"
           />
+          {errors?.destination && (
+            <p className="text-sm text-destructive">{errors.destination}</p>
+          )}
         </div>
       </div>
     </Card>

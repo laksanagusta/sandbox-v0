@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EditableRow } from "@shared/types";
+import { EditableRow, PaymentType } from "@shared/types";
 
 interface EditableTableProps {
   rows: EditableRow[];
@@ -50,6 +50,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
         subtype: "",
         total_night: "",
         subtotal: 0,
+        payment_type: "uang muka", // Default value
       },
     ]);
   };
@@ -102,6 +103,9 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
               </th>
               <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2">
                 Total Malam
+              </th>
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2">
+                Tipe Pembayaran
               </th>
               <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2">
                 Subtotal (Rp)
@@ -175,6 +179,25 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       data-testid={`input-total-night-${index}`}
                     />
                   </td>
+                  <td className="py-2 px-2">
+                    <Select
+                      value={row.payment_type}
+                      onValueChange={(value: PaymentType) =>
+                        updateRow(index, "payment_type", value)
+                      }
+                    >
+                      <SelectTrigger
+                        className="h-8 text-sm"
+                        data-testid={`select-payment-type-${index}`}
+                      >
+                        <SelectValue placeholder="Pilih tipe pembayaran" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="uang_muka">Uang Muka</SelectItem>
+                        <SelectItem value="rampung">Rampung</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </td>
                   <td className="py-2 px-2 text-right font-mono text-sm">
                     {formatRupiah(row.subtotal)}
                   </td>
@@ -239,7 +262,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
               >
                 Rp {calculateTotal()}
               </td>
-              <td colSpan={4}></td>
+              <td colSpan={5}></td>
             </tr>
           </tfoot>
         </table>
