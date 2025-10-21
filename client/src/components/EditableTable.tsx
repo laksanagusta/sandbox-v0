@@ -51,6 +51,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
         total_night: "",
         subtotal: 0,
         payment_type: "uang muka", // Default value
+        spd_number: "",
       },
     ]);
   };
@@ -70,6 +71,16 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
     return formatRupiah(total);
   };
 
+  const updateSpdNumber = (index: number, value: string) => {
+    setRows((prevRows) => {
+      const nameToMatch = prevRows[index]?.name;
+      if (!nameToMatch) return prevRows; // If no name, do nothing
+      return prevRows.map((row) =>
+        row.name === nameToMatch ? { ...row, spd_number: value } : row
+      );
+    });
+  };
+
   return (
     <Card className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -86,34 +97,37 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[800px]">
+        <table className="">
           <thead>
             <tr className="border-b">
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Nama
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+                No. SPD
+              </th>
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Tipe
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Subtipe
               </th>
-              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Jumlah (Rp)
               </th>
-              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Total Malam
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap min-w-[150px]">
                 Tipe Pembayaran
               </th>
-              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Subtotal (Rp)
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Detail Transport
               </th>
-              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 w-20">
+              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
                 Aksi
               </th>
             </tr>
@@ -128,7 +142,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                   className="border-b hover:bg-muted/30 transition-colors"
                   data-testid={`row-${index}`}
                 >
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2 whitespace-nowrap">
                     <Input
                       value={row.name}
                       onChange={(e) => updateRow(index, "name", e.target.value)}
@@ -137,7 +151,16 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       data-testid={`input-name-${index}`}
                     />
                   </td>
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2 whitespace-nowrap">
+                    <Input
+                      value={row.spd_number || ""}
+                      onChange={(e) => updateSpdNumber(index, e.target.value)}
+                      placeholder="No. SPD"
+                      className="h-8 text-sm"
+                      data-testid={`input-spd-number-${index}`}
+                    />
+                  </td>
+                  <td className="py-2 px-2 whitespace-nowrap">
                     <Input
                       value={row.type}
                       onChange={(e) => updateRow(index, "type", e.target.value)}
@@ -146,7 +169,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       data-testid={`input-type-${index}`}
                     />
                   </td>
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2 whitespace-nowrap">
                     <Input
                       value={row.subtype}
                       onChange={(e) =>
@@ -157,7 +180,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       data-testid={`input-subtype-${index}`}
                     />
                   </td>
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2 whitespace-nowrap">
                     <Input
                       value={String(row.amount)}
                       onChange={(e) =>
@@ -168,7 +191,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       data-testid={`input-amount-${index}`}
                     />
                   </td>
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2 whitespace-nowrap">
                     <Input
                       value={row.total_night}
                       onChange={(e) =>
@@ -179,7 +202,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       data-testid={`input-total-night-${index}`}
                     />
                   </td>
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2 whitespace-nowrap">
                     <Select
                       value={row.payment_type}
                       onValueChange={(value: PaymentType) =>
@@ -187,7 +210,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       }
                     >
                       <SelectTrigger
-                        className="h-8 text-sm"
+                        className="h-8 text-sm min-w-[150px]"
                         data-testid={`select-payment-type-${index}`}
                       >
                         <SelectValue placeholder="Pilih tipe pembayaran" />
@@ -198,10 +221,10 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       </SelectContent>
                     </Select>
                   </td>
-                  <td className="py-2 px-2 text-right font-mono text-sm">
+                  <td className="py-2 px-2 text-right font-mono text-sm whitespace-nowrap">
                     {formatRupiah(row.subtotal)}
                   </td>
-                  <td className="py-2 px-2">
+                  <td className="py-2 px-2 whitespace-nowrap">
                     {isTransport ? (
                       <Select
                         value={row.transport_detail || ""}
@@ -233,7 +256,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       </div>
                     )}
                   </td>
-                  <td className="py-2 px-2 text-center">
+                  <td className="py-2 px-2 text-center whitespace-nowrap">
                     <Button
                       size="icon"
                       variant="ghost"
@@ -251,18 +274,18 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
           <tfoot>
             <tr className="bg-muted/50">
               <td
-                colSpan={3}
-                className="py-3 px-2 text-sm font-semibold text-right"
+                colSpan={5}
+                className="py-3 px-2 text-sm font-semibold text-right whitespace-nowrap"
               >
                 Total
               </td>
               <td
-                className="py-3 px-2 text-sm font-semibold text-right font-mono"
+                className="py-3 px-2 text-sm font-semibold text-right font-mono whitespace-nowrap"
                 data-testid="text-total"
               >
                 Rp {calculateTotal()}
               </td>
-              <td colSpan={5}></td>
+              <td colSpan={4} className="whitespace-nowrap"></td>
             </tr>
           </tfoot>
         </table>

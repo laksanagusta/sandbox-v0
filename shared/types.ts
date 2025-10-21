@@ -9,6 +9,7 @@ export interface EditableRow {
   subtotal: number;
   transport_detail?: string;
   payment_type: PaymentType;
+  spd_number?: string;
 }
 
 export type PaymentType = "uang muka" | "rampung";
@@ -21,4 +22,5 @@ export interface TransactionDTO {
   total_night?: number;
   subtotal: number;
   payment_type: PaymentType;
+  spd_number?: string;
 }

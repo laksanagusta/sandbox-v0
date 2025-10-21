@@ -14,6 +14,11 @@ interface ActivityData {
   start_date: string;
   end_date: string;
   destination: string;
+  destination_city: string;
+  spd_date: string;
+  departure_date: string;
+  return_date: string;
+  receipt_sign_date: string;
 }
 
 export default function KwitansiPage() {
@@ -22,6 +27,11 @@ export default function KwitansiPage() {
     start_date: "",
     end_date: "",
     destination: "",
+    destination_city: "",
+    spd_date: "",
+    departure_date: "",
+    return_date: "",
+    receipt_sign_date: "",
   });
   const [activityErrors, setActivityErrors] = useState<
     Partial<Record<keyof ActivityData, string>>
@@ -43,6 +53,7 @@ export default function KwitansiPage() {
       subtotal: item.subtotal || 0, // Tambahkan subtotal
       transport_detail: item.transport_detail || "",
       payment_type: (item.payment_type || "uang muka") as PaymentType, // Default value and cast
+      spd_number: item.spd_number || "",
     }));
 
     setTableRows(normalized);
@@ -61,6 +72,7 @@ export default function KwitansiPage() {
       total_night: parseInt(row.total_night) || undefined,
       subtotal: row.subtotal,
       payment_type: row.payment_type,
+      spd_number: row.spd_number,
     }));
 
     const newErrors: Partial<Record<keyof ActivityData, string>> = {};
@@ -73,6 +85,21 @@ export default function KwitansiPage() {
     }
     if (!activity.destination) {
       newErrors.destination = "Tujuan kegiatan harus diisi.";
+    }
+    if (!activity.destination_city) {
+      newErrors.destination_city = "Kota tujuan kegiatan harus diisi.";
+    }
+    if (!activity.spd_date) {
+      newErrors.spd_date = "Tanggal SPD harus diisi.";
+    }
+    if (!activity.departure_date) {
+      newErrors.departure_date = "Tanggal berangkat harus diisi.";
+    }
+    if (!activity.return_date) {
+      newErrors.return_date = "Tanggal pulang harus diisi.";
+    }
+    if (!activity.receipt_sign_date) {
+      newErrors.receipt_sign_date = "Tanggal TTD Kwitansi harus diisi.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -103,12 +130,33 @@ export default function KwitansiPage() {
     }
 
     const formattedActivity = {
+      ...activity, // Include all original activity properties
       start_date: format(new Date(activity.start_date), "dd MMMM yyyy", {
         locale: id,
       }),
       end_date: format(new Date(activity.end_date), "dd MMMM yyyy", {
         locale: id,
       }),
+      spd_date: format(new Date(activity.spd_date), "dd MMMM yyyy", {
+        locale: id,
+      }),
+      departure_date: format(
+        new Date(activity.departure_date),
+        "dd MMMM yyyy",
+        {
+          locale: id,
+        }
+      ),
+      return_date: format(new Date(activity.return_date), "dd MMMM yyyy", {
+        locale: id,
+      }),
+      receipt_sign_date: format(
+        new Date(activity.receipt_sign_date),
+        "dd MMMM yyyy",
+        {
+          locale: id,
+        }
+      ),
     };
 
     const payload = {
