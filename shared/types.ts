@@ -10,6 +10,9 @@ export interface EditableRow {
   transport_detail?: string;
   payment_type: PaymentType;
   spd_number?: string;
+  employee_id: string;
+  position: string;
+  rank: string;
 }
 
 export type PaymentType = "uang muka" | "rampung";
@@ -23,4 +26,9 @@ export interface TransactionDTO {
   subtotal: number;
   payment_type: PaymentType;
   spd_number?: string;
+  description?: string;
+  transport_detail?: string;
+  employee_id: string;
+  position: string;
+  rank: string;
 }

@@ -52,6 +52,9 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
         subtotal: 0,
         payment_type: "uang muka", // Default value
         spd_number: "",
+        employee_id: "",
+        position: "",
+        rank: "",
       },
     ]);
   };
@@ -97,37 +100,49 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
       </div>
 
       <div className="overflow-x-auto">
-        <table className="">
+        <table className="min-w-[2000px]">
           <thead>
             <tr className="border-b">
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
                 Nama
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
                 No. SPD
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
                 Tipe
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[100px]">
                 Subtipe
               </th>
-              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
+                Deskripsi
+              </th>
+              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
                 Jumlah (Rp)
               </th>
-              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[100px]">
                 Total Malam
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap min-w-[150px]">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
                 Tipe Pembayaran
               </th>
-              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
                 Subtotal (Rp)
               </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
                 Detail Transport
               </th>
-              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap">
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
+                Employee ID
+              </th>
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
+                Position
+              </th>
+              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
+                Rank
+              </th>
+              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[60px]">
                 Aksi
               </th>
             </tr>
@@ -178,6 +193,17 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       placeholder="Subtipe"
                       className="h-8 text-sm"
                       data-testid={`input-subtype-${index}`}
+                    />
+                  </td>
+                  <td className="py-2 px-2 whitespace-nowrap w-[200px]">
+                    <Input
+                      value={row.description}
+                      onChange={(e) =>
+                        updateRow(index, "description", e.target.value)
+                      }
+                      placeholder="Deskripsi"
+                      className="h-8 text-sm"
+                      data-testid={`input-description-${index}`}
                     />
                   </td>
                   <td className="py-2 px-2 whitespace-nowrap">
@@ -256,6 +282,37 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
                       </div>
                     )}
                   </td>
+                  <td className="py-2 px-2 whitespace-nowrap">
+                    <Input
+                      value={row.employee_id}
+                      onChange={(e) =>
+                        updateRow(index, "employee_id", e.target.value)
+                      }
+                      placeholder="NIP"
+                      className="h-8 text-sm"
+                      data-testid={`input-employee-id-${index}`}
+                    />
+                  </td>
+                  <td className="py-2 px-2 whitespace-nowrap">
+                    <Input
+                      value={row.position}
+                      onChange={(e) =>
+                        updateRow(index, "position", e.target.value)
+                      }
+                      placeholder="Jabatan"
+                      className="h-8 text-sm"
+                      data-testid={`input-position-${index}`}
+                    />
+                  </td>
+                  <td className="py-2 px-2 whitespace-nowrap">
+                    <Input
+                      value={row.rank}
+                      onChange={(e) => updateRow(index, "rank", e.target.value)}
+                      placeholder="Golongan"
+                      className="h-8 text-sm"
+                      data-testid={`input-rank-${index}`}
+                    />
+                  </td>
                   <td className="py-2 px-2 text-center whitespace-nowrap">
                     <Button
                       size="icon"
@@ -274,7 +331,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
           <tfoot>
             <tr className="bg-muted/50">
               <td
-                colSpan={5}
+                colSpan={12}
                 className="py-3 px-2 text-sm font-semibold text-right whitespace-nowrap"
               >
                 Total
@@ -285,7 +342,7 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
               >
                 Rp {calculateTotal()}
               </td>
-              <td colSpan={4} className="whitespace-nowrap"></td>
+              <td colSpan={1} className="whitespace-nowrap"></td>
             </tr>
           </tfoot>
         </table>

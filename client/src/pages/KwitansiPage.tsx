@@ -39,6 +39,7 @@ export default function KwitansiPage() {
 
   const [tableRows, setTableRows] = useState<EditableRow[]>([]);
   const [description, setDescription] = useState("");
+  const [transportDetail, setTransportDetail] = useState("");
 
   const handleUploaded = (data: any[]) => {
     // Normalize data - ensure all required fields exist with defaults
@@ -54,6 +55,9 @@ export default function KwitansiPage() {
       transport_detail: item.transport_detail || "",
       payment_type: (item.payment_type || "uang muka") as PaymentType, // Default value and cast
       spd_number: item.spd_number || "",
+      employee_id: item.employee_id || "",
+      position: item.position || "",
+      rank: item.rank || "",
     }));
 
     setTableRows(normalized);
@@ -73,6 +77,11 @@ export default function KwitansiPage() {
       subtotal: row.subtotal,
       payment_type: row.payment_type,
       spd_number: row.spd_number,
+      description: row.description,
+      transport_detail: row.transport_detail,
+      employee_id: row.employee_id,
+      position: row.position,
+      rank: row.rank,
     }));
 
     const newErrors: Partial<Record<keyof ActivityData, string>> = {};
@@ -161,6 +170,8 @@ export default function KwitansiPage() {
 
     const payload = {
       transactions: transactionsDTO,
+      description: description,
+      transport_detail: transportDetail,
       ...formattedActivity,
     };
 
