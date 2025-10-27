@@ -10,57 +10,122 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EditableRow, PaymentType } from "@shared/types";
+import { Assignee, PaymentType, Transaction } from "@shared/types";
 
 interface EditableTableProps {
-  rows: EditableRow[];
-  setRows: React.Dispatch<React.SetStateAction<EditableRow[]>>;
+  assignees: Assignee[];
+  onUpdateAssignees: (assignees: Assignee[]) => void;
 }
 
-export default function EditableTable({ rows, setRows }: EditableTableProps) {
-  const updateRow = (
-    index: number,
-    field: keyof EditableRow,
+export default function EditableTable({
+  assignees,
+  onUpdateAssignees,
+}: EditableTableProps) {
+  const updateTransaction = (
+    assigneeIndex: number,
+    transactionIndex: number,
+    field: keyof Transaction,
     value: string | number
   ) => {
-    setRows((prevRows: EditableRow[]) =>
-      prevRows.map((row: EditableRow, i: number) =>
-        i === index
-          ? {
-              ...row,
-              [field]:
-                typeof value === "string" && field === "amount"
-                  ? parseInt(value.replace(/\D/g, "")) || 0
-                  : value,
+    const updatedAssignees = assignees.map((assignee, aIdx) => {
+      if (aIdx === assigneeIndex) {
+        const updatedTransactions = assignee.transactions.map(
+          (transaction, tIdx) => {
+            if (tIdx === transactionIndex) {
+              return {
+                ...transaction,
+                [field]:
+                  typeof value === "string" &&
+                  (field === "amount" || field === "subtotal")
+                    ? parseInt(value.replace(/\D/g, "")) || 0
+                    : value,
+              };
             }
-          : row
-      )
-    );
+            return transaction;
+          }
+        );
+        return { ...assignee, transactions: updatedTransactions };
+      }
+      return assignee;
+    });
+    onUpdateAssignees(updatedAssignees);
   };
 
-  const addRow = () => {
-    setRows([
-      ...rows,
+  const updateAssigneeField = (
+    assigneeIndex: number,
+    field: keyof Assignee,
+    value: string
+  ) => {
+    const updatedAssignees = assignees.map((assignee, aIdx) => {
+      if (aIdx === assigneeIndex) {
+        return {
+          ...assignee,
+          [field]: value,
+        };
+      }
+      return assignee;
+    });
+    onUpdateAssignees(updatedAssignees);
+  };
+
+  const addTransaction = (assigneeIndex: number) => {
+    const updatedAssignees = assignees.map((assignee, aIdx) => {
+      if (aIdx === assigneeIndex) {
+        return {
+          ...assignee,
+          transactions: [
+            ...assignee.transactions,
+            {
+              type: "",
+              subtype: "",
+              amount: 0,
+              subtotal: 0,
+              payment_type: "uang muka" as PaymentType,
+              description: "",
+              transport_detail: "",
+            },
+          ],
+        };
+      }
+      return assignee;
+    });
+    onUpdateAssignees(updatedAssignees);
+  };
+
+  const addAssignee = () => {
+    onUpdateAssignees([
+      ...assignees,
       {
-        id: "",
-        description: "",
-        amount: 0,
         name: "",
-        type: "",
-        subtype: "",
-        total_night: "",
-        subtotal: 0,
-        payment_type: "uang muka", // Default value
         spd_number: "",
         employee_id: "",
         position: "",
         rank: "",
+        transactions: [],
       },
     ]);
   };
 
-  const deleteRow = (index: number) => {
-    setRows(rows.filter((_, i) => i !== index));
+  const deleteTransaction = (
+    assigneeIndex: number,
+    transactionIndex: number
+  ) => {
+    const updatedAssignees = assignees.map((assignee, aIdx) => {
+      if (aIdx === assigneeIndex) {
+        return {
+          ...assignee,
+          transactions: assignee.transactions.filter(
+            (_, tIdx) => tIdx !== transactionIndex
+          ),
+        };
+      }
+      return assignee;
+    });
+    onUpdateAssignees(updatedAssignees);
+  };
+
+  const deleteAssignee = (assigneeIndex: number) => {
+    onUpdateAssignees(assignees.filter((_, aIdx) => aIdx !== assigneeIndex));
   };
 
   const formatRupiah = (amount: number) => {
@@ -68,20 +133,35 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
   };
 
   const calculateTotal = () => {
-    const total = rows.reduce((sum, row) => {
-      return sum + row.amount;
+    const total = assignees.reduce((sumAssignee, assignee) => {
+      return (
+        sumAssignee +
+        assignee.transactions.reduce((sumTransaction, transaction) => {
+          return sumTransaction + transaction.amount;
+        }, 0)
+      );
     }, 0);
     return formatRupiah(total);
   };
 
-  const updateSpdNumber = (index: number, value: string) => {
-    setRows((prevRows) => {
-      const nameToMatch = prevRows[index]?.name;
-      if (!nameToMatch) return prevRows; // If no name, do nothing
-      return prevRows.map((row) =>
-        row.name === nameToMatch ? { ...row, spd_number: value } : row
-      );
+  const updateSpdNumberForAssigneeTransactions = (
+    assigneeIndex: number,
+    value: string
+  ) => {
+    const updatedAssignees = assignees.map((assignee, aIdx) => {
+      if (aIdx === assigneeIndex) {
+        return {
+          ...assignee,
+          spd_number: value,
+          transactions: assignee.transactions.map((transaction) => ({
+            ...transaction,
+            spd_number: value,
+          })),
+        };
+      }
+      return assignee;
     });
+    onUpdateAssignees(updatedAssignees);
   };
 
   return (
@@ -89,272 +169,400 @@ export default function EditableTable({ rows, setRows }: EditableTableProps) {
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h2 className="text-lg font-semibold">Transaksi</h2>
         <Button
-          onClick={addRow}
+          onClick={addAssignee}
           variant="outline"
           size="sm"
-          data-testid="button-add-row"
+          data-testid="button-add-assignee"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Tambah Baris
+          Tambah Penugas
         </Button>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-[2000px]">
-          <thead>
-            <tr className="border-b">
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
-                Nama
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
-                No. SPD
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
-                Tipe
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[100px]">
-                Subtipe
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
-                Deskripsi
-              </th>
-              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
-                Jumlah (Rp)
-              </th>
-              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[100px]">
-                Total Malam
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
-                Tipe Pembayaran
-              </th>
-              <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
-                Subtotal (Rp)
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[200px]">
-                Detail Transport
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
-                Employee ID
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
-                Position
-              </th>
-              <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[150px]">
-                Rank
-              </th>
-              <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[60px]">
-                Aksi
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, index) => {
-              const isTransport = row.type.toLowerCase() === "transport";
+      {assignees.map((assignee, assigneeIndex) => (
+        <div key={assigneeIndex} className="mb-8 border rounded-lg p-4">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="font-semibold">
+              Penugas: {assignee.name || `Baru ${assigneeIndex + 1}`}
+            </h3>
+            <Button
+              size="icon"
+              variant="ghost"
+              onClick={() => deleteAssignee(assigneeIndex)}
+              className="text-destructive hover:text-destructive"
+              data-testid={`button-delete-assignee-${assigneeIndex}`}
+            >
+              <Trash2 className="w-4 h-4" />
+            </Button>
+          </div>
 
-              return (
-                <tr
-                  key={index}
-                  className="border-b hover:bg-muted/30 transition-colors"
-                  data-testid={`row-${index}`}
-                >
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.name}
-                      onChange={(e) => updateRow(index, "name", e.target.value)}
-                      placeholder="Nama"
-                      className="h-8 text-sm"
-                      data-testid={`input-name-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.spd_number || ""}
-                      onChange={(e) => updateSpdNumber(index, e.target.value)}
-                      placeholder="No. SPD"
-                      className="h-8 text-sm"
-                      data-testid={`input-spd-number-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.type}
-                      onChange={(e) => updateRow(index, "type", e.target.value)}
-                      placeholder="Tipe"
-                      className="h-8 text-sm"
-                      data-testid={`input-type-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.subtype}
-                      onChange={(e) =>
-                        updateRow(index, "subtype", e.target.value)
-                      }
-                      placeholder="Subtipe"
-                      className="h-8 text-sm"
-                      data-testid={`input-subtype-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap w-[200px]">
-                    <Input
-                      value={row.description}
-                      onChange={(e) =>
-                        updateRow(index, "description", e.target.value)
-                      }
-                      placeholder="Deskripsi"
-                      className="h-8 text-sm"
-                      data-testid={`input-description-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={String(row.amount)}
-                      onChange={(e) =>
-                        updateRow(index, "amount", e.target.value)
-                      }
-                      placeholder="0"
-                      className="h-8 text-sm text-right font-mono"
-                      data-testid={`input-amount-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.total_night}
-                      onChange={(e) =>
-                        updateRow(index, "total_night", e.target.value)
-                      }
-                      placeholder="0"
-                      className="h-8 text-sm text-center"
-                      data-testid={`input-total-night-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Select
-                      value={row.payment_type}
-                      onValueChange={(value: PaymentType) =>
-                        updateRow(index, "payment_type", value)
-                      }
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Nama
+              </label>
+              <Input
+                value={assignee.name}
+                onChange={(e) =>
+                  updateAssigneeField(assigneeIndex, "name", e.target.value)
+                }
+                placeholder="Nama Penugas"
+                className="h-9 text-sm"
+                data-testid={`input-assignee-name-${assigneeIndex}`}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                No. SPD
+              </label>
+              <Input
+                value={assignee.spd_number}
+                onChange={(e) =>
+                  updateSpdNumberForAssigneeTransactions(
+                    assigneeIndex,
+                    e.target.value
+                  )
+                }
+                placeholder="No. SPD"
+                className="h-9 text-sm"
+                data-testid={`input-assignee-spd-${assigneeIndex}`}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Employee ID
+              </label>
+              <Input
+                value={assignee.employee_id}
+                onChange={(e) =>
+                  updateAssigneeField(
+                    assigneeIndex,
+                    "employee_id",
+                    e.target.value
+                  )
+                }
+                placeholder="Employee ID"
+                className="h-9 text-sm"
+                data-testid={`input-assignee-employee-id-${assigneeIndex}`}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Jabatan
+              </label>
+              <Input
+                value={assignee.position}
+                onChange={(e) =>
+                  updateAssigneeField(assigneeIndex, "position", e.target.value)
+                }
+                placeholder="Jabatan"
+                className="h-9 text-sm"
+                data-testid={`input-assignee-position-${assigneeIndex}`}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Golongan
+              </label>
+              <Input
+                value={assignee.rank}
+                onChange={(e) =>
+                  updateAssigneeField(assigneeIndex, "rank", e.target.value)
+                }
+                placeholder="Golongan"
+                className="h-9 text-sm"
+                data-testid={`input-assignee-rank-${assigneeIndex}`}
+              />
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-[1400px] w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                    Tipe
+                  </th>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                    Subtipe
+                  </th>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[300px]">
+                    Deskripsi
+                  </th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                    Jumlah (Rp)
+                  </th>
+                  <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                    Subtotal (Rp)
+                  </th>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                    Tipe Pembayaran
+                  </th>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                    Detail Transport
+                  </th>
+                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                    Total Malam
+                  </th>
+                  <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[40px]">
+                    Aksi
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {assignee.transactions.map((transaction, transactionIndex) => {
+                  const isTransport =
+                    transaction.type.toLowerCase() === "transport";
+                  const isHotel =
+                    transaction.type.toLowerCase() === "hotel";
+                  return (
+                    <tr
+                      key={transactionIndex}
+                      className="border-b hover:bg-muted/30 transition-colors"
+                      data-testid={`assignee-${assigneeIndex}-transaction-${transactionIndex}`}
                     >
-                      <SelectTrigger
-                        className="h-8 text-sm min-w-[150px]"
-                        data-testid={`select-payment-type-${index}`}
-                      >
-                        <SelectValue placeholder="Pilih tipe pembayaran" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="uang_muka">Uang Muka</SelectItem>
-                        <SelectItem value="rampung">Rampung</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </td>
-                  <td className="py-2 px-2 text-right font-mono text-sm whitespace-nowrap">
-                    {formatRupiah(row.subtotal)}
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    {isTransport ? (
-                      <Select
-                        value={row.transport_detail || ""}
-                        onValueChange={(value) =>
-                          updateRow(index, "transport_detail", value)
-                        }
-                      >
-                        <SelectTrigger
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        <Input
+                          value={transaction.type}
+                          onChange={(e) =>
+                            updateTransaction(
+                              assigneeIndex,
+                              transactionIndex,
+                              "type",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Tipe"
                           className="h-8 text-sm"
-                          data-testid={`select-transport-detail-${index}`}
+                          data-testid={`input-type-${assigneeIndex}-${transactionIndex}`}
+                        />
+                      </td>
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        <Input
+                          value={transaction.subtype}
+                          onChange={(e) =>
+                            updateTransaction(
+                              assigneeIndex,
+                              transactionIndex,
+                              "subtype",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Subtipe"
+                          className="h-8 text-sm"
+                          data-testid={`input-subtype-${assigneeIndex}-${transactionIndex}`}
+                        />
+                      </td>
+                      <td className="py-2 px-2 whitespace-nowrap w-[300px]">
+                        <Input
+                          value={transaction.description}
+                          onChange={(e) =>
+                            updateTransaction(
+                              assigneeIndex,
+                              transactionIndex,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Deskripsi"
+                          className="h-8 text-sm"
+                          data-testid={`input-description-${assigneeIndex}-${transactionIndex}`}
+                        />
+                      </td>
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        <Input
+                          value={String(transaction.amount)}
+                          onChange={(e) =>
+                            updateTransaction(
+                              assigneeIndex,
+                              transactionIndex,
+                              "amount",
+                              e.target.value
+                            )
+                          }
+                          placeholder="0"
+                          className="h-8 text-sm text-right font-mono"
+                          data-testid={`input-amount-${assigneeIndex}-${transactionIndex}`}
+                        />
+                      </td>
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        <Input
+                          value={String(transaction.subtotal)}
+                          onChange={(e) =>
+                            updateTransaction(
+                              assigneeIndex,
+                              transactionIndex,
+                              "subtotal",
+                              e.target.value
+                            )
+                          }
+                          placeholder="0"
+                          className="h-8 text-sm text-right font-mono"
+                          data-testid={`input-subtotal-${assigneeIndex}-${transactionIndex}`}
+                        />
+                      </td>
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        <Select
+                          value={transaction.payment_type}
+                          onValueChange={(value: PaymentType) =>
+                            updateTransaction(
+                              assigneeIndex,
+                              transactionIndex,
+                              "payment_type",
+                              value
+                            )
+                          }
                         >
-                          <SelectValue placeholder="Pilih detail" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="transport_asal">
-                            Transport Asal
-                          </SelectItem>
-                          <SelectItem value="transport_daerah">
-                            Transport Daerah
-                          </SelectItem>
-                          <SelectItem value="transport_darat">
-                            Transport Darat
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <div className="h-8 flex items-center justify-center">
-                        <span className="text-xs text-muted-foreground">-</span>
-                      </div>
+                          <SelectTrigger
+                            className="h-8 text-sm min-w-[150px]"
+                            data-testid={`select-payment-type-${assigneeIndex}-${transactionIndex}`}
+                          >
+                            <SelectValue placeholder="Pilih tipe pembayaran" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="uang muka">Uang Muka</SelectItem>
+                            <SelectItem value="rampung">Rampung</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </td>
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        {isTransport ? (
+                          <Select
+                            value={transaction.transport_detail || ""}
+                            onValueChange={(value) =>
+                              updateTransaction(
+                                assigneeIndex,
+                                transactionIndex,
+                                "transport_detail",
+                                value
+                              )
+                            }
+                          >
+                            <SelectTrigger
+                              className="h-8 text-sm"
+                              data-testid={`select-transport-detail-${assigneeIndex}-${transactionIndex}`}
+                            >
+                              <SelectValue placeholder="Pilih detail" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="transport_asal">
+                                Transport Asal
+                              </SelectItem>
+                              <SelectItem value="transport_daerah">
+                                Transport Daerah
+                              </SelectItem>
+                              <SelectItem value="transport_darat">
+                                Transport Darat
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <div className="h-8 flex items-center justify-center">
+                            <span className="text-xs text-muted-foreground">
+                              -
+                            </span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-2 px-2 whitespace-nowrap">
+                        {isHotel ? (
+                          <Input
+                            value={String(transaction.total_night || "")}
+                            onChange={(e) =>
+                              updateTransaction(
+                                assigneeIndex,
+                                transactionIndex,
+                                "total_night",
+                                e.target.value
+                              )
+                            }
+                            placeholder="Jml malam"
+                            className="h-8 text-sm text-center"
+                            type="number"
+                            min="0"
+                            data-testid={`input-total-night-${assigneeIndex}-${transactionIndex}`}
+                          />
+                        ) : (
+                          <div className="h-8 flex items-center justify-center">
+                            <span className="text-xs text-muted-foreground">
+                              -
+                            </span>
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-2 px-2 text-center whitespace-nowrap">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() =>
+                            deleteTransaction(assigneeIndex, transactionIndex)
+                          }
+                          className="h-8 w-8 text-destructive hover:text-destructive"
+                          data-testid={`button-delete-transaction-${assigneeIndex}-${transactionIndex}`}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr className="bg-muted/50">
+                  <td
+                    colSpan={3}
+                    className="py-3 px-2 text-sm font-semibold text-right whitespace-nowrap"
+                  >
+                    Total Transaksi untuk {assignee.name || "Penugas Baru"}
+                  </td>
+                  <td
+                    colSpan={2}
+                    className="py-3 px-2 text-sm font-semibold text-right font-mono whitespace-nowrap"
+                    data-testid={`text-total-assignee-${assigneeIndex}`}
+                  >
+                    Rp{" "}
+                    {formatRupiah(
+                      assignee.transactions.reduce(
+                        (sum, t) => sum + t.amount,
+                        0
+                      )
                     )}
                   </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.employee_id}
-                      onChange={(e) =>
-                        updateRow(index, "employee_id", e.target.value)
-                      }
-                      placeholder="NIP"
-                      className="h-8 text-sm"
-                      data-testid={`input-employee-id-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.position}
-                      onChange={(e) =>
-                        updateRow(index, "position", e.target.value)
-                      }
-                      placeholder="Jabatan"
-                      className="h-8 text-sm"
-                      data-testid={`input-position-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 whitespace-nowrap">
-                    <Input
-                      value={row.rank}
-                      onChange={(e) => updateRow(index, "rank", e.target.value)}
-                      placeholder="Golongan"
-                      className="h-8 text-sm"
-                      data-testid={`input-rank-${index}`}
-                    />
-                  </td>
-                  <td className="py-2 px-2 text-center whitespace-nowrap">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => deleteRow(index)}
-                      className="h-8 w-8 text-destructive hover:text-destructive"
-                      data-testid={`button-delete-${index}`}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </td>
+                  <td colSpan={4} className="whitespace-nowrap"></td>
                 </tr>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            <tr className="bg-muted/50">
-              <td
-                colSpan={12}
-                className="py-3 px-2 text-sm font-semibold text-right whitespace-nowrap"
-              >
-                Total
-              </td>
-              <td
-                className="py-3 px-2 text-sm font-semibold text-right font-mono whitespace-nowrap"
-                data-testid="text-total"
-              >
-                Rp {calculateTotal()}
-              </td>
-              <td colSpan={1} className="whitespace-nowrap"></td>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+              </tfoot>
+            </table>
+          </div>
+          <div className="flex justify-end mt-4">
+            <Button
+              onClick={() => addTransaction(assigneeIndex)}
+              variant="secondary"
+              size="sm"
+              data-testid={`button-add-transaction-${assigneeIndex}`}
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Tambah Transaksi
+            </Button>
+          </div>
+        </div>
+      ))}
 
-      {rows.length === 0 && (
+      {assignees.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-sm">
-            Belum ada transaksi. Upload dokumen atau tambah baris secara manual.
+            Belum ada penugas. Tambah penugas secara manual.
           </p>
         </div>
       )}
+
+      <div className="mt-8 pt-4 border-t">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 className="text-lg font-semibold">Total Keseluruhan</h2>
+          <span className="text-xl font-bold font-mono">
+            Rp {calculateTotal()}
+          </span>
+        </div>
+      </div>
     </Card>
   );
 }

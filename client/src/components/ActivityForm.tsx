@@ -3,24 +3,21 @@ import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
 import { formatDateToString, parseDateFromString } from "@/lib/utils";
 
-/**
- * Props for the ActivityForm component.
- */
-interface ActivityData {
-  start_date: string;
-  end_date: string;
-  destination: string;
-  destination_city: string;
-  spd_date: string;
-  departure_date: string;
-  return_date: string;
-  receipt_sign_date: string;
+interface ActivityFormPropsData {
+  startDate: string;
+  endDate: string;
+  activityPurpose: string;
+  destinationCity: string;
+  spdDate: string;
+  departureDate: string;
+  returnDate: string;
+  receiptSignatureDate: string;
 }
 
 interface ActivityFormProps {
-  activity: ActivityData;
-  onChange: (activity: ActivityData) => void;
-  errors?: Partial<Record<keyof ActivityData, string>>; // Add errors prop
+  activity: ActivityFormPropsData;
+  onChange: (activity: ActivityFormPropsData) => void;
+  errors?: Partial<Record<keyof ActivityFormPropsData, string>>; // Add errors prop
 }
 
 export default function ActivityForm({
@@ -28,7 +25,7 @@ export default function ActivityForm({
   onChange,
   errors,
 }: ActivityFormProps) {
-  const handleChange = (field: keyof ActivityData, value: string) => {
+  const handleChange = (field: keyof ActivityFormPropsData, value: string) => {
     onChange({
       ...activity,
       [field]: value,
@@ -41,175 +38,175 @@ export default function ActivityForm({
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="start_date" className="text-sm font-medium">
+          <Label htmlFor="startDate" className="text-sm font-medium">
             Tanggal Mulai Kegiatan <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="start_date"
+            id="startDate"
             type="date"
-            value={activity.start_date}
-            onChange={(e) => handleChange("start_date", e.target.value)}
+            value={activity.startDate}
+            onChange={(e) => handleChange("startDate", e.target.value)}
             className={`w-full ${
-              errors?.start_date
+              errors?.startDate
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
             data-testid="input-start-date"
           />
-          {errors?.start_date && (
-            <p className="text-sm text-destructive">{errors.start_date}</p>
+          {errors?.startDate && (
+            <p className="text-sm text-destructive">{errors.startDate}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="end_date" className="text-sm font-medium">
+          <Label htmlFor="endDate" className="text-sm font-medium">
             Tanggal Selesai Kegiatan <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="end_date"
+            id="endDate"
             type="date"
-            value={activity.end_date}
-            onChange={(e) => handleChange("end_date", e.target.value)}
+            value={activity.endDate}
+            onChange={(e) => handleChange("endDate", e.target.value)}
             className={`w-full ${
-              errors?.end_date
+              errors?.endDate
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
             data-testid="input-end-date"
           />
-          {errors?.end_date && (
-            <p className="text-sm text-destructive">{errors.end_date}</p>
+          {errors?.endDate && (
+            <p className="text-sm text-destructive">{errors.endDate}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="destination" className="text-sm font-medium">
+          <Label htmlFor="activityPurpose" className="text-sm font-medium">
             Tujuan Kegiatan <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="destination"
+            id="activityPurpose"
             type="text"
-            value={activity.destination}
-            onChange={(e) => handleChange("destination", e.target.value)}
-            placeholder="Contoh: Jakarta"
+            value={activity.activityPurpose}
+            onChange={(e) => handleChange("activityPurpose", e.target.value)}
+            placeholder="Contoh: Monitoring and Evaluation"
             className={`w-full ${
-              errors?.destination
+              errors?.activityPurpose
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
-            data-testid="input-destination"
+            data-testid="input-activity-purpose"
           />
-          {errors?.destination && (
-            <p className="text-sm text-destructive">{errors.destination}</p>
+          {errors?.activityPurpose && (
+            <p className="text-sm text-destructive">{errors.activityPurpose}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="destination_city" className="text-sm font-medium">
+          <Label htmlFor="destinationCity" className="text-sm font-medium">
             Kota Tujuan <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="destination_city"
+            id="destinationCity"
             type="text"
-            value={activity.destination_city}
-            onChange={(e) => handleChange("destination_city", e.target.value)}
-            placeholder="Contoh: Jakarta"
+            value={activity.destinationCity}
+            onChange={(e) => handleChange("destinationCity", e.target.value)}
+            placeholder="Contoh: Balikpapan"
             className={`w-full ${
-              errors?.destination_city
+              errors?.destinationCity
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
             data-testid="input-destination-city"
           />
-          {errors?.destination_city && (
-            <p className="text-sm text-destructive">
-              {errors.destination_city}
-            </p>
+          {errors?.destinationCity && (
+            <p className="text-sm text-destructive">{errors.destinationCity}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="spd_date" className="text-sm font-medium">
+          <Label htmlFor="spdDate" className="text-sm font-medium">
             Tanggal SPD <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="spd_date"
+            id="spdDate"
             type="date"
-            value={activity.spd_date}
-            onChange={(e) => handleChange("spd_date", e.target.value)}
+            value={activity.spdDate}
+            onChange={(e) => handleChange("spdDate", e.target.value)}
             className={`w-full ${
-              errors?.spd_date
+              errors?.spdDate
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
             data-testid="input-spd-date"
           />
-          {errors?.spd_date && (
-            <p className="text-sm text-destructive">{errors.spd_date}</p>
+          {errors?.spdDate && (
+            <p className="text-sm text-destructive">{errors.spdDate}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="departure_date" className="text-sm font-medium">
+          <Label htmlFor="departureDate" className="text-sm font-medium">
             Tanggal Berangkat <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="departure_date"
+            id="departureDate"
             type="date"
-            value={activity.departure_date}
-            onChange={(e) => handleChange("departure_date", e.target.value)}
+            value={activity.departureDate}
+            onChange={(e) => handleChange("departureDate", e.target.value)}
             className={`w-full ${
-              errors?.departure_date
+              errors?.departureDate
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
             data-testid="input-departure-date"
           />
-          {errors?.departure_date && (
-            <p className="text-sm text-destructive">{errors.departure_date}</p>
+          {errors?.departureDate && (
+            <p className="text-sm text-destructive">{errors.departureDate}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="return_date" className="text-sm font-medium">
+          <Label htmlFor="returnDate" className="text-sm font-medium">
             Tanggal Pulang <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="return_date"
+            id="returnDate"
             type="date"
-            value={activity.return_date}
-            onChange={(e) => handleChange("return_date", e.target.value)}
+            value={activity.returnDate}
+            onChange={(e) => handleChange("returnDate", e.target.value)}
             className={`w-full ${
-              errors?.return_date
+              errors?.returnDate
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
             data-testid="input-return-date"
           />
-          {errors?.return_date && (
-            <p className="text-sm text-destructive">{errors.return_date}</p>
+          {errors?.returnDate && (
+            <p className="text-sm text-destructive">{errors.returnDate}</p>
           )}
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="receipt_sign_date" className="text-sm font-medium">
+          <Label htmlFor="receiptSignatureDate" className="text-sm font-medium">
             Tanggal TTD Kwitansi <span className="text-destructive">*</span>
           </Label>
           <Input
-            id="receipt_sign_date"
+            id="receiptSignatureDate"
             type="date"
-            value={activity.receipt_sign_date}
-            onChange={(e) => handleChange("receipt_sign_date", e.target.value)}
+            value={activity.receiptSignatureDate}
+            onChange={(e) =>
+              handleChange("receiptSignatureDate", e.target.value)
+            }
             className={`w-full ${
-              errors?.receipt_sign_date
+              errors?.receiptSignatureDate
                 ? "border-destructive focus-visible:ring-destructive"
                 : ""
             }`}
-            data-testid="input-receipt-sign-date"
+            data-testid="input-receipt-signature-date"
           />
-          {errors?.receipt_sign_date && (
+          {errors?.receiptSignatureDate && (
             <p className="text-sm text-destructive">
-              {errors.receipt_sign_date}
+              {errors.receiptSignatureDate}
             </p>
           )}
         </div>

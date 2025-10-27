@@ -4,111 +4,162 @@ import { Button } from "@/components/ui/button";
 import UploadForm from "@/components/UploadForm";
 import ActivityForm from "@/components/ActivityForm";
 import EditableTable from "@/components/EditableTable";
+import LLMDisclaimer from "@/components/LLMDisclaimer";
+import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
-import { EditableRow, TransactionDTO } from "@shared/types";
-import { format } from "date-fns";
+import { Assignee, KwitansiData, Transaction } from "@shared/types";
+import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
 import { PaymentType } from "@shared/types";
 
-interface ActivityData {
-  start_date: string;
-  end_date: string;
-  destination: string;
-  destination_city: string;
-  spd_date: string;
-  departure_date: string;
-  return_date: string;
-  receipt_sign_date: string;
+interface ActivityFormInput {
+  startDate: string;
+  endDate: string;
+  activityPurpose: string;
+  destinationCity: string;
+  spdDate: string;
+  departureDate: string;
+  returnDate: string;
+  receiptSignatureDate: string;
 }
+
+// Helper function to normalize date format to YYYY-MM-DD for input fields
+const normalizeDateForInput = (dateValue: any): string => {
+  if (!dateValue) return "";
+
+  try {
+    // If it's already in YYYY-MM-DD format, return as is
+    if (
+      typeof dateValue === "string" &&
+      /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+    ) {
+      return dateValue;
+    }
+
+    // Try to parse the date and format it
+    const date = new Date(dateValue);
+    if (!isNaN(date.getTime())) {
+      return format(date, "yyyy-MM-dd");
+    }
+  } catch (error) {
+    console.warn("Failed to parse date:", dateValue, error);
+  }
+
+  return "";
+};
 
 export default function KwitansiPage() {
   const { toast } = useToast();
-  const [activity, setActivity] = useState<ActivityData>({
-    start_date: "",
-    end_date: "",
-    destination: "",
-    destination_city: "",
-    spd_date: "",
-    departure_date: "",
-    return_date: "",
-    receipt_sign_date: "",
+  const [kwitansiData, setKwitansiData] = useState<KwitansiData>({
+    startDate: "",
+    endDate: "",
+    activityPurpose: "",
+    destinationCity: "",
+    spdDate: "",
+    departureDate: "",
+    returnDate: "",
+    receiptSignatureDate: "",
+    assignees: [],
   });
+
   const [activityErrors, setActivityErrors] = useState<
-    Partial<Record<keyof ActivityData, string>>
+    Partial<Record<keyof ActivityFormInput, string>>
   >({});
 
-  const [tableRows, setTableRows] = useState<EditableRow[]>([]);
-  const [description, setDescription] = useState("");
-  const [transportDetail, setTransportDetail] = useState("");
+  const handleActivityChange = (newActivityData: ActivityFormInput) => {
+    setKwitansiData((prev) => ({
+      ...prev,
+      ...newActivityData,
+    }));
+  };
 
-  const handleUploaded = (data: any[]) => {
-    // Normalize data - ensure all required fields exist with defaults
-    const normalized = data.map((item, index) => ({
-      id: String(index),
-      description: item.description || "",
-      name: item.name || "",
-      type: item.type || "",
-      subtype: item.subtype || "",
-      amount: item.amount || 0,
-      total_night: item.total_night || "",
-      subtotal: item.subtotal || 0, // Tambahkan subtotal
-      transport_detail: item.transport_detail || "",
-      payment_type: (item.payment_type || "uang muka") as PaymentType, // Default value and cast
-      spd_number: item.spd_number || "",
-      employee_id: item.employee_id || "",
-      position: item.position || "",
-      rank: item.rank || "",
+  const handleUploaded = (responseData: any) => {
+    // Handle the new API response structure: { activity fields, assignees: [...] }
+
+    // Extract activity fields directly from the response
+    const extractedActivity = {
+      startDate: normalizeDateForInput(responseData.startDate),
+      endDate: normalizeDateForInput(responseData.endDate),
+      activityPurpose: responseData.activityPurpose || "",
+      destinationCity: responseData.destinationCity || "",
+      spdDate: normalizeDateForInput(responseData.spdDate),
+      departureDate: normalizeDateForInput(responseData.departureDate),
+      returnDate: normalizeDateForInput(responseData.returnDate),
+      receiptSignatureDate: normalizeDateForInput(
+        responseData.receiptSignatureDate
+      ),
+    };
+
+    // Process assignees array from the response
+    const newAssignees: Assignee[] = (responseData.assignees || []).map(
+      (assigneeItem: any) => ({
+        name: assigneeItem.name || "",
+        spd_number: assigneeItem.spd_number || "",
+        employee_id: assigneeItem.employee_id || "",
+        position: assigneeItem.position || "",
+        rank: assigneeItem.rank || "",
+        transactions: (assigneeItem.transactions || []).map(
+          (transactionItem: any) => ({
+            type: transactionItem.type || "",
+            subtype: transactionItem.subtype || "",
+            amount: transactionItem.amount || 0,
+            subtotal: transactionItem.subtotal || 0,
+            payment_type: (transactionItem.payment_type ||
+              "uang muka") as PaymentType,
+            description: transactionItem.description || "",
+            transport_detail: transactionItem.transport_detail || "",
+            spd_number: transactionItem.spd_number || "",
+            total_night: transactionItem.total_night ? Number(transactionItem.total_night) : undefined,
+          })
+        ),
+      })
+    );
+
+    // Update state with both activity data and assignees
+    setKwitansiData((prev) => ({
+      ...prev,
+      ...extractedActivity,
+      assignees: newAssignees,
     }));
 
-    setTableRows(normalized);
     toast({
       title: "Berhasil!",
-      description: `${normalized.length} transaksi berhasil dimuat dari file.`,
+      description: `${newAssignees.length} penugas dan transaksinya berhasil dimuat dari file.`,
     });
   };
 
+  const handleUpdateAssignees = (updatedAssignees: Assignee[]) => {
+    setKwitansiData((prev) => ({ ...prev, assignees: updatedAssignees }));
+  };
+
   const handleSaveExport = async () => {
-    const transactionsDTO: TransactionDTO[] = tableRows.map((row) => ({
-      name: row.name,
-      type: row.type,
-      subtype: row.subtype,
-      amount: row.amount,
-      total_night: parseInt(row.total_night) || undefined,
-      subtotal: row.subtotal,
-      payment_type: row.payment_type,
-      spd_number: row.spd_number,
-      description: row.description,
-      transport_detail: row.transport_detail,
-      employee_id: row.employee_id,
-      position: row.position,
-      rank: row.rank,
-    }));
+    const { assignees, ...activityFormInput } = kwitansiData;
+    const newErrors: Partial<Record<keyof ActivityFormInput, string>> = {};
 
-    const newErrors: Partial<Record<keyof ActivityData, string>> = {};
-
-    if (!activity.start_date) {
-      newErrors.start_date = "Tanggal mulai kegiatan harus diisi.";
+    // Validation for ActivityFormInput
+    if (!activityFormInput.startDate) {
+      newErrors.startDate = "Tanggal mulai kegiatan harus diisi.";
     }
-    if (!activity.end_date) {
-      newErrors.end_date = "Tanggal selesai kegiatan harus diisi.";
+    if (!activityFormInput.endDate) {
+      newErrors.endDate = "Tanggal selesai kegiatan harus diisi.";
     }
-    if (!activity.destination) {
-      newErrors.destination = "Tujuan kegiatan harus diisi.";
+    if (!activityFormInput.activityPurpose) {
+      newErrors.activityPurpose = "Tujuan kegiatan harus diisi.";
     }
-    if (!activity.destination_city) {
-      newErrors.destination_city = "Kota tujuan kegiatan harus diisi.";
+    if (!activityFormInput.destinationCity) {
+      newErrors.destinationCity = "Kota tujuan kegiatan harus diisi.";
     }
-    if (!activity.spd_date) {
-      newErrors.spd_date = "Tanggal SPD harus diisi.";
+    if (!activityFormInput.spdDate) {
+      newErrors.spdDate = "Tanggal SPD harus diisi.";
     }
-    if (!activity.departure_date) {
-      newErrors.departure_date = "Tanggal berangkat harus diisi.";
+    if (!activityFormInput.departureDate) {
+      newErrors.departureDate = "Tanggal berangkat harus diisi.";
     }
-    if (!activity.return_date) {
-      newErrors.return_date = "Tanggal pulang harus diisi.";
+    if (!activityFormInput.returnDate) {
+      newErrors.returnDate = "Tanggal pulang harus diisi.";
     }
-    if (!activity.receipt_sign_date) {
-      newErrors.receipt_sign_date = "Tanggal TTD Kwitansi harus diisi.";
+    if (!activityFormInput.receiptSignatureDate) {
+      newErrors.receiptSignatureDate = "Tanggal TTD Kwitansi harus diisi.";
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -121,12 +172,15 @@ export default function KwitansiPage() {
       return;
     }
 
-    if (new Date(activity.start_date) > new Date(activity.end_date)) {
+    if (
+      new Date(activityFormInput.startDate) >
+      new Date(activityFormInput.endDate)
+    ) {
       setActivityErrors((prevErrors) => ({
         ...prevErrors,
-        start_date:
+        startDate:
           "Tanggal mulai kegiatan tidak boleh lebih besar dari tanggal selesai kegiatan.",
-        end_date:
+        endDate:
           "Tanggal selesai kegiatan tidak boleh lebih kecil dari tanggal mulai kegiatan.",
       }));
       toast({
@@ -139,28 +193,31 @@ export default function KwitansiPage() {
     }
 
     const formattedActivity = {
-      ...activity, // Include all original activity properties
-      start_date: format(new Date(activity.start_date), "dd MMMM yyyy", {
+      startDate: format(new Date(activityFormInput.startDate), "dd MMMM yyyy", {
         locale: id,
       }),
-      end_date: format(new Date(activity.end_date), "dd MMMM yyyy", {
+      endDate: format(new Date(activityFormInput.endDate), "dd MMMM yyyy", {
         locale: id,
       }),
-      spd_date: format(new Date(activity.spd_date), "dd MMMM yyyy", {
+      spdDate: format(new Date(activityFormInput.spdDate), "dd MMMM yyyy", {
         locale: id,
       }),
-      departure_date: format(
-        new Date(activity.departure_date),
+      departureDate: format(
+        new Date(activityFormInput.departureDate),
         "dd MMMM yyyy",
         {
           locale: id,
         }
       ),
-      return_date: format(new Date(activity.return_date), "dd MMMM yyyy", {
-        locale: id,
-      }),
-      receipt_sign_date: format(
-        new Date(activity.receipt_sign_date),
+      returnDate: format(
+        new Date(activityFormInput.returnDate),
+        "dd MMMM yyyy",
+        {
+          locale: id,
+        }
+      ),
+      receiptSignatureDate: format(
+        new Date(activityFormInput.receiptSignatureDate),
         "dd MMMM yyyy",
         {
           locale: id,
@@ -168,21 +225,32 @@ export default function KwitansiPage() {
       ),
     };
 
-    const payload = {
-      transactions: transactionsDTO,
-      description: description,
-      transport_detail: transportDetail,
+    const payload: KwitansiData = {
+      ...kwitansiData,
       ...formattedActivity,
+      assignees: kwitansiData.assignees.map((assignee) => ({
+        ...assignee,
+        transactions: assignee.transactions.map((transaction) => ({
+          ...transaction,
+          amount: Number(transaction.amount),
+          subtotal: Number(transaction.subtotal),
+          total_night: transaction.total_night ? Number(transaction.total_night) : undefined,
+        })),
+      })),
+      exportTime: new Date().toISOString(),
     };
 
     try {
-      const response = await fetch("http://localhost:5002/api/report/excel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/report/excel`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Gagal mengirim data ke API atau menerima file Excel.");
@@ -192,7 +260,7 @@ export default function KwitansiPage() {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "recap_transactions.xlsx"; // Nama file yang akan diunduh
+      a.download = "recap_transactions.xlsx";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -216,10 +284,8 @@ export default function KwitansiPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
-          {/* Header with Title and Save Button */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-2xl font-semibold" data-testid="text-title">
               Kwitansi
@@ -230,25 +296,29 @@ export default function KwitansiPage() {
             </Button>
           </div>
 
-          {/* Upload Section */}
+          <LLMDisclaimer className="mb-6" />
+
           <div id="upload">
             <UploadForm onUploaded={handleUploaded} />
           </div>
 
-          {/* Activity Form Section */}
           <div id="activity">
             <ActivityForm
-              activity={activity}
-              onChange={setActivity}
+              activity={kwitansiData}
+              onChange={handleActivityChange}
               errors={activityErrors}
             />
           </div>
 
-          {/* Editable Table Section */}
           <div id="transactions">
-            <EditableTable rows={tableRows} setRows={setTableRows} />
+            <EditableTable
+              assignees={kwitansiData.assignees}
+              onUpdateAssignees={handleUpdateAssignees}
+            />
           </div>
         </div>
+
+        <Footer />
       </div>
     </div>
   );

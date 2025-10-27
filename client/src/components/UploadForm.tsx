@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 interface UploadFormProps {
-  onUploaded: (data: any[]) => void;
+  onUploaded: (data: any) => void;
 }
 
 export default function UploadForm({ onUploaded }: UploadFormProps) {
@@ -54,7 +54,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
         formData.append("file", file);
       });
 
-      const response = await fetch("http://localhost:5002/api/upload", {
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/upload`, {
         method: "POST",
         body: formData,
       });
@@ -65,7 +65,8 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
 
       const data = await response.json();
 
-      if (!Array.isArray(data)) {
+      // Validate response structure for new API format
+      if (!data || typeof data !== 'object') {
         throw new Error("Format response tidak valid");
       }
 

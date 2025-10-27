@@ -1,34 +1,36 @@
-export interface EditableRow {
-  id: string;
-  description: string;
-  amount: number;
-  name: string;
-  type: string;
-  subtype: string;
-  total_night: string;
-  subtotal: number;
-  transport_detail?: string;
-  payment_type: PaymentType;
-  spd_number?: string;
-  employee_id: string;
-  position: string;
-  rank: string;
-}
-
 export type PaymentType = "uang muka" | "rampung";
 
-export interface TransactionDTO {
-  name: string;
+export interface Transaction {
+  name?: string; // Optional for transactions within an assignee
   type: string;
   subtype: string;
   amount: number;
-  total_night?: number;
   subtotal: number;
   payment_type: PaymentType;
-  spd_number?: string;
   description?: string;
   transport_detail?: string;
+  spd_number?: string;
+  total_night?: number; // Number of nights for hotel transactions
+}
+
+export interface Assignee {
+  name: string;
+  spd_number: string;
   employee_id: string;
   position: string;
   rank: string;
+  transactions: Transaction[];
+}
+
+export interface KwitansiData {
+  startDate: string;
+  endDate: string;
+  activityPurpose: string;
+  destinationCity: string;
+  spdDate: string;
+  departureDate: string;
+  returnDate: string;
+  receiptSignatureDate: string;
+  assignees: Assignee[];
+  exportTime?: string; // Timestamp when data is exported
 }

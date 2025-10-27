@@ -1,61 +1,44 @@
-import { FileText, Upload, Table, Settings } from 'lucide-react';
+import { FileText } from 'lucide-react';
+import { Link } from 'wouter';
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarHeader,
 } from '@/components/ui/sidebar';
 
-const menuItems = [
-  {
-    title: 'Upload',
-    icon: Upload,
-    id: 'upload',
-  },
-  {
-    title: 'Detail Kegiatan',
-    icon: FileText,
-    id: 'activity',
-  },
-  {
-    title: 'Transaksi',
-    icon: Table,
-    id: 'transactions',
-  },
-  {
-    title: 'Pengaturan',
-    icon: Settings,
-    id: 'settings',
-  },
-];
-
 export function AppSidebar() {
-  const scrollToSection = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
     <Sidebar>
+      <SidebarHeader className="p-4">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <FileText className="w-4 h-4 text-primary-foreground" />
+          </div>
+          <h2 className="text-lg font-semibold">Kwitansi</h2>
+        </div>
+      </SidebarHeader>
+
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Menu Kwitansi</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton onClick={() => scrollToSection(item.id)} data-testid={`nav-${item.id}`}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="w-full justify-start"
+                  data-testid="nav-kwitansi"
+                >
+                  <Link href="/">
+                    <FileText className="w-4 h-4" />
+                    <span>Buat Kwitansi</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
