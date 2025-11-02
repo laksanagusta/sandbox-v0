@@ -175,7 +175,7 @@ export default function EditableTable({
           data-testid="button-add-assignee"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Tambah Penugas
+          Tambah Data Pegawai
         </Button>
       </div>
 
@@ -183,7 +183,7 @@ export default function EditableTable({
         <div key={assigneeIndex} className="mb-8 border rounded-lg p-4">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold">
-              Penugas: {assignee.name || `Baru ${assigneeIndex + 1}`}
+              Data Pegawai: {assignee.name || `Baru ${assigneeIndex + 1}`}
             </h3>
             <Button
               size="icon"
@@ -206,7 +206,7 @@ export default function EditableTable({
                 onChange={(e) =>
                   updateAssigneeField(assigneeIndex, "name", e.target.value)
                 }
-                placeholder="Nama Penugas"
+                placeholder="Nama Data Pegawai"
                 className="h-9 text-sm"
                 data-testid={`input-assignee-name-${assigneeIndex}`}
               />
@@ -313,8 +313,7 @@ export default function EditableTable({
                 {assignee.transactions.map((transaction, transactionIndex) => {
                   const isTransport =
                     transaction.type.toLowerCase() === "transport";
-                  const isHotel =
-                    transaction.type.toLowerCase() === "hotel";
+                  const isHotel = transaction.type.toLowerCase() === "hotel";
                   return (
                     <tr
                       key={transactionIndex}
@@ -513,7 +512,7 @@ export default function EditableTable({
                     colSpan={3}
                     className="py-3 px-2 text-sm font-semibold text-right whitespace-nowrap"
                   >
-                    Total Transaksi untuk {assignee.name || "Penugas Baru"}
+                    Total Transaksi untuk {assignee.name || "Data Pegawai Baru"}
                   </td>
                   <td
                     colSpan={2}
@@ -550,7 +549,7 @@ export default function EditableTable({
       {assignees.length === 0 && (
         <div className="text-center py-12">
           <p className="text-muted-foreground text-sm">
-            Belum ada penugas. Tambah penugas secara manual.
+            Belum ada data pegawai. Tambah data pegawai secara manual.
           </p>
         </div>
       )}

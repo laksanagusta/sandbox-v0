@@ -109,7 +109,9 @@ export default function KwitansiPage() {
             description: transactionItem.description || "",
             transport_detail: transactionItem.transport_detail || "",
             spd_number: transactionItem.spd_number || "",
-            total_night: transactionItem.total_night ? Number(transactionItem.total_night) : undefined,
+            total_night: transactionItem.total_night
+              ? Number(transactionItem.total_night)
+              : undefined,
           })
         ),
       })
@@ -124,7 +126,7 @@ export default function KwitansiPage() {
 
     toast({
       title: "Berhasil!",
-      description: `${newAssignees.length} penugas dan transaksinya berhasil dimuat dari file.`,
+      description: `${newAssignees.length} data pegawai dan transaksinya berhasil dimuat dari file.`,
     });
   };
 
@@ -234,7 +236,9 @@ export default function KwitansiPage() {
           ...transaction,
           amount: Number(transaction.amount),
           subtotal: Number(transaction.subtotal),
-          total_night: transaction.total_night ? Number(transaction.total_night) : undefined,
+          total_night: transaction.total_night
+            ? Number(transaction.total_night)
+            : undefined,
         })),
       })),
       exportTime: new Date().toISOString(),
