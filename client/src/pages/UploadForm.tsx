@@ -110,7 +110,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
                 <>
                   <CheckCircle2 className="w-8 h-8 mb-2 text-chart-2" />
                   <p className="text-sm text-chart-2 font-medium">
-                    File berhasil diproses!
+                    Data Pegawaiproses!
                   </p>
                 </>
               ) : (
