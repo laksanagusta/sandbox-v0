@@ -58,7 +58,7 @@ export default function KwitansiPage() {
     spdDate: "",
     departureDate: "",
     returnDate: "",
-    receiptSignatureDate: "",
+    receiptSignatureDate: new Date().toISOString().split('T')[0], // Default to today
     assignees: [],
   });
 
@@ -294,7 +294,11 @@ export default function KwitansiPage() {
             <h1 className="text-2xl font-semibold" data-testid="text-title">
               Kwitansi
             </h1>
-            <Button onClick={handleSaveExport} data-testid="button-save-export">
+            <Button
+              onClick={handleSaveExport}
+              className="modern-btn-success"
+              data-testid="button-save-export"
+            >
               <Save className="w-4 h-4 mr-2" />
               Simpan / Export
             </Button>

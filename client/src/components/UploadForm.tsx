@@ -185,7 +185,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
         <Button
           onClick={handleUpload}
           disabled={files.length === 0 || uploading}
-          className="w-full sm:w-auto"
+          className="modern-btn-success w-full sm:w-auto"
           data-testid="button-upload"
         >
           {uploading ? (

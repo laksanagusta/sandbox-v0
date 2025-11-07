@@ -14,31 +14,31 @@
   --elevate-1: rgba(0,0,0, .03);
   --elevate-2: rgba(0,0,0, .08);
 
-  --background: 220 13% 96%;
+  --background: 0 0% 100%; /* Pure white like Excel */
 
-  --foreground: 222 47% 11%;
+  --foreground: 0 0% 15%; /* Dark text like Excel */
 
-  --border: 220 13% 85%;
+  --border: 0 0% 80%; /* Light gray borders like Excel grid */
 
-  --card: 0 0% 100%;
+  --card: 0 0% 100%; /* White cards like Excel sheets */
 
-  --card-foreground: 222 47% 11%;
+  --card-foreground: 0 0% 15%;
 
-  --card-border: 220 13% 90%;
+  --card-border: 0 0% 85%; /* Standard Excel border color */
 
-  --sidebar: 220 13% 94%;
+  --sidebar: 30 6% 94%; /* Light gray like Excel ribbon */
 
-  --sidebar-foreground: 222 47% 11%;
+  --sidebar-foreground: 0 0% 15%;
 
-  --sidebar-border: 220 13% 88%;
+  --sidebar-border: 0 0% 75%;
 
-  --sidebar-primary: 219 78% 46%;
+  --sidebar-primary: 142 71% 45%; /* Excel green accent */
 
   --sidebar-primary-foreground: 0 0% 100%;
 
-  --sidebar-accent: 220 12% 88%;
+  --sidebar-accent: 0 0% 95%; /* Very light gray */
 
-  --sidebar-accent-foreground: 222 47% 11%;
+  --sidebar-accent-foreground: 0 0% 15%;
 
   --sidebar-ring: 219 78% 46%;
 
@@ -48,21 +48,21 @@
 
   --popover-border: 220 13% 88%;
 
-  --primary: 219 78% 46%;
+  --primary: 30 6% 94%; /* Excel button gray */
 
-  --primary-foreground: 0 0% 100%;
+  --primary-foreground: 0 0% 15%;
 
-  --secondary: 220 13% 91%;
+  --secondary: 0 0% 96%; /* Lighter Excel gray */
 
-  --secondary-foreground: 222 47% 11%;
+  --secondary-foreground: 0 0% 15%;
 
-  --muted: 220 12% 93%;
+  --muted: 0 0% 96%; /* Excel cell background */
 
-  --muted-foreground: 215 16% 47%;
+  --muted-foreground: 0 0% 40%;
 
-  --accent: 220 14% 90%;
+  --accent: 142 71% 45%; /* Excel green for accents */
 
-  --accent-foreground: 222 47% 11%;
+  --accent-foreground: 0 0% 100%;
 
   --destructive: 0 84% 60%;
 
@@ -325,4 +325,56 @@
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
   }
+}
+
+/* Modern table styles */
+.modern-table {
+  @apply bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100;
+}
+
+.modern-table th {
+  @apply bg-gray-50 text-left text-xs font-semibold text-gray-700 py-3 px-4 uppercase tracking-wider border-b border-gray-200;
+}
+
+.modern-table td {
+  @apply py-3 px-4 text-sm text-gray-900 border-b border-gray-100;
+}
+
+.modern-table tr:last-child td {
+  @apply border-b-0;
+}
+
+.modern-table input {
+  @apply border-none bg-transparent w-full focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md px-2 py-1;
+  font-family: var(--font-sans);
+}
+
+.modern-table tr:hover td {
+  @apply bg-gray-50;
+}
+
+.modern-table tr:hover input {
+  @apply bg-gray-50;
+}
+
+/* Modern card styles */
+.modern-card {
+  @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+}
+
+.modern-card-header {
+  @apply flex items-center justify-between mb-6 pb-4 border-b border-gray-100;
+}
+
+/* Modern button styles */
+.modern-btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
+}
+
+.modern-btn-secondary {
+  @apply bg-white hover:bg-gray-50 text-gray-700 font-medium px-4 py-2 rounded-lg border border-gray-300 hover:border-gray-400 shadow-sm hover:shadow-md transition-all duration-200;
+}
+
+.modern-btn-success {
+  @apply bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm hover:shadow-md transition-all duration-200;
 }

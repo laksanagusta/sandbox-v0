@@ -170,8 +170,7 @@ export default function EditableTable({
         <h2 className="text-lg font-semibold">Transaksi</h2>
         <Button
           onClick={addAssignee}
-          variant="outline"
-          size="sm"
+          className="modern-btn-secondary"
           data-testid="button-add-assignee"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -207,7 +206,7 @@ export default function EditableTable({
                   updateAssigneeField(assigneeIndex, "name", e.target.value)
                 }
                 placeholder="Nama Data Pegawai"
-                className="h-9 text-sm"
+                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-name-${assigneeIndex}`}
               />
             </div>
@@ -224,13 +223,13 @@ export default function EditableTable({
                   )
                 }
                 placeholder="No. SPD"
-                className="h-9 text-sm"
+                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-spd-${assigneeIndex}`}
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Employee ID
+                NIP
               </label>
               <Input
                 value={assignee.employee_id}
@@ -241,8 +240,8 @@ export default function EditableTable({
                     e.target.value
                   )
                 }
-                placeholder="Employee ID"
-                className="h-9 text-sm"
+                placeholder="NIP"
+                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-employee-id-${assigneeIndex}`}
               />
             </div>
@@ -256,7 +255,7 @@ export default function EditableTable({
                   updateAssigneeField(assigneeIndex, "position", e.target.value)
                 }
                 placeholder="Jabatan"
-                className="h-9 text-sm"
+                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-position-${assigneeIndex}`}
               />
             </div>
@@ -270,41 +269,35 @@ export default function EditableTable({
                   updateAssigneeField(assigneeIndex, "rank", e.target.value)
                 }
                 placeholder="Golongan"
-                className="h-9 text-sm"
+                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-rank-${assigneeIndex}`}
               />
             </div>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-[1400px] w-full">
+            <table className="min-w-[1400px] w-full modern-table">
               <thead>
-                <tr className="border-b">
-                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
-                    Tipe
-                  </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
-                    Subtipe
-                  </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[300px]">
-                    Deskripsi
-                  </th>
-                  <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                <tr>
+                  <th className="whitespace-nowrap w-[140px]">Tipe</th>
+                  <th className="whitespace-nowrap w-[100px]">Subtipe</th>
+                  <th className="whitespace-nowrap w-[300px]">Deskripsi</th>
+                  <th className="text-right whitespace-nowrap w-[120px]">
                     Jumlah (Rp)
                   </th>
-                  <th className="text-right text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                  <th className="text-right whitespace-nowrap w-[120px]">
                     Subtotal (Rp)
                   </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                  <th className="whitespace-nowrap w-[150px]">
                     Tipe Pembayaran
                   </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                  <th className="whitespace-nowrap w-[150px]">
                     Detail Transport
                   </th>
-                  <th className="text-left text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[80px]">
+                  <th className="text-center whitespace-nowrap w-[100px]">
                     Total Malam
                   </th>
-                  <th className="text-center text-xs font-semibold uppercase tracking-wide py-3 px-2 whitespace-nowrap w-[40px]">
+                  <th className="text-center whitespace-nowrap w-[80px]">
                     Aksi
                   </th>
                 </tr>
@@ -317,10 +310,10 @@ export default function EditableTable({
                   return (
                     <tr
                       key={transactionIndex}
-                      className="border-b hover:bg-muted/30 transition-colors"
+                      className="transition-colors"
                       data-testid={`assignee-${assigneeIndex}-transaction-${transactionIndex}`}
                     >
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="whitespace-nowrap">
                         <Input
                           value={transaction.type}
                           onChange={(e) =>
@@ -332,11 +325,11 @@ export default function EditableTable({
                             )
                           }
                           placeholder="Tipe"
-                          className="h-8 text-sm"
+                          className="h-9 text-sm"
                           data-testid={`input-type-${assigneeIndex}-${transactionIndex}`}
                         />
                       </td>
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="whitespace-nowrap">
                         <Input
                           value={transaction.subtype}
                           onChange={(e) =>
@@ -348,11 +341,11 @@ export default function EditableTable({
                             )
                           }
                           placeholder="Subtipe"
-                          className="h-8 text-sm"
+                          className="h-9 text-sm"
                           data-testid={`input-subtype-${assigneeIndex}-${transactionIndex}`}
                         />
                       </td>
-                      <td className="py-2 px-2 whitespace-nowrap w-[300px]">
+                      <td className="whitespace-nowrap w-[300px]">
                         <Input
                           value={transaction.description}
                           onChange={(e) =>
@@ -364,11 +357,11 @@ export default function EditableTable({
                             )
                           }
                           placeholder="Deskripsi"
-                          className="h-8 text-sm"
+                          className="h-9 text-sm"
                           data-testid={`input-description-${assigneeIndex}-${transactionIndex}`}
                         />
                       </td>
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="whitespace-nowrap">
                         <Input
                           value={String(transaction.amount)}
                           onChange={(e) =>
@@ -380,11 +373,11 @@ export default function EditableTable({
                             )
                           }
                           placeholder="0"
-                          className="h-8 text-sm text-right font-mono"
+                          className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
                           data-testid={`input-amount-${assigneeIndex}-${transactionIndex}`}
                         />
                       </td>
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="whitespace-nowrap">
                         <Input
                           value={String(transaction.subtotal)}
                           onChange={(e) =>
@@ -396,11 +389,11 @@ export default function EditableTable({
                             )
                           }
                           placeholder="0"
-                          className="h-8 text-sm text-right font-mono"
+                          className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
                           data-testid={`input-subtotal-${assigneeIndex}-${transactionIndex}`}
                         />
                       </td>
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="whitespace-nowrap">
                         <Select
                           value={transaction.payment_type}
                           onValueChange={(value: PaymentType) =>
@@ -413,7 +406,7 @@ export default function EditableTable({
                           }
                         >
                           <SelectTrigger
-                            className="h-8 text-sm min-w-[150px]"
+                            className="h-8 text-sm min-w-[150px] border-gray-300 bg-transparent hover:bg-blue-50 focus:ring-1 focus:ring-blue-400 rounded-none"
                             data-testid={`select-payment-type-${assigneeIndex}-${transactionIndex}`}
                           >
                             <SelectValue placeholder="Pilih tipe pembayaran" />
@@ -424,7 +417,7 @@ export default function EditableTable({
                           </SelectContent>
                         </Select>
                       </td>
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="whitespace-nowrap">
                         {isTransport ? (
                           <Select
                             value={transaction.transport_detail || ""}
@@ -438,7 +431,7 @@ export default function EditableTable({
                             }
                           >
                             <SelectTrigger
-                              className="h-8 text-sm"
+                              className="h-9 text-sm"
                               data-testid={`select-transport-detail-${assigneeIndex}-${transactionIndex}`}
                             >
                               <SelectValue placeholder="Pilih detail" />
@@ -463,7 +456,7 @@ export default function EditableTable({
                           </div>
                         )}
                       </td>
-                      <td className="py-2 px-2 whitespace-nowrap">
+                      <td className="whitespace-nowrap">
                         {isHotel ? (
                           <Input
                             value={String(transaction.total_night || "")}
@@ -476,7 +469,7 @@ export default function EditableTable({
                               )
                             }
                             placeholder="Jml malam"
-                            className="h-8 text-sm text-center"
+                            className="h-8 text-sm text-center border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
                             type="number"
                             min="0"
                             data-testid={`input-total-night-${assigneeIndex}-${transactionIndex}`}
@@ -507,16 +500,16 @@ export default function EditableTable({
                 })}
               </tbody>
               <tfoot>
-                <tr className="bg-muted/50">
+                <tr className="bg-gray-50">
                   <td
                     colSpan={3}
-                    className="py-3 px-2 text-sm font-semibold text-right whitespace-nowrap"
+                    className="py-4 px-4 text-sm font-semibold text-right whitespace-nowrap"
                   >
                     Total Transaksi untuk {assignee.name || "Data Pegawai Baru"}
                   </td>
                   <td
                     colSpan={2}
-                    className="py-3 px-2 text-sm font-semibold text-right font-mono whitespace-nowrap"
+                    className="py-4 px-4 text-sm font-bold text-right font-mono whitespace-nowrap text-blue-600"
                     data-testid={`text-total-assignee-${assigneeIndex}`}
                   >
                     Rp{" "}
@@ -535,8 +528,7 @@ export default function EditableTable({
           <div className="flex justify-end mt-4">
             <Button
               onClick={() => addTransaction(assigneeIndex)}
-              variant="secondary"
-              size="sm"
+              className="modern-btn-secondary"
               data-testid={`button-add-transaction-${assigneeIndex}`}
             >
               <Plus className="w-4 h-4 mr-2" />
