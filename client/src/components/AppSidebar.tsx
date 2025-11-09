@@ -19,12 +19,10 @@ export function AppSidebar() {
         <div className="flex items-center space-x-3">
           <div>
             <h1 className="text-xl font-bold text-gray-800">The Core</h1>
-            <p className="text-xs text-gray-500">v0</p>
           </div>
         </div>
       </SidebarHeader>
 
-      {/* Navigation yang seragam */}
       <SidebarContent className="bg-gray-100">
         <SidebarGroup className="px-4 py-6">
           <div className="mb-4">

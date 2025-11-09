@@ -32,13 +32,83 @@ export default function EditableTable({
         const updatedTransactions = assignee.transactions.map(
           (transaction, tIdx) => {
             if (tIdx === transactionIndex) {
+              // Handle numeric fields separately
+              const numValue: number =
+                typeof value === "string" &&
+                (field === "amount" ||
+                  field === "subtotal" ||
+                  field === "total_night")
+                  ? parseInt(value.replace(/\D/g, "")) || 0
+                  : typeof value === "number"
+                  ? value
+                  : 0;
+
+              // For string fields (payment_type, transport_detail, type, subtype, description), keep as string
+              const stringValue: string =
+                field === "payment_type" ||
+                field === "transport_detail" ||
+                field === "type" ||
+                field === "subtype" ||
+                field === "description" ||
+                field === "spd_number"
+                  ? value as string
+                  : "";
+
+              // For daily allowance, calculate subtotal automatically
+              const isDailyAllowance =
+                transaction.type.toLowerCase() === "daily allowance" ||
+                transaction.type.toLowerCase() === "daily" ||
+                transaction.subtype.toLowerCase() === "daily allowance" ||
+                transaction.subtype.toLowerCase() === "daily";
+
+              if (isDailyAllowance) {
+                // Calculate days from description or use a default
+                const days =
+                  typeof transaction.total_night === "number"
+                    ? transaction.total_night
+                    : 1;
+
+                if (field === "amount") {
+                  // Update amount and recalculate subtotal
+                  return {
+                    ...transaction,
+                    amount: numValue,
+                    subtotal: numValue * days,
+                  };
+                } else if (field === "total_night") {
+                  // Update days and recalculate subtotal
+                  return {
+                    ...transaction,
+                    total_night: numValue,
+                    subtotal: transaction.amount * numValue,
+                  };
+                } else {
+                  // Update other fields (use appropriate value type)
+                  const isStringField = field === "payment_type" ||
+                    field === "transport_detail" ||
+                    field === "type" ||
+                    field === "subtype" ||
+                    field === "description" ||
+                    field === "spd_number";
+
+                  return {
+                    ...transaction,
+                    [field]: isStringField ? stringValue : numValue,
+                  };
+                }
+              }
+
+              // For other transaction types, update normally (use appropriate value type)
+              const isStringField = field === "payment_type" ||
+                field === "transport_detail" ||
+                field === "type" ||
+                field === "subtype" ||
+                field === "description" ||
+                field === "spd_number";
+
               return {
                 ...transaction,
-                [field]:
-                  typeof value === "string" &&
-                  (field === "amount" || field === "subtotal")
-                    ? parseInt(value.replace(/\D/g, "")) || 0
-                    : value,
+                [field]: isStringField ? stringValue : numValue,
               };
             }
             return transaction;
@@ -83,6 +153,8 @@ export default function EditableTable({
               payment_type: "uang muka" as PaymentType,
               description: "",
               transport_detail: "",
+              total_night: 0,
+              spd_number: "",
             },
           ],
         };
@@ -132,12 +204,20 @@ export default function EditableTable({
     return new Intl.NumberFormat("id-ID").format(amount);
   };
 
+  const formatRupiahInput = (value: string | number) => {
+    const numValue =
+      typeof value === "string"
+        ? parseInt(value.replace(/\D/g, "")) || 0
+        : value;
+    return new Intl.NumberFormat("id-ID").format(numValue);
+  };
+
   const calculateTotal = () => {
     const total = assignees.reduce((sumAssignee, assignee) => {
       return (
         sumAssignee +
         assignee.transactions.reduce((sumTransaction, transaction) => {
-          return sumTransaction + transaction.amount;
+          return sumTransaction + transaction.subtotal;
         }, 0)
       );
     }, 0);
@@ -276,37 +356,35 @@ export default function EditableTable({
           </div>
 
           <div className="overflow-x-auto">
-            <table className="min-w-[1400px] w-full modern-table">
+            <table className="min-w-[1800px] w-full modern-table">
               <thead>
                 <tr>
-                  <th className="whitespace-nowrap w-[140px]">Tipe</th>
-                  <th className="whitespace-nowrap w-[100px]">Subtipe</th>
-                  <th className="whitespace-nowrap w-[300px]">Deskripsi</th>
-                  <th className="text-right whitespace-nowrap w-[120px]">
+                  <th className="whitespace-nowrap w-[10%]">Tipe</th>
+                  <th className="whitespace-nowrap w-[12%]">Subtipe</th>
+                  <th className="whitespace-nowrap w-[28%]">Deskripsi</th>
+                  <th className="text-right whitespace-nowrap w-[10%]">
                     Jumlah (Rp)
                   </th>
-                  <th className="text-right whitespace-nowrap w-[120px]">
+                  <th className="text-right whitespace-nowrap w-[10%]">
                     Subtotal (Rp)
                   </th>
-                  <th className="whitespace-nowrap w-[150px]">
-                    Tipe Pembayaran
-                  </th>
-                  <th className="whitespace-nowrap w-[150px]">
+                  <th className="whitespace-nowrap w-[12%]">Tipe Pembayaran</th>
+                  <th className="whitespace-nowrap w-[10%]">
                     Detail Transport
                   </th>
-                  <th className="text-center whitespace-nowrap w-[100px]">
-                    Total Malam
+                  <th className="text-center whitespace-nowrap w-[6%]">
+                    Hari/Malam
                   </th>
-                  <th className="text-center whitespace-nowrap w-[80px]">
-                    Aksi
-                  </th>
+                  <th className="text-center whitespace-nowrap w-[6%]">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 {assignee.transactions.map((transaction, transactionIndex) => {
                   const isTransport =
                     transaction.type.toLowerCase() === "transport";
-                  const isHotel = transaction.type.toLowerCase() === "hotel";
+                  const isHotel = transaction.subtype.toLowerCase() === "hotel";
+                  const isDailyAllowance =
+                    transaction.subtype.toLowerCase() === "daily allowance";
                   return (
                     <tr
                       key={transactionIndex}
@@ -363,7 +441,11 @@ export default function EditableTable({
                       </td>
                       <td className="whitespace-nowrap">
                         <Input
-                          value={String(transaction.amount)}
+                          value={
+                            transaction.amount === 0
+                              ? ""
+                              : formatRupiahInput(transaction.amount)
+                          }
                           onChange={(e) =>
                             updateTransaction(
                               assigneeIndex,
@@ -378,20 +460,34 @@ export default function EditableTable({
                         />
                       </td>
                       <td className="whitespace-nowrap">
-                        <Input
-                          value={String(transaction.subtotal)}
-                          onChange={(e) =>
-                            updateTransaction(
-                              assigneeIndex,
-                              transactionIndex,
-                              "subtotal",
-                              e.target.value
-                            )
-                          }
-                          placeholder="0"
-                          className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
-                          data-testid={`input-subtotal-${assigneeIndex}-${transactionIndex}`}
-                        />
+                        {isDailyAllowance ? (
+                          <div className="h-8 flex items-center justify-center">
+                            <span className="text-sm font-mono text-right w-full pr-2">
+                              {transaction.subtotal === 0
+                                ? ""
+                                : formatRupiahInput(transaction.subtotal)}
+                            </span>
+                          </div>
+                        ) : (
+                          <Input
+                            value={
+                              transaction.subtotal === 0
+                                ? ""
+                                : formatRupiahInput(transaction.subtotal)
+                            }
+                            onChange={(e) =>
+                              updateTransaction(
+                                assigneeIndex,
+                                transactionIndex,
+                                "subtotal",
+                                e.target.value
+                              )
+                            }
+                            placeholder="0"
+                            className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
+                            data-testid={`input-subtotal-${assigneeIndex}-${transactionIndex}`}
+                          />
+                        )}
                       </td>
                       <td className="whitespace-nowrap">
                         <Select
@@ -406,7 +502,7 @@ export default function EditableTable({
                           }
                         >
                           <SelectTrigger
-                            className="h-8 text-sm min-w-[150px] border-gray-300 bg-transparent hover:bg-blue-50 focus:ring-1 focus:ring-blue-400 rounded-none"
+                            className="h-9 text-sm rounded-md"
                             data-testid={`select-payment-type-${assigneeIndex}-${transactionIndex}`}
                           >
                             <SelectValue placeholder="Pilih tipe pembayaran" />
@@ -420,7 +516,7 @@ export default function EditableTable({
                       <td className="whitespace-nowrap">
                         {isTransport ? (
                           <Select
-                            value={transaction.transport_detail || ""}
+                            value={transaction.transport_detail}
                             onValueChange={(value) =>
                               updateTransaction(
                                 assigneeIndex,
@@ -431,7 +527,7 @@ export default function EditableTable({
                             }
                           >
                             <SelectTrigger
-                              className="h-9 text-sm"
+                              className="h-9 text-sm rounded-md"
                               data-testid={`select-transport-detail-${assigneeIndex}-${transactionIndex}`}
                             >
                               <SelectValue placeholder="Pilih detail" />
@@ -457,9 +553,9 @@ export default function EditableTable({
                         )}
                       </td>
                       <td className="whitespace-nowrap">
-                        {isHotel ? (
+                        {isHotel || isDailyAllowance ? (
                           <Input
-                            value={String(transaction.total_night || "")}
+                            value={transaction.total_night || ""}
                             onChange={(e) =>
                               updateTransaction(
                                 assigneeIndex,
@@ -468,8 +564,8 @@ export default function EditableTable({
                                 e.target.value
                               )
                             }
-                            placeholder="Jml malam"
-                            className="h-8 text-sm text-center border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
+                            placeholder={isHotel ? "Jml malam" : "Jml hari"}
+                            className="h-9 text-sm text-center"
                             type="number"
                             min="0"
                             data-testid={`input-total-night-${assigneeIndex}-${transactionIndex}`}
@@ -515,7 +611,7 @@ export default function EditableTable({
                     Rp{" "}
                     {formatRupiah(
                       assignee.transactions.reduce(
-                        (sum, t) => sum + t.amount,
+                        (sum, t) => sum + t.subtotal,
                         0
                       )
                     )}
