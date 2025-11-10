@@ -196,7 +196,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
           ) : (
             <>
               <Upload className="w-4 h-4 mr-2" />
-              Upload & Parse
+              Upload
             </>
           )}
         </Button>
