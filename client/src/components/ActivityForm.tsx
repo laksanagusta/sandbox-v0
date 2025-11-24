@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { formatDateToString, parseDateFromString } from "@/lib/utils";
 
 interface ActivityFormPropsData {
+  businessTripNumber?: string;
   startDate: string;
   endDate: string;
   activityPurpose: string;
@@ -12,6 +13,7 @@ interface ActivityFormPropsData {
   departureDate: string;
   returnDate: string;
   receiptSignatureDate: string;
+  documentLink?: string;
 }
 
 interface ActivityFormProps {
@@ -35,6 +37,24 @@ export default function ActivityForm({
   return (
     <Card className="p-6">
       <h2 className="text-lg font-semibold mb-4">Detail Kegiatan</h2>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <div className="space-y-2">
+          <Label htmlFor="businessTripNumber" className="text-sm font-medium">
+            No. Business Trip
+          </Label>
+          <Input
+            id="businessTripNumber"
+            type="text"
+            value={activity.businessTripNumber || ""}
+            disabled
+            className="w-full bg-gray-50 text-gray-700 font-mono"
+            placeholder="BT-0000"
+            data-testid="input-business-trip-number"
+          />
+          <p className="text-xs text-gray-500">Nomor business trip digenerate otomatis oleh sistem</p>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
@@ -210,6 +230,42 @@ export default function ActivityForm({
             </p>
           )}
         </div>
+      </div>
+
+      <div className="mt-6 space-y-2">
+        <Label htmlFor="documentLink" className="text-sm font-medium">
+          Link Document (Google Drive)
+        </Label>
+        <Input
+          id="documentLink"
+          type="url"
+          value={activity.documentLink || ""}
+          onChange={(e) => handleChange("documentLink", e.target.value)}
+          placeholder="https://drive.google.com/..."
+          className={`w-full ${
+            errors?.documentLink
+              ? "border-destructive focus-visible:ring-destructive"
+              : ""
+          }`}
+          data-testid="input-document-link"
+        />
+        {errors?.documentLink && (
+          <p className="text-sm text-destructive">{errors.documentLink}</p>
+        )}
+        {activity.documentLink && (
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-blue-600 hover:text-blue-800">
+              <a
+                href={activity.documentLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline"
+              >
+                Preview Document
+              </a>
+            </span>
+          </div>
+        )}
       </div>
     </Card>
   );

@@ -170,7 +170,7 @@ export default function EditableTable({
       {
         name: "",
         spd_number: "",
-        employee_id: "",
+        employee_number: "",
         position: "",
         rank: "",
         transactions: [],
@@ -312,17 +312,17 @@ export default function EditableTable({
                 NIP
               </label>
               <Input
-                value={assignee.employee_id}
+                value={assignee.employee_number}
                 onChange={(e) =>
                   updateAssigneeField(
                     assigneeIndex,
-                    "employee_id",
+                    "employee_number",
                     e.target.value
                   )
                 }
                 placeholder="NIP"
                 className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
-                data-testid={`input-assignee-employee-id-${assigneeIndex}`}
+                data-testid={`input-assignee-employee-number-${assigneeIndex}`}
               />
             </div>
             <div>

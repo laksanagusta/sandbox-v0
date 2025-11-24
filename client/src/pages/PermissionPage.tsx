@@ -1,0 +1,38 @@
+import { useState } from "react";
+import { Shield, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PermissionTable } from "@/components/PermissionTable";
+
+export default function PermissionPage() {
+  return (
+    <div className="bg-background min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Shield className="w-8 h-8 text-gray-600" />
+              <h1 className="text-2xl font-semibold">Permissions</h1>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Button variant="outline">
+                <Plus className="w-4 h-4 mr-2" />
+                Tambah Permission
+              </Button>
+            </div>
+          </div>
+
+          {/* Permissions Table */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Daftar Permissions</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PermissionTable />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
