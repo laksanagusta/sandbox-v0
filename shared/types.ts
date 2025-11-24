@@ -39,3 +39,49 @@ export interface KwitansiData {
   assignees: Assignee[];
   exportTime?: string; // Timestamp when data is exported
 }
+
+// Vaccine related types
+export interface Vaccine {
+  vaccine_code: string;
+  vaccine_name: string;
+  description: string;
+  vaccine_type: "routine" | "travel" | "optional";
+  recommendation: "required" | "recommended" | "consider";
+}
+
+export interface VaccineRecommendation {
+  country_code: string;
+  country_name: string;
+  required_vaccines: Vaccine[] | null;
+  recommended_vaccines: Vaccine[] | null;
+  consider_vaccines: Vaccine[] | null;
+  malaria_risk: string;
+  malaria_prophylaxis: string;
+  health_notice: string;
+  last_updated: string;
+  data_source: string;
+}
+
+export interface Country {
+  id: string;
+  country_code: string;
+  country_name_id: string;
+  country_name_en: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CountriesResponse {
+  data: Country[];
+  page: number;
+  limit: number;
+  total_items: number;
+  total_pages: number;
+}
+
+export interface VaccineRecommendationResponse {
+  data: VaccineRecommendation;
+  message: string;
+  success: boolean;
+}

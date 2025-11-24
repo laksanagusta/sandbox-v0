@@ -15,6 +15,7 @@ import PermissionPage from "@/pages/PermissionPage";
 import PermissionDetailPage from "@/pages/PermissionDetailPage";
 import UserPage from "@/pages/UserPage";
 import UserDetailPage from "@/pages/UserDetailPage";
+import VaccinesPage from "@/pages/VaccinesPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
 
@@ -37,6 +38,7 @@ function AuthenticatedLayout() {
               <Route path="/kwitansi" component={KwitansiPage} />
               <Route path="/kwitansi/:id" component={KwitansiPage} />
               <Route path="/business-trips" component={BusinessTripListPage} />
+              <Route path="/vaccines" component={VaccinesPage} />
               <Route
                 path="/organization/:id"
                 component={OrganizationDetailPage}
@@ -103,6 +105,11 @@ export default function App() {
               </ProtectedRoute>
             </Route>
             <Route path="/business-trips">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/vaccines">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>

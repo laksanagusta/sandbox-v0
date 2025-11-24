@@ -1,4 +1,4 @@
-import { Plane, LogOut, User, Settings, Building, Users, Shield, ChevronDown, ChevronRight, Briefcase } from "lucide-react";
+import { Plane, LogOut, User, Settings, Building, Users, Shield, ChevronDown, ChevronRight, Briefcase, Activity } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
 import {
@@ -94,6 +94,23 @@ export function AppSidebar() {
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </Collapsible>
+              </SidebarMenuItem>
+
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
+                  data-testid="nav-vaccines"
+                >
+                  <Link href="/vaccines" className="flex items-center space-x-3">
+                    <div className="w-5 h-5 flex items-center justify-center">
+                      <Activity className="w-5 h-5 text-gray-600 group-hover:text-gray-900 transition-colors" />
+                    </div>
+                    <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">
+                      Vaccine Recommendations
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
               </SidebarMenuItem>
 
               <SidebarMenuItem>
