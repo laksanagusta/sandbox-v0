@@ -54,10 +54,19 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
         formData.append("file", file);
       });
 
+      // Get token from localStorage
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login kembali.");
+      }
+
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/api/upload`,
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
           body: formData,
         }
       );

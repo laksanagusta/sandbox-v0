@@ -13,9 +13,18 @@ import { Assignee, KwitansiData, Transaction } from "@shared/types";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
 import { PaymentType } from "@shared/types";
-import { validateStatusTransition, getInitialStatus, getNextAvailableStatuses } from "@/utils/statusValidation";
+import {
+  validateStatusTransition,
+  getInitialStatus,
+  getNextAvailableStatuses,
+} from "@/utils/statusValidation";
 import { BusinessTripStatus } from "@shared/types";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
 
 interface ActivityFormInput {
@@ -77,7 +86,8 @@ export default function KwitansiPage() {
     assignees: [],
   });
 
-  const [originalKwitansiData, setOriginalKwitansiData] = useState<KwitansiData | null>(null);
+  const [originalKwitansiData, setOriginalKwitansiData] =
+    useState<KwitansiData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -94,28 +104,28 @@ export default function KwitansiPage() {
       draft: {
         bg: "bg-gray-100 hover:bg-gray-200",
         text: "text-gray-800",
-        label: "Draft"
+        label: "Draft",
       },
       ongoing: {
         bg: "bg-blue-100 hover:bg-blue-200",
         text: "text-blue-800",
-        label: "Ongoing"
+        label: "Ongoing",
       },
       completed: {
         bg: "bg-green-100 hover:bg-green-200",
         text: "text-green-800",
-        label: "Completed"
+        label: "Completed",
       },
       canceled: {
         bg: "bg-red-100 hover:bg-red-200",
         text: "text-red-800",
-        label: "Canceled"
-      }
+        label: "Canceled",
+      },
     };
 
     const config = statusConfig[status] || statusConfig.draft;
     const availableStatuses = getNextAvailableStatuses(status);
-    const canChangeStatus = status === 'draft' || status === 'ongoing';
+    const canChangeStatus = status === "draft" || status === "ongoing";
 
     if (canChangeStatus) {
       return (
@@ -131,13 +141,13 @@ export default function KwitansiPage() {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             {availableStatuses
-              .filter(s => s !== status) // Remove current status
+              .filter((s) => s !== status) // Remove current status
               .map((nextStatus) => {
                 const nextStatusConfig = {
-                  draft: 'bg-gray-100 text-gray-800',
-                  ongoing: 'bg-blue-100 text-blue-800',
-                  completed: 'bg-green-100 text-green-800',
-                  canceled: 'bg-red-100 text-red-800'
+                  draft: "bg-gray-100 text-gray-800",
+                  ongoing: "bg-blue-100 text-blue-800",
+                  completed: "bg-green-100 text-green-800",
+                  canceled: "bg-red-100 text-red-800",
                 };
 
                 return (
@@ -147,14 +157,16 @@ export default function KwitansiPage() {
                     className="cursor-pointer"
                   >
                     <div className="flex items-center w-full">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${nextStatusConfig[nextStatus]}`}>
-                        {nextStatus.charAt(0).toUpperCase() + nextStatus.slice(1)}
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${nextStatusConfig[nextStatus]}`}
+                      >
+                        {nextStatus.charAt(0).toUpperCase() +
+                          nextStatus.slice(1)}
                       </span>
                     </div>
                   </DropdownMenuItem>
                 );
-              })
-            }
+              })}
           </DropdownMenuContent>
         </DropdownMenu>
       );
@@ -214,13 +226,16 @@ export default function KwitansiPage() {
         throw new Error("Token tidak ditemukan. Silakan login kembali.");
       }
 
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips/${id}`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Gagal mengambil data kwitansi");
@@ -239,7 +254,9 @@ export default function KwitansiPage() {
         spdDate: normalizeDateForInput(data.spd_date),
         departureDate: normalizeDateForInput(data.departure_date),
         returnDate: normalizeDateForInput(data.return_date),
-        receiptSignatureDate: normalizeDateForInput(data.receipt_signature_date) || new Date().toISOString().split("T")[0],
+        receiptSignatureDate:
+          normalizeDateForInput(data.receipt_signature_date) ||
+          new Date().toISOString().split("T")[0],
         status: data.status || "draft",
         documentLink: data.document_link || "",
         assignees: (data.assignees || []).map((assignee: any) => ({
@@ -248,29 +265,36 @@ export default function KwitansiPage() {
           employee_number: assignee.employee_number || "",
           position: assignee.position || "",
           rank: assignee.rank || "",
-          transactions: (assignee.transactions || []).map((transaction: any) => ({
-            type: transaction.type || "",
-            subtype: transaction.subtype || "",
-            amount: transaction.amount || 0,
-            subtotal: transaction.subtotal || 0,
-            payment_type: (transaction.payment_type || "uang muka") as PaymentType,
-            description: transaction.description || "",
-            transport_detail: transaction.transport_detail || "",
-            spd_number: transaction.spd_number || "",
-            total_night: transaction.total_night ? Number(transaction.total_night) : undefined,
-            name: transaction.name || "",
-          })),
+          transactions: (assignee.transactions || []).map(
+            (transaction: any) => ({
+              type: transaction.type || "",
+              subtype: transaction.subtype || "",
+              amount: transaction.amount || 0,
+              subtotal: transaction.subtotal || 0,
+              payment_type: (transaction.payment_type ||
+                "uang muka") as PaymentType,
+              description: transaction.description || "",
+              transport_detail: transaction.transport_detail || "",
+              spd_number: transaction.spd_number || "",
+              total_night: transaction.total_night
+                ? Number(transaction.total_night)
+                : undefined,
+              name: transaction.name || "",
+            })
+          ),
         })),
       };
 
       setKwitansiData(transformedData);
       setOriginalKwitansiData(JSON.parse(JSON.stringify(transformedData)));
-
     } catch (error) {
       console.error("Fetch error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Terjadi kesalahan saat mengambil data",
+        description:
+          error instanceof Error
+            ? error.message
+            : "Terjadi kesalahan saat mengambil data",
         variant: "destructive",
       });
     } finally {
@@ -298,7 +322,9 @@ export default function KwitansiPage() {
       spdDate: normalizeDateForInput(responseData.spd_date),
       departureDate: normalizeDateForInput(responseData.departure_date),
       returnDate: normalizeDateForInput(responseData.return_date),
-      receiptSignatureDate: normalizeDateForInput(responseData.receipt_signature_date) || new Date().toISOString().split("T")[0],
+      receiptSignatureDate:
+        normalizeDateForInput(responseData.receipt_signature_date) ||
+        new Date().toISOString().split("T")[0],
       documentLink: responseData.document_link || "",
     };
 
@@ -349,20 +375,24 @@ export default function KwitansiPage() {
       let newStatus = prev.status;
 
       // Only auto-update if it's a new business trip (not in edit mode)
-      if (!isEditMode && (prev.status === 'draft' || prev.status === 'ongoing')) {
+      if (
+        !isEditMode &&
+        (prev.status === "draft" || prev.status === "ongoing")
+      ) {
         newStatus = getInitialStatus(updatedAssignees.length > 0);
       }
 
       return {
         ...prev,
         assignees: updatedAssignees,
-        status: newStatus
+        status: newStatus,
       };
     });
   };
 
   const handleSave = async () => {
-    const { assignees, receiptSignatureDate, ...activityFormInput } = kwitansiData;
+    const { assignees, receiptSignatureDate, ...activityFormInput } =
+      kwitansiData;
     const newErrors: Partial<Record<keyof ActivityFormInput, string>> = {};
 
     // Use status from form (for edit mode) or auto-determine for new
@@ -439,7 +469,13 @@ export default function KwitansiPage() {
     }
 
     for (const assignee of assignees) {
-      if (!assignee.name || !assignee.spd_number || !assignee.employee_number || !assignee.position || !assignee.rank) {
+      if (
+        !assignee.name ||
+        !assignee.spd_number ||
+        !assignee.employee_number ||
+        !assignee.position ||
+        !assignee.rank
+      ) {
         toast({
           title: "Error",
           description: "Semua field pegawai harus diisi",
@@ -459,7 +495,13 @@ export default function KwitansiPage() {
       }
 
       for (const transaction of assignee.transactions) {
-        if (!transaction.name || !transaction.type || !transaction.subtype || !transaction.amount || !transaction.description) {
+        if (
+          !transaction.name ||
+          !transaction.type ||
+          !transaction.subtype ||
+          !transaction.amount ||
+          !transaction.description
+        ) {
           toast({
             title: "Error",
             description: "Semua field transaksi harus diisi",
@@ -496,7 +538,9 @@ export default function KwitansiPage() {
           subtype: transaction.subtype,
           amount: Number(transaction.amount),
           description: transaction.description,
-          total_night: transaction.total_night ? Number(transaction.total_night) : undefined,
+          total_night: transaction.total_night
+            ? Number(transaction.total_night)
+            : undefined,
         })),
       })),
     };
@@ -510,38 +554,50 @@ export default function KwitansiPage() {
       let response;
       if (isEditMode && businessTripId) {
         // Update existing business trip
-        response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips/${businessTripId}/with-assignees`, {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            id: businessTripId,
-            ...payload,
-          }),
-        });
+        response = await fetch(
+          `${
+            import.meta.env.VITE_API_BASE_URL
+          }/api/v1/business-trips/${businessTripId}/with-assignees`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              id: businessTripId,
+              ...payload,
+            }),
+          }
+        );
       } else {
         // Create new business trip
-        response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify(payload),
-        });
+        response = await fetch(
+          `${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          }
+        );
       }
 
       if (!response.ok) {
-        throw new Error(`Gagal ${isEditMode ? "mengupdate" : "menyimpan"} data kwitansi (Status: ${response.status})`);
+        throw new Error(
+          `Gagal ${
+            isEditMode ? "mengupdate" : "menyimpan"
+          } data kwitansi (Status: ${response.status})`
+        );
       }
 
       // For create operation, we need the ID from Location header or response
       let savedId = null;
       if (!isEditMode) {
         // Try to get ID from Location header first
-        const locationHeader = response.headers.get('Location');
+        const locationHeader = response.headers.get("Location");
         if (locationHeader) {
           // Extract ID from Location header (e.g., /api/v1/business-trips/123)
           const idMatch = locationHeader.match(/\/([a-f0-9-]{36})$/);
@@ -568,26 +624,33 @@ export default function KwitansiPage() {
 
       toast({
         title: "Berhasil!",
-        description: `Kwitansi berhasil ${isEditMode ? "diupdate" : "disimpan"}`,
+        description: `Kwitansi berhasil ${
+          isEditMode ? "diupdate" : "disimpan"
+        }`,
       });
 
       // If creating new, redirect to edit mode if we have the ID
       if (!isEditMode && savedId) {
-        window.history.pushState({}, '', `/kwitansi/${savedId}`);
+        window.history.pushState({}, "", `/kwitansi/${savedId}`);
         window.location.reload();
       } else if (!isEditMode) {
         // If no ID returned, just show success message and stay on create page
         toast({
           title: "Berhasil!",
-          description: "Kwitansi berhasil disimpan. Anda bisa melanjutkan mengisi form atau membuat kwitansi baru.",
+          description:
+            "Kwitansi berhasil disimpan. Anda bisa melanjutkan mengisi form atau membuat kwitansi baru.",
         });
       }
-
     } catch (error) {
       console.error("Save error:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : `Terjadi kesalahan saat ${isEditMode ? "mengupdate" : "menyimpan"} kwitansi`,
+        description:
+          error instanceof Error
+            ? error.message
+            : `Terjadi kesalahan saat ${
+                isEditMode ? "mengupdate" : "menyimpan"
+              } kwitansi`,
         variant: "destructive",
       });
     } finally {
@@ -689,30 +752,66 @@ export default function KwitansiPage() {
       ),
     };
 
-    const payload: KwitansiData = {
-      ...kwitansiData,
-      ...formattedActivity,
+    const formatDateForExport = (dateString: string) => {
+      try {
+        return format(new Date(dateString), "dd MMMM yyyy", {
+          locale: id,
+        });
+      } catch (error) {
+        return dateString;
+      }
+    };
+
+    const payload = {
+      business_trip_number: kwitansiData.businessTripNumber,
+      start_date: formatDateForExport(activityFormInput.startDate),
+      end_date: formatDateForExport(activityFormInput.endDate),
+      activity_purpose: activityFormInput.activityPurpose,
+      destination_city: activityFormInput.destinationCity,
+      spd_date: formatDateForExport(activityFormInput.spdDate),
+      departure_date: formatDateForExport(activityFormInput.departureDate),
+      return_date: formatDateForExport(activityFormInput.returnDate),
+      receipt_signature_date: formatDateForExport(activityFormInput.receiptSignatureDate),
+      status: kwitansiData.status,
+      document_link: activityFormInput.documentLink || null,
       assignees: kwitansiData.assignees.map((assignee) => ({
-        ...assignee,
+        name: assignee.name,
+        spd_number: assignee.spd_number,
+        employee_number: assignee.employee_number,
+        employee_id: assignee.employee_id,
+        position: assignee.position,
+        rank: assignee.rank,
         transactions: assignee.transactions.map((transaction) => ({
-          ...transaction,
+          name: transaction.name,
+          type: transaction.type,
+          subtype: transaction.subtype,
           amount: Number(transaction.amount),
           subtotal: Number(transaction.subtotal),
+          payment_type: transaction.payment_type || "uang muka",
+          description: transaction.description,
+          transport_detail: transaction.transport_detail,
+          spd_number: transaction.spd_number,
           total_night: transaction.total_night
             ? Number(transaction.total_night)
             : undefined,
         })),
       })),
-      exportTime: new Date().toISOString(),
+      export_time: new Date().toISOString(),
     };
 
     try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login kembali.");
+      }
+
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/api/report/excel`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(payload),
         }
@@ -761,7 +860,7 @@ export default function KwitansiPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-2xl font-semibold" data-testid="text-title">

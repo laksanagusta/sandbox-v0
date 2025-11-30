@@ -9,6 +9,11 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import KwitansiPage from "@/pages/KwitansiPage";
 import BusinessTripListPage from "@/pages/BusinessTripListPage";
+import WorkPaperListPage from "@/pages/WorkPaperListPage";
+import WorkPaperItemsListPage from "@/pages/WorkPaperItemsListPage";
+import WorkPaperItemDetailPage from "@/pages/WorkPaperItemDetailPage";
+import WorkPaperDetailPage from "@/pages/WorkPaperDetailPage";
+import WorkPaperSignaturesListPage from "@/pages/WorkPaperSignaturesListPage";
 import OrganizationPage from "@/pages/OrganizationPage";
 import OrganizationDetailPage from "@/pages/OrganizationDetailPage";
 import PermissionPage from "@/pages/PermissionPage";
@@ -16,12 +21,13 @@ import PermissionDetailPage from "@/pages/PermissionDetailPage";
 import UserPage from "@/pages/UserPage";
 import UserDetailPage from "@/pages/UserDetailPage";
 import VaccinesPage from "@/pages/VaccinesPage";
+import WorkPaperCreatePage from "@/pages/WorkPaperCreatePage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
 
 function AuthenticatedLayout() {
   const style = {
-    "--sidebar-width": "16rem",
+    "--sidebar-width": "18rem",
     "--sidebar-width-icon": "3rem",
   };
 
@@ -29,15 +35,21 @@ function AuthenticatedLayout() {
     <SidebarProvider style={style as React.CSSProperties}>
       <div className="flex h-screen w-full">
         <AppSidebar />
-        <div className="flex flex-col flex-1">
-          <header className="flex items-center h-16 px-4 border-b bg-card sticky top-0 z-40">
+        <div className="flex flex-col flex-1 min-w-0">
+          <header className="flex items-center h-14 px-6 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
             <SidebarTrigger data-testid="button-sidebar-toggle" />
           </header>
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto bg-background/50">
             <Switch>
               <Route path="/kwitansi" component={KwitansiPage} />
               <Route path="/kwitansi/:id" component={KwitansiPage} />
               <Route path="/business-trips" component={BusinessTripListPage} />
+              <Route path="/work-papers" component={WorkPaperListPage} />
+              <Route path="/work-papers/create" component={WorkPaperCreatePage} />
+              <Route path="/work-papers/:id" component={WorkPaperDetailPage} />
+              <Route path="/work-paper-items" component={WorkPaperItemsListPage} />
+              <Route path="/work-paper-items/:id" component={WorkPaperItemDetailPage} />
+              <Route path="/work-paper-signatures" component={WorkPaperSignaturesListPage} />
               <Route path="/vaccines" component={VaccinesPage} />
               <Route
                 path="/organization/:id"
@@ -105,6 +117,36 @@ export default function App() {
               </ProtectedRoute>
             </Route>
             <Route path="/business-trips">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/work-papers">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/work-papers/create">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/work-papers/:id">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/work-paper-items">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/work-paper-items/:id">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/work-paper-signatures">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>
