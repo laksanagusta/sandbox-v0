@@ -19,10 +19,11 @@ export interface Assignee {
   employee_number: string;
   position: string;
   rank: string;
+  employee_id: string;
   transactions: Transaction[];
 }
 
-export type BusinessTripStatus = 'draft' | 'ongoing' | 'completed' | 'canceled';
+export type BusinessTripStatus = "draft" | "ongoing" | "completed" | "canceled";
 
 export interface KwitansiData {
   businessTripNumber?: string;

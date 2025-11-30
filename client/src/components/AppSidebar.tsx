@@ -13,6 +13,8 @@ import {
   FileText,
   PenTool,
   CheckSquare,
+  BarChart3,
+  ClipboardCheck,
 } from "lucide-react";
 import { Link } from "wouter";
 import { useState } from "react";
@@ -37,9 +39,11 @@ import {
 } from "@/components/ui/collapsible";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import { canAccessBusinessTripVerifications } from "@/utils/permissions";
 
 export function AppSidebar() {
   const { user, logout } = useAuth();
+  const canViewVerifications = canAccessBusinessTripVerifications(user);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isBusinessTripOpen, setIsBusinessTripOpen] = useState(false);
   const [isWorkPaperOpen, setIsWorkPaperOpen] = useState(false);
@@ -109,6 +113,53 @@ export function AppSidebar() {
                             </span>
                           </Link>
                         </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          data-testid="nav-business-trip-report"
+                        >
+                          <Link
+                            href="/business-trips/report"
+                            className="flex items-center space-x-3"
+                          >
+                            <div className="w-4 h-4 flex items-center justify-center">
+                              <BarChart3 className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                            </div>
+                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                              Report
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        {canViewVerifications ? (
+                          <SidebarMenuSubButton
+                            asChild
+                            className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                            data-testid="nav-business-trip-verifications"
+                          >
+                            <Link
+                              href="/business-trips/verifications"
+                              className="flex items-center space-x-3"
+                            >
+                              <div className="w-4 h-4 flex items-center justify-center">
+                                <ClipboardCheck className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              </div>
+                              <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                                Need to Verify
+                              </span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        ) : (
+                          <div className="w-full px-4 py-2">
+                            <span className="text-gray-400 text-xs flex items-center space-x-1">
+                              <ClipboardCheck className="w-3 h-3" />
+                              <span>Tidak memiliki akses</span>
+                            </span>
+                          </div>
+                        )}
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>
@@ -323,14 +374,17 @@ export function AppSidebar() {
             <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
               <User className="w-4 h-4 text-gray-600" />
             </div>
-            <div className="flex-1 min-w-0">
+            <Link
+              href="/profile"
+              className="flex-1 min-w-0 cursor-pointer hover:bg-gray-50 rounded px-2 py-1 transition-colors"
+            >
               <p className="text-sm font-medium text-gray-900 truncate">
                 {user?.first_name || "User"}
               </p>
               <p className="text-xs text-gray-500 truncate">
                 {user?.username || "username"}
               </p>
-            </div>
+            </Link>
           </div>
           <Button
             variant="ghost"

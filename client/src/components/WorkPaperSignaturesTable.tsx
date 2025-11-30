@@ -30,8 +30,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { formatDateTime, getSignedAtTimestamp } from "@/utils/dateFormat";
 import { vaccinesApi } from "@/services/vaccines-api";
 import { useAuth } from "@/hooks/use-auth";
 import workPaperApi from "@/services/work-paper-api";
@@ -192,14 +191,7 @@ export function WorkPaperSignaturesTable({
     }
   };
 
-  const formatDateTime = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMM yyyy, HH:mm", { locale: id });
-    } catch (error) {
-      return "-";
-    }
-  };
-
+  
   const getStatusBadge = (status: SignatureStatus) => {
     const statusConfig = {
       pending: {

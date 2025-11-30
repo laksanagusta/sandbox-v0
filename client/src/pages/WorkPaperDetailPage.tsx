@@ -46,9 +46,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { formatDate, formatDateTime, getSignedAtTimestamp } from "@/utils/dateFormat";
 
 export type WorkPaperStatus =
   | "draft"
@@ -156,6 +166,9 @@ export default function WorkPaperDetailPage() {
   }>({});
   const [savingDriveLink, setSavingDriveLink] = useState<string | null>(null);
   const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [confirmSignDialog, setConfirmSignDialog] = useState<string | null>(
+    null
+  );
 
   const generateAIAnswerForNote = async (noteId: string) => {
     try {
@@ -246,8 +259,34 @@ export default function WorkPaperDetailPage() {
     }));
   };
 
+  const checkAllSignaturesSigned = (): boolean => {
+    if (workPaperSignatures.length === 0) return false;
+
+    return workPaperSignatures.every(
+      signature => signature.status === "signed"
+    );
+  };
+
   const handleUpdateStatus = async (newStatus: WorkPaperStatus) => {
     try {
+      // Validasi untuk status "completed"
+      if (newStatus === "completed") {
+        const allSigned = checkAllSignaturesSigned();
+
+        if (!allSigned) {
+          const pendingSignatures = workPaperSignatures.filter(
+            signature => signature.status !== "signed"
+          );
+
+          toast({
+            title: "Tidak Dapat Mengubah Status",
+            description: `Status tidak dapat diubah menjadi "Completed" karena masih ada ${pendingSignatures.length} tanda tangan yang belum ditandatangani. Pastikan semua pihak telah menandatangani terlebih dahulu.`,
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
       setUpdatingStatus(true);
       const token = localStorage.getItem("auth_token");
       if (!token) {
@@ -414,16 +453,7 @@ export default function WorkPaperDetailPage() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMMM yyyy", {
-        locale: id as any,
-      });
-    } catch (error) {
-      return "-";
-    }
-  };
-
+  
   const fetchWorkPaperSignatures = async () => {
     try {
       const token = localStorage.getItem("auth_token");
@@ -457,6 +487,8 @@ export default function WorkPaperDetailPage() {
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
       );
       setWorkPaperSignatures(sortedSignatures);
+
+      console.log(sortedSignatures);
     } catch (error) {
       console.error("Error fetching work paper signatures:", error);
       toast({
@@ -473,6 +505,7 @@ export default function WorkPaperDetailPage() {
   const handleDigitalSign = async (signatureId: string) => {
     try {
       setSigningSignature(signatureId);
+      setConfirmSignDialog(null);
       const token = localStorage.getItem("auth_token");
       if (!token) {
         throw new Error("Token tidak ditemukan. Silakan login kembali.");
@@ -532,16 +565,7 @@ export default function WorkPaperDetailPage() {
     return null;
   };
 
-  const formatDateTime = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMMM yyyy, HH:mm", {
-        locale: id as any,
-      });
-    } catch (error) {
-      return "-";
-    }
-  };
-
+  
   const getStatusBadge = (status: WorkPaperStatus) => {
     const statusConfig = {
       draft: {
@@ -592,6 +616,13 @@ export default function WorkPaperDetailPage() {
               ] as WorkPaperStatus[]
             )
               .filter((s) => s !== status) // Remove current status
+              .filter((nextStatus) => {
+                // Nonaktifkan "completed" jika belum semua signature ditandatangani
+                if (nextStatus === "completed") {
+                  return checkAllSignaturesSigned();
+                }
+                return true;
+              })
               .map((nextStatus) => {
                 const nextStatusConfig = {
                   draft: "bg-gray-100 text-gray-800",
@@ -600,13 +631,16 @@ export default function WorkPaperDetailPage() {
                   completed: "bg-green-100 text-green-800",
                 };
 
+                const isCompletedDisabled = nextStatus === "completed" && !checkAllSignaturesSigned();
+
                 return (
                   <DropdownMenuItem
                     key={nextStatus}
                     onClick={() => handleUpdateStatus(nextStatus)}
-                    className="cursor-pointer"
+                    disabled={isCompletedDisabled}
+                    className={`cursor-pointer ${isCompletedDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
-                    <div className="flex items-center w-full">
+                    <div className="flex items-center justify-between w-full">
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-medium ${nextStatusConfig[nextStatus]}`}
                       >
@@ -615,6 +649,11 @@ export default function WorkPaperDetailPage() {
                           : nextStatus.charAt(0).toUpperCase() +
                             nextStatus.slice(1)}
                       </span>
+                      {isCompletedDisabled && (
+                        <span className="text-xs text-gray-500 ml-2">
+                          ⚠️ Semua tanda tangan harus selesai
+                        </span>
+                      )}
                     </div>
                   </DropdownMenuItem>
                 );
@@ -1117,8 +1156,7 @@ export default function WorkPaperDetailPage() {
                                 </Badge>
                               </TableCell>
                               <TableCell className="min-w-[450px] max-w-[900px]">
-                                {workPaper.status === "ongoing" ||
-                                workPaper.status === "ready_to_sign" ? (
+                                {workPaper.status === "ongoing" ? (
                                   <Textarea
                                     value={note.notes || ""}
                                     onChange={(e) =>
@@ -1194,7 +1232,8 @@ export default function WorkPaperDetailPage() {
             {/* Approval Section */}
             <div className="space-y-6">
               {/* Signatures Section */}
-              {workPaper.status === "ready_to_sign" && (
+              {(workPaper.status === "ready_to_sign" ||
+                workPaper.status === "completed") && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
@@ -1220,7 +1259,7 @@ export default function WorkPaperDetailPage() {
                               <TableHead>Email</TableHead>
                               <TableHead>Role</TableHead>
                               <TableHead>Status</TableHead>
-                              <TableHead>Tanggal Tanda Tangan</TableHead>
+                              <TableHead>Signed At</TableHead>
                               <TableHead>Tipe Tanda Tangan</TableHead>
                               <TableHead>Aksi</TableHead>
                             </TableRow>
@@ -1272,9 +1311,7 @@ export default function WorkPaperDetailPage() {
                                     </Badge>
                                   </TableCell>
                                   <TableCell>
-                                    {signature.signed_at
-                                      ? formatDateTime(signature.signed_at)
-                                      : "-"}
+                                    {getSignedAtTimestamp(signature)}
                                   </TableCell>
                                   <TableCell>
                                     <Badge
@@ -1296,23 +1333,83 @@ export default function WorkPaperDetailPage() {
                                   </TableCell>
                                   <TableCell>
                                     {canSign ? (
-                                      <Button
-                                        onClick={() =>
-                                          handleDigitalSign(signature.id)
-                                        }
-                                        disabled={
-                                          signingSignature === signature.id
-                                        }
-                                        size="sm"
-                                        className="flex items-center space-x-1"
-                                      >
-                                        <PenTool className="w-3 h-3" />
-                                        <span>
-                                          {signingSignature === signature.id
-                                            ? "Menandatangani..."
-                                            : "Tanda Tangan Digital"}
-                                        </span>
-                                      </Button>
+                                      <>
+                                        <AlertDialog
+                                          open={
+                                            confirmSignDialog === signature.id
+                                          }
+                                          onOpenChange={(open) => {
+                                            if (!open)
+                                              setConfirmSignDialog(null);
+                                          }}
+                                        >
+                                          <AlertDialogTrigger asChild>
+                                            <Button
+                                              onClick={() =>
+                                                setConfirmSignDialog(
+                                                  signature.id
+                                                )
+                                              }
+                                              disabled={
+                                                signingSignature ===
+                                                signature.id
+                                              }
+                                              size="sm"
+                                              className="flex items-center space-x-1"
+                                            >
+                                              <PenTool className="w-3 h-3" />
+                                              <span>
+                                                {signingSignature ===
+                                                signature.id
+                                                  ? "Menandatangani..."
+                                                  : "Tanda Tangan Digital"}
+                                              </span>
+                                            </Button>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle>
+                                                Konfirmasi Tanda Tangan Digital
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription>
+                                                Apakah Anda yakin ingin
+                                                menandatangani work paper{" "}
+                                                <strong>
+                                                  "{workPaper?.np_waper}"
+                                                </strong>{" "}
+                                                secara digital?
+                                                <br />
+                                                <br />
+                                                Tindakan ini tidak dapat
+                                                dibatalkan dan akan mencatat
+                                                digital signature Anda pada
+                                                sistem.
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel>
+                                                Batal
+                                              </AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() =>
+                                                  handleDigitalSign(
+                                                    signature.id
+                                                  )
+                                                }
+                                                disabled={
+                                                  signingSignature ===
+                                                  signature.id
+                                                }
+                                              >
+                                                {signingSignature ===
+                                                signature.id
+                                                  ? "Menandatangani..."
+                                                  : "Ya, Tandatangani"}
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      </>
                                     ) : (
                                       <Button
                                         size="sm"

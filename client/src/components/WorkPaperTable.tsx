@@ -26,8 +26,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { formatDateTime } from "@/utils/dateFormat";
 
 export type WorkPaperStatus = 'ongoing' | 'completed' | 'draft';
 
@@ -198,14 +197,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
     }
   };
 
-  const formatDateTime = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMM yyyy, HH:mm", { locale: id as any });
-    } catch (error) {
-      return "-";
-    }
-  };
-
+  
   const getStatusBadge = (status: WorkPaperStatus) => {
     const statusConfig = {
       ongoing: {

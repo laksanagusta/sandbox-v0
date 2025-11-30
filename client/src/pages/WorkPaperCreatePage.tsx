@@ -125,7 +125,7 @@ export default function WorkPaperCreatePage() {
       if (searchTerm) {
         params.search = searchTerm;
       }
-      const response = await apiClient.getOrganizations(params) as any;
+      const response = (await apiClient.getOrganizations(params)) as any;
       setOrganizations(response.data || []);
     } catch (error) {
       console.error("Error loading organizations:", error);
@@ -149,7 +149,7 @@ export default function WorkPaperCreatePage() {
       if (searchTerm) {
         params.search = searchTerm;
       }
-      const response = await apiClient.getUsers(params) as any;
+      const response = (await apiClient.getUsers(params)) as any;
       setUsers(response.data || []);
     } catch (error) {
       console.error("Error loading users:", error);
@@ -495,7 +495,7 @@ export default function WorkPaperCreatePage() {
             </div>
 
             {/* Add Signer Button */}
-            <div className="border-t pt-4">
+            <div className="pt-4">
               <Button
                 onClick={addNewSigner}
                 variant="outline"
@@ -508,7 +508,7 @@ export default function WorkPaperCreatePage() {
 
             {/* Signers Summary */}
             {signers.length > 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-medium text-blue-900">

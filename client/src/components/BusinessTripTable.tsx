@@ -26,8 +26,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { formatDate, formatDateTime } from "@/utils/dateFormat";
 
 export type BusinessTripStatus = 'draft' | 'ongoing' | 'completed' | 'canceled';
 
@@ -198,22 +197,7 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
     );
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMM yyyy", { locale: id });
-    } catch (error) {
-      return "-";
-    }
-  };
-
-  const formatDateTime = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMM yyyy, HH:mm", { locale: id });
-    } catch (error) {
-      return "-";
-    }
-  };
-
+  
   const formatCurrency = (amount?: number) => {
     if (!amount) return "-";
     return new Intl.NumberFormat("id-ID", {

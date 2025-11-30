@@ -8,7 +8,8 @@ class ApiClient {
 
   constructor() {
     this.baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
-    this.identityUrl = import.meta.env.VITE_API_IDENTITY_URL || "http://localhost:5001";
+    this.identityUrl =
+      import.meta.env.VITE_API_IDENTITY_URL || "http://localhost:5001";
   }
 
   private getAuthToken(): string | null {
@@ -24,7 +25,9 @@ class ApiClient {
   private buildUrl(endpoint: string, useIdentityApi: boolean = false): string {
     const baseUrl = useIdentityApi ? this.identityUrl : this.baseUrl;
     // Remove leading slash from endpoint to avoid double slashes
-    const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+    const cleanEndpoint = endpoint.startsWith("/")
+      ? endpoint.slice(1)
+      : endpoint;
     return `${baseUrl}/${cleanEndpoint}`;
   }
 
@@ -38,7 +41,7 @@ class ApiClient {
     // Default headers
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      ...(fetchOptions.headers as Record<string, string> || {}),
+      ...((fetchOptions.headers as Record<string, string>) || {}),
     };
 
     // Add Authorization header for authenticated requests
@@ -69,7 +72,9 @@ class ApiClient {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        const errorMessage = errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+        const errorMessage =
+          errorData.message ||
+          `HTTP ${response.status}: ${response.statusText}`;
         throw new Error(errorMessage);
       }
 
@@ -80,7 +85,10 @@ class ApiClient {
 
       return await response.json();
     } catch (error) {
-      if (error instanceof Error && error.message.includes("Authentication required")) {
+      if (
+        error instanceof Error &&
+        error.message.includes("Authentication required")
+      ) {
         throw error;
       }
       console.error(`API call failed for ${endpoint}:`, error);
@@ -139,7 +147,9 @@ class ApiClient {
     if (params?.search) searchParams.append("search", params.search);
 
     const queryString = searchParams.toString();
-    const endpoint = `api/v1/organizations${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `api/v1/organizations${
+      queryString ? `?${queryString}` : ""
+    }`;
 
     return this.request(endpoint, {}, true);
   }
@@ -161,7 +171,9 @@ class ApiClient {
     if (params?.status) searchParams.append("status", params.status);
 
     const queryString = searchParams.toString();
-    const endpoint = `api/v1/desk/work-papers${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `api/v1/desk/work-papers${
+      queryString ? `?${queryString}` : ""
+    }`;
 
     return this.request(endpoint);
   }
@@ -179,7 +191,7 @@ class ApiClient {
       user_name: string;
       user_email: string;
       user_role: string;
-      signature_type: 'digital' | 'manual' | 'approval';
+      signature_type: "digital" | "manual" | "approval";
     }>;
   }) {
     return this.request("api/v1/desk/work-papers", {
@@ -188,26 +200,35 @@ class ApiClient {
     });
   }
 
-  async assignSignersToWorkPaper(workPaperId: string, signers: Array<{
-    user_id: string;
-    user_name: string;
-    signature_type: 'digital' | 'manual' | 'approval';
-  }>) {
-    return this.request(`api/v1/desk/work-papers/${workPaperId}/assign-signers`, {
-      method: "POST",
-      body: JSON.stringify({ signers }),
-    });
-  }
-
-  async manageWorkPaperSigners(workPaperId: string, data: {
-    action: 'add' | 'remove' | 'replace';
+  async assignSignersToWorkPaper(
+    workPaperId: string,
     signers: Array<{
       user_id: string;
       user_name: string;
-      user_email?: string;
-      signature_type: 'digital' | 'manual' | 'approval';
-    }>;
-  }) {
+      signature_type: "digital" | "manual" | "approval";
+    }>
+  ) {
+    return this.request(
+      `api/v1/desk/work-papers/${workPaperId}/assign-signers`,
+      {
+        method: "POST",
+        body: JSON.stringify({ signers }),
+      }
+    );
+  }
+
+  async manageWorkPaperSigners(
+    workPaperId: string,
+    data: {
+      action: "add" | "remove" | "replace";
+      signers: Array<{
+        user_id: string;
+        user_name: string;
+        user_email?: string;
+        signature_type: "digital" | "manual" | "approval";
+      }>;
+    }
+  ) {
     return this.request(`api/v1/desk/work-papers/${workPaperId}/signers`, {
       method: "PUT",
       body: JSON.stringify(data),
@@ -215,7 +236,9 @@ class ApiClient {
   }
 
   async getWorkPaperSignatureStats(workPaperId: string) {
-    return this.request(`api/v1/desk/work-papers/${workPaperId}/signature-stats`);
+    return this.request(
+      `api/v1/desk/work-papers/${workPaperId}/signature-stats`
+    );
   }
 
   async getWorkPaperItems(params?: {
@@ -231,10 +254,13 @@ class ApiClient {
     if (params?.limit) searchParams.append("limit", params.limit.toString());
     if (params?.sort) searchParams.append("sort", params.sort);
     if (params?.id) searchParams.append("id", params.id);
-    if (params?.work_paper_id) searchParams.append("work_paper_id", params.work_paper_id);
+    if (params?.work_paper_id)
+      searchParams.append("work_paper_id", params.work_paper_id);
 
     const queryString = searchParams.toString();
-    const endpoint = `api/v1/desk/work-paper-items${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `api/v1/desk/work-paper-items${
+      queryString ? `?${queryString}` : ""
+    }`;
 
     return this.request(endpoint);
   }
@@ -256,11 +282,14 @@ class ApiClient {
     if (params?.page) searchParams.append("page", params.page.toString());
     if (params?.limit) searchParams.append("limit", params.limit.toString());
     if (params?.sort) searchParams.append("sort", params.sort);
-    if (params?.activity_purpose) searchParams.append("activity_purpose", params.activity_purpose);
+    if (params?.activity_purpose)
+      searchParams.append("activity_purpose", params.activity_purpose);
     if (params?.status) searchParams.append("status", params.status);
 
     const queryString = searchParams.toString();
-    const endpoint = `api/v1/business-trips${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `api/v1/business-trips${
+      queryString ? `?${queryString}` : ""
+    }`;
 
     return this.request(endpoint);
   }
@@ -280,6 +309,31 @@ class ApiClient {
     });
   }
 
+  async getBusinessTripDashboard(params?: {
+    start_date?: string;
+    end_date?: string;
+    destination?: string;
+    status?: string;
+    limit?: number;
+  }) {
+    const searchParams = new URLSearchParams();
+
+    if (params?.start_date)
+      searchParams.append("start_date", params.start_date);
+    if (params?.end_date) searchParams.append("end_date", params.end_date);
+    if (params?.destination)
+      searchParams.append("destination", params.destination);
+    if (params?.status) searchParams.append("status", params.status);
+    if (params?.limit) searchParams.append("limit", params.limit.toString());
+
+    const queryString = searchParams.toString();
+    const endpoint = `api/v1/business-trips/dashboard${
+      queryString ? `?${queryString}` : ""
+    }`;
+
+    return this.request(endpoint, {}, false);
+  }
+
   // Vaccines API methods
   async getVaccineCountries(params?: {
     limit?: number;
@@ -290,16 +344,24 @@ class ApiClient {
 
     if (params?.limit) searchParams.append("limit", params.limit.toString());
     if (params?.page) searchParams.append("page", params.page.toString());
-    if (params?.country_name_id) searchParams.append("country_name_id", params.country_name_id);
+    if (params?.country_name_id)
+      searchParams.append("country_name_id", params.country_name_id);
 
     const queryString = searchParams.toString();
-    const endpoint = `api/v1/vaccines/countries${queryString ? `?${queryString}` : ""}`;
+    const endpoint = `api/v1/vaccines/countries${
+      queryString ? `?${queryString}` : ""
+    }`;
 
     return this.request(endpoint);
   }
 
-  async getVaccineRecommendations(countryCode: string, language: string = "en") {
-    return this.request(`api/v1/vaccines/recommendations/${countryCode}?language=${language}`);
+  async getVaccineRecommendations(
+    countryCode: string,
+    language: string = "en"
+  ) {
+    return this.request(
+      `api/v1/vaccines/recommendations/${countryCode}?language=${language}`
+    );
   }
 
   // Generic request method for custom endpoints
@@ -307,7 +369,11 @@ class ApiClient {
     return this.request<T>(endpoint, {}, useIdentityApi);
   }
 
-  async post<T>(endpoint: string, data: any, useIdentityApi: boolean = false): Promise<T> {
+  async post<T>(
+    endpoint: string,
+    data: any,
+    useIdentityApi: boolean = false
+  ): Promise<T> {
     return this.request<T>(
       endpoint,
       {
@@ -318,7 +384,11 @@ class ApiClient {
     );
   }
 
-  async put<T>(endpoint: string, data: any, useIdentityApi: boolean = false): Promise<T> {
+  async put<T>(
+    endpoint: string,
+    data: any,
+    useIdentityApi: boolean = false
+  ): Promise<T> {
     return this.request<T>(
       endpoint,
       {
@@ -329,7 +399,10 @@ class ApiClient {
     );
   }
 
-  async delete<T>(endpoint: string, useIdentityApi: boolean = false): Promise<T> {
+  async delete<T>(
+    endpoint: string,
+    useIdentityApi: boolean = false
+  ): Promise<T> {
     return this.request<T>(
       endpoint,
       {

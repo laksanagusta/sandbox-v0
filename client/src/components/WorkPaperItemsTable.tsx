@@ -24,8 +24,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
-import { format } from "date-fns";
-import { id } from "date-fns/locale";
+import { formatDateTime } from "@/utils/dateFormat";
 import { apiClient } from "@/lib/api-client";
 
 interface WorkPaperItem {
@@ -177,14 +176,7 @@ export function WorkPaperItemsTable({ className = "" }: WorkPaperItemsTableProps
     }
   };
 
-  const formatDateTime = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMM yyyy, HH:mm", { locale: id as any });
-    } catch (error) {
-      return "-";
-    }
-  };
-
+  
   const getTypeBadge = (type: string) => {
     const typeConfig: Record<string, { bg: string; text: string; label: string }> = {
       A: {

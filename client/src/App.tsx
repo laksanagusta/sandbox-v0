@@ -20,8 +20,12 @@ import PermissionPage from "@/pages/PermissionPage";
 import PermissionDetailPage from "@/pages/PermissionDetailPage";
 import UserPage from "@/pages/UserPage";
 import UserDetailPage from "@/pages/UserDetailPage";
+import ProfilePage from "@/pages/ProfilePage";
 import VaccinesPage from "@/pages/VaccinesPage";
 import WorkPaperCreatePage from "@/pages/WorkPaperCreatePage";
+import BusinessTripReportPage from "@/pages/BusinessTripReportPage";
+import BusinessTripVerificationsPage from "@/pages/BusinessTripVerificationsPage";
+import BusinessTripVerificatorPage from "@/pages/BusinessTripVerificatorPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
 
@@ -44,6 +48,8 @@ function AuthenticatedLayout() {
               <Route path="/kwitansi" component={KwitansiPage} />
               <Route path="/kwitansi/:id" component={KwitansiPage} />
               <Route path="/business-trips" component={BusinessTripListPage} />
+              <Route path="/business-trips/report" component={BusinessTripReportPage} />
+              <Route path="/business-trips/verifications" component={BusinessTripVerificationsPage} />
               <Route path="/work-papers" component={WorkPaperListPage} />
               <Route path="/work-papers/create" component={WorkPaperCreatePage} />
               <Route path="/work-papers/:id" component={WorkPaperDetailPage} />
@@ -60,6 +66,7 @@ function AuthenticatedLayout() {
               <Route path="/permission" component={PermissionPage} />
               <Route path="/users/:id" component={UserDetailPage} />
               <Route path="/users" component={UserPage} />
+              <Route path="/profile" component={ProfilePage} />
               <Route component={NotFound} />
             </Switch>
           </main>
@@ -111,12 +118,22 @@ export default function App() {
                 <AuthenticatedLayout />
               </ProtectedRoute>
             </Route>
+            <Route path="/profile">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
             <Route path="/kwitansi/:id">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>
             </Route>
             <Route path="/business-trips">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/business-trips/report">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>
@@ -161,6 +178,7 @@ export default function App() {
                 <AuthenticatedLayout />
               </ProtectedRoute>
             </Route>
+            <Route path="/business-trips/verifications" component={BusinessTripVerificationsPage} />
             <Route component={NotFound} />
           </Switch>
           <Toaster />

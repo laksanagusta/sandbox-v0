@@ -14,6 +14,7 @@ import {
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { formatDate } from "@/utils/dateFormat";
 
 interface Role {
   id: string;
@@ -175,20 +176,7 @@ export function UserTable({ className = "" }: UserTableProps) {
     );
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return new Date(dateString).toLocaleDateString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-    } catch (error) {
-      return "-";
-    }
-  };
-
+  
   const getRoleBadge = (roles: Role[]) => {
     if (!roles || roles.length === 0) {
       return (

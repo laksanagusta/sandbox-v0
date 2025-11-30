@@ -14,6 +14,13 @@ export default function WorkPaperItemsListPage() {
           <div className="flex items-center space-x-4">
             <h1 className="text-xl font-semibold">Work Paper Items Management</h1>
           </div>
+          <Button
+            onClick={() => setLocation("/work-paper-items/new")}
+            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Tambah Work Paper Item</span>
+          </Button>
         </div>
       </div>
 

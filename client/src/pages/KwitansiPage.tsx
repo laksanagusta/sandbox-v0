@@ -771,7 +771,9 @@ export default function KwitansiPage() {
       spd_date: formatDateForExport(activityFormInput.spdDate),
       departure_date: formatDateForExport(activityFormInput.departureDate),
       return_date: formatDateForExport(activityFormInput.returnDate),
-      receipt_signature_date: formatDateForExport(activityFormInput.receiptSignatureDate),
+      receipt_signature_date: formatDateForExport(
+        activityFormInput.receiptSignatureDate
+      ),
       status: kwitansiData.status,
       document_link: activityFormInput.documentLink || null,
       assignees: kwitansiData.assignees.map((assignee) => ({

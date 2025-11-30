@@ -43,10 +43,11 @@ export default function WorkPaperItemDetailPage() {
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const id = params.id!;
+  const isNew = id === "new";
 
   const [workPaperItem, setWorkPaperItem] =
     useState<WorkPaperItemDetail | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!isNew);
   const [formData, setFormData] = useState({
     number: "",
     type: "",
@@ -120,6 +121,8 @@ export default function WorkPaperItemDetailPage() {
   };
 
   const fetchWorkPaperItemDetail = async () => {
+    if (isNew) return;
+
     try {
       setLoading(true);
 
@@ -168,44 +171,57 @@ export default function WorkPaperItemDetailPage() {
         throw new Error("Token tidak ditemukan. Silakan login kembali.");
       }
 
-      const response = await fetch(
-        `${
-          import.meta.env.VITE_API_BASE_URL
-        }/api/v1/desk/work-paper-items/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            type: formData.type,
-            number: formData.number,
-            statement: formData.statement,
-            explanation: formData.explanation,
-            filling_guide: formData.filling_guide,
-            level: formData.level,
-            sort_order: formData.sort_order,
-            is_active: formData.is_active,
-          }),
-        }
-      );
+      const url = isNew
+        ? `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-paper-items`
+        : `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-paper-items/${id}`;
+
+      const method = isNew ? "POST" : "PUT";
+
+      const response = await fetch(url, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          type: formData.type,
+          number: formData.number,
+          statement: formData.statement,
+          explanation: formData.explanation,
+          filling_guide: formData.filling_guide,
+          level: formData.level,
+          sort_order: formData.sort_order,
+          is_active: formData.is_active,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error(`Gagal menyimpan perubahan: ${response.status}`);
+        throw new Error(`Gagal ${isNew ? 'membuat' : 'memperbarui'} work paper item: ${response.status}`);
       }
 
-      await fetchWorkPaperItemDetail();
-      toast({
-        title: "Success",
-        description: "Work Paper Item berhasil diperbarui",
-      });
+      if (isNew) {
+        const responseData = await response.json();
+        const newId = responseData.data?.id;
+        if (newId) {
+          setLocation(`/work-paper-items/${newId}`);
+          toast({
+            title: "Success",
+            description: "Work Paper Item berhasil dibuat",
+          });
+        }
+      } else {
+        await fetchWorkPaperItemDetail();
+        toast({
+          title: "Success",
+          description: "Work Paper Item berhasil diperbarui",
+        });
+      }
     } catch (error) {
       console.error("Error saving work paper item:", error);
       toast({
         title: "Error",
         description:
-          error instanceof Error ? error.message : "Gagal menyimpan perubahan",
+          error instanceof Error ? error.message : `Gagal ${isNew ? 'membuat' : 'memperbarui'} work paper item`,
         variant: "destructive",
       });
     } finally {
@@ -228,7 +244,7 @@ export default function WorkPaperItemDetailPage() {
     );
   }
 
-  if (!workPaperItem) {
+  if (!workPaperItem && !isNew) {
     return (
       <div className="bg-background min-h-screen">
         <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -259,7 +275,7 @@ export default function WorkPaperItemDetailPage() {
                 <FileText className="w-8 h-8 text-gray-600" />
                 <div>
                   <h1 className="text-2xl font-semibold">
-                    Detail Work Paper Item
+                    {isNew ? "Buat Work Paper Item Baru" : "Detail Work Paper Item"}
                   </h1>
                 </div>
               </div>
@@ -273,7 +289,7 @@ export default function WorkPaperItemDetailPage() {
                 className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 <Save className="w-4 h-4" />
-                <span>{saving ? "Menyimpan..." : "Simpan"}</span>
+                <span>{saving ? "Menyimpan..." : (isNew ? "Buat" : "Simpan")}</span>
               </Button>
             </div>
           </div>
@@ -288,14 +304,16 @@ export default function WorkPaperItemDetailPage() {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-4 gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-gray-700">
-                    ID
-                  </Label>
-                  <p className="text-sm mt-1 font-mono bg-gray-50 px-2 py-1 rounded">
-                    {workPaperItem.id}
-                  </p>
-                </div>
+                {!isNew && (
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">
+                      ID
+                    </Label>
+                    <p className="text-sm mt-1 font-mono bg-gray-50 px-2 py-1 rounded">
+                      {workPaperItem?.id}
+                    </p>
+                  </div>
+                )}
                 <div>
                   <Label className="text-sm font-medium text-gray-700">
                     Nomor
@@ -393,7 +411,7 @@ export default function WorkPaperItemDetailPage() {
                 </div>
               </div>
 
-              {workPaperItem.parent_id && (
+              {!isNew && workPaperItem?.parent_id && (
                 <div>
                   <Label className="text-sm font-medium text-gray-700">
                     Parent ID
