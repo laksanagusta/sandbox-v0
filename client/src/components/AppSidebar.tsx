@@ -43,7 +43,6 @@ import { canAccessBusinessTripVerifications } from "@/utils/permissions";
 
 export function AppSidebar() {
   const { user, logout } = useAuth();
-  const canViewVerifications = canAccessBusinessTripVerifications(user);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isBusinessTripOpen, setIsBusinessTripOpen] = useState(false);
   const [isWorkPaperOpen, setIsWorkPaperOpen] = useState(false);
@@ -51,7 +50,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       {/* Header dengan logo yang sederhana */}
-      <SidebarHeader className="bg-background border-b border-border p-6">
+      <SidebarHeader className="bg-white p-6">
         <div className="flex items-center space-x-3">
           <div>
             <h1 className="text-xl font-bold text-foreground">The Core</h1>
@@ -59,7 +58,7 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="bg-background/50">
+      <SidebarContent className="bg-white">
         <SidebarGroup className="px-4 py-6">
           <div className="mb-4">
             <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3">
@@ -75,21 +74,21 @@ export function AppSidebar() {
                 >
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                      className="w-full justify-start hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
+                      className="w-full justify-start hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
                       data-testid="nav-business-trip"
                     >
                       <div className="flex items-center space-x-3 flex-1">
                         <div className="w-5 h-5 flex items-center justify-center">
-                          <Briefcase className="w-5 h-5 text-gray-600 group-hover:text-gray-900 transition-colors" />
+                          <Briefcase className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                         </div>
-                        <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">
+                        <span className="text-sidebar-foreground font-medium group-hover:text-foreground transition-colors">
                           Business Trip
                         </span>
                       </div>
                       {isBusinessTripOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground/70 group-hover:text-muted-foreground transition-colors" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground/70 group-hover:text-muted-foreground transition-colors" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -98,7 +97,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-business-trip-list"
                         >
                           <Link
@@ -106,9 +105,9 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <Plane className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <Plane className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
                               Business Trip
                             </span>
                           </Link>
@@ -117,7 +116,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-business-trip-report"
                         >
                           <Link
@@ -125,41 +124,32 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <BarChart3 className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <BarChart3 className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
                               Report
                             </span>
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
                       <SidebarMenuSubItem>
-                        {canViewVerifications ? (
                           <SidebarMenuSubButton
                             asChild
-                            className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                            className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                             data-testid="nav-business-trip-verifications"
                           >
                             <Link
-                              href="/business-trips/verifications"
+                              href="/business-trip-verifications"
                               className="flex items-center space-x-3"
                             >
                               <div className="w-4 h-4 flex items-center justify-center">
-                                <ClipboardCheck className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                                <ClipboardCheck className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                               </div>
-                              <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
-                                Need to Verify
+                              <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
+                                Verify
                               </span>
                             </Link>
                           </SidebarMenuSubButton>
-                        ) : (
-                          <div className="w-full px-4 py-2">
-                            <span className="text-gray-400 text-xs flex items-center space-x-1">
-                              <ClipboardCheck className="w-3 h-3" />
-                              <span>Tidak memiliki akses</span>
-                            </span>
-                          </div>
-                        )}
                       </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>
@@ -173,21 +163,21 @@ export function AppSidebar() {
                 >
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                      className="w-full justify-start hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
+                      className="w-full justify-start hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
                       data-testid="nav-work-paper"
                     >
                       <div className="flex items-center space-x-3 flex-1">
                         <div className="w-5 h-5 flex items-center justify-center">
-                          <FileText className="w-5 h-5 text-gray-600 group-hover:text-gray-900 transition-colors" />
+                          <FileText className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                         </div>
-                        <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">
+                        <span className="text-sidebar-foreground font-medium group-hover:text-foreground transition-colors">
                           Work Paper
                         </span>
                       </div>
                       {isWorkPaperOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground/70 group-hover:text-muted-foreground transition-colors" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground/70 group-hover:text-muted-foreground transition-colors" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -196,7 +186,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-work-paper-list"
                         >
                           <Link
@@ -204,9 +194,9 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <FileText className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <FileText className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
                               Work Paper
                             </span>
                           </Link>
@@ -215,7 +205,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-work-paper-items"
                         >
                           <Link
@@ -223,10 +213,10 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <FileText className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <FileText className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
-                              Work Paper Items
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
+                              Items
                             </span>
                           </Link>
                         </SidebarMenuSubButton>
@@ -234,7 +224,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-work-paper-signatures"
                         >
                           <Link
@@ -242,10 +232,10 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <CheckSquare className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <CheckSquare className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
-                              Need to Sign
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
+                              Sign
                             </span>
                           </Link>
                         </SidebarMenuSubButton>
@@ -258,7 +248,7 @@ export function AppSidebar() {
               <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
-                  className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
+                  className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
                   data-testid="nav-vaccines"
                 >
                   <Link
@@ -266,9 +256,9 @@ export function AppSidebar() {
                     className="flex items-center space-x-3"
                   >
                     <div className="w-5 h-5 flex items-center justify-center">
-                      <Activity className="w-5 h-5 text-gray-600 group-hover:text-gray-900 transition-colors" />
+                      <Activity className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                     </div>
-                    <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">
+                    <span className="text-sidebar-foreground font-medium group-hover:text-foreground transition-colors">
                       Vaccine Recommendations
                     </span>
                   </Link>
@@ -282,21 +272,21 @@ export function AppSidebar() {
                 >
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
-                      className="w-full justify-start hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
+                      className="w-full justify-start hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
                       data-testid="nav-settings"
                     >
                       <div className="flex items-center space-x-3 flex-1">
                         <div className="w-5 h-5 flex items-center justify-center">
-                          <Settings className="w-5 h-5 text-gray-600 group-hover:text-gray-900 transition-colors" />
+                          <Settings className="w-5 h-5 text-muted-foreground group-hover:text-foreground transition-colors" />
                         </div>
-                        <span className="text-gray-700 font-medium group-hover:text-gray-900 transition-colors">
+                        <span className="text-sidebar-foreground font-medium group-hover:text-foreground transition-colors">
                           Settings
                         </span>
                       </div>
                       {isSettingsOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground/70 group-hover:text-muted-foreground transition-colors" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 transition-colors" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground/70 group-hover:text-muted-foreground transition-colors" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -305,7 +295,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-organization"
                         >
                           <Link
@@ -313,9 +303,9 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <Building className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <Building className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
                               Organization
                             </span>
                           </Link>
@@ -324,7 +314,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-permissions"
                         >
                           <Link
@@ -332,9 +322,9 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <Shield className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <Shield className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
                               Permissions
                             </span>
                           </Link>
@@ -343,7 +333,7 @@ export function AppSidebar() {
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
-                          className="hover:bg-white hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
                           data-testid="nav-users"
                         >
                           <Link
@@ -351,9 +341,9 @@ export function AppSidebar() {
                             className="flex items-center space-x-3"
                           >
                             <div className="w-4 h-4 flex items-center justify-center">
-                              <Users className="w-4 h-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
+                              <Users className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
                             </div>
-                            <span className="text-gray-600 group-hover:text-gray-800 transition-colors text-sm">
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
                               Users
                             </span>
                           </Link>
@@ -368,20 +358,20 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-background border-t border-border p-4">
+      <SidebarFooter className="bg-white p-4">
         <div className="space-y-4">
           <div className="flex items-center space-x-3 px-3">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-gray-600" />
+            <div className="w-8 h-8 bg-muted rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-muted-foreground" />
             </div>
             <Link
               href="/profile"
-              className="flex-1 min-w-0 cursor-pointer hover:bg-gray-50 rounded px-2 py-1 transition-colors"
+              className="flex-1 min-w-0 cursor-pointer hover:bg-sidebar-accent rounded px-2 py-1 transition-colors"
             >
-              <p className="text-sm font-medium text-gray-900 truncate">
+              <p className="text-sm font-medium text-foreground truncate">
                 {user?.first_name || "User"}
               </p>
-              <p className="text-xs text-gray-500 truncate">
+              <p className="text-xs text-muted-foreground truncate">
                 {user?.username || "username"}
               </p>
             </Link>
@@ -390,7 +380,7 @@ export function AppSidebar() {
             variant="ghost"
             size="sm"
             onClick={logout}
-            className="w-full justify-start text-gray-600 hover:text-gray-900 hover:bg-white px-3"
+            className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-sidebar-accent px-3"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Keluar

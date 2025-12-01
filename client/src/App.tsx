@@ -31,44 +31,46 @@ import NotFound from "@/pages/not-found";
 
 function AuthenticatedLayout() {
   const style = {
-    "--sidebar-width": "18rem",
+    "--sidebar-width": "15rem",
     "--sidebar-width-icon": "3rem",
   };
 
   return (
     <SidebarProvider style={style as React.CSSProperties}>
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full bg-muted/20">
         <AppSidebar />
         <div className="flex flex-col flex-1 min-w-0">
-          <header className="flex items-center h-14 px-6 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-            <SidebarTrigger data-testid="button-sidebar-toggle" />
+          <header className="flex items-center h-14 px-6 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 transition-all duration-200">
+            <SidebarTrigger data-testid="button-sidebar-toggle" className="text-muted-foreground hover:text-foreground transition-colors" />
           </header>
-          <main className="flex-1 overflow-auto bg-background/50">
-            <Switch>
-              <Route path="/kwitansi" component={KwitansiPage} />
-              <Route path="/kwitansi/:id" component={KwitansiPage} />
-              <Route path="/business-trips" component={BusinessTripListPage} />
-              <Route path="/business-trips/report" component={BusinessTripReportPage} />
-              <Route path="/business-trips/verifications" component={BusinessTripVerificationsPage} />
-              <Route path="/work-papers" component={WorkPaperListPage} />
-              <Route path="/work-papers/create" component={WorkPaperCreatePage} />
-              <Route path="/work-papers/:id" component={WorkPaperDetailPage} />
-              <Route path="/work-paper-items" component={WorkPaperItemsListPage} />
-              <Route path="/work-paper-items/:id" component={WorkPaperItemDetailPage} />
-              <Route path="/work-paper-signatures" component={WorkPaperSignaturesListPage} />
-              <Route path="/vaccines" component={VaccinesPage} />
-              <Route
-                path="/organization/:id"
-                component={OrganizationDetailPage}
-              />
-              <Route path="/organization" component={OrganizationPage} />
-              <Route path="/permission/:id" component={PermissionDetailPage} />
-              <Route path="/permission" component={PermissionPage} />
-              <Route path="/users/:id" component={UserDetailPage} />
-              <Route path="/users" component={UserPage} />
-              <Route path="/profile" component={ProfilePage} />
-              <Route component={NotFound} />
-            </Switch>
+          <main className="flex-1 overflow-auto p-6">
+            <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500 slide-in-from-bottom-4">
+              <Switch>
+                <Route path="/kwitansi" component={KwitansiPage} />
+                <Route path="/kwitansi/:id" component={KwitansiPage} />
+                <Route path="/business-trips" component={BusinessTripListPage} />
+                <Route path="/business-trips/report" component={BusinessTripReportPage} />
+                <Route path="/business-trip-verifications" component={BusinessTripVerificatorPage} />
+                <Route path="/work-papers" component={WorkPaperListPage} />
+                <Route path="/work-papers/create" component={WorkPaperCreatePage} />
+                <Route path="/work-papers/:id" component={WorkPaperDetailPage} />
+                <Route path="/work-paper-items" component={WorkPaperItemsListPage} />
+                <Route path="/work-paper-items/:id" component={WorkPaperItemDetailPage} />
+                <Route path="/work-paper-signatures" component={WorkPaperSignaturesListPage} />
+                <Route path="/vaccines" component={VaccinesPage} />
+                <Route
+                  path="/organization/:id"
+                  component={OrganizationDetailPage}
+                />
+                <Route path="/organization" component={OrganizationPage} />
+                <Route path="/permission/:id" component={PermissionDetailPage} />
+                <Route path="/permission" component={PermissionPage} />
+                <Route path="/users/:id" component={UserDetailPage} />
+                <Route path="/users" component={UserPage} />
+                <Route path="/profile" component={ProfilePage} />
+                <Route component={NotFound} />
+              </Switch>
+            </div>
           </main>
         </div>
       </div>
@@ -173,12 +175,11 @@ export default function App() {
                 <AuthenticatedLayout />
               </ProtectedRoute>
             </Route>
-            <Route path="/">
+            <Route path="/business-trip-verifications">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>
             </Route>
-            <Route path="/business-trips/verifications" component={BusinessTripVerificationsPage} />
             <Route component={NotFound} />
           </Switch>
           <Toaster />

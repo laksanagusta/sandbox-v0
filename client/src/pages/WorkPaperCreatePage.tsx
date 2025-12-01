@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -277,94 +278,135 @@ export default function WorkPaperCreatePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b bg-card px-6 py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-semibold">Buat Work Paper Baru</h1>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setLocation("/work-papers")}
-            className="hover:bg-muted"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Kembali
-          </Button>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="p-8">
+    <div className="bg-background min-h-screen">
+      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="space-y-6">
-          {/* Basic Information */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4">Informasi Dasar</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <Label htmlFor="organization_id">Organisasi</Label>
-                <SearchableSelect
-                  value={organizationId}
-                  onValueChange={setOrganizationId}
-                  placeholder="Pilih organisasi"
-                  disabled={isLoadingOrgs}
-                  loading={isLoadingOrgs}
-                  options={organizations.map((org) => ({
-                    value: org.id,
-                    label: org.name,
-                    subtitle: org.code,
-                  }))}
-                  onSearch={loadOrganizations}
-                  searchPlaceholder="Cari organisasi..."
-                  className="mt-1"
-                />
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="outline"
+                onClick={() => setLocation("/work-papers")}
+                className="flex items-center space-x-2 hover:bg-gray-100 transition-colors"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Kembali</span>
+              </Button>
+              <div className="flex items-center space-x-3">
+                <FileText className="w-8 h-8 text-gray-600" />
+                <div>
+                  <h1 className="text-2xl font-semibold">
+                    Buat Work Paper Baru
+                  </h1>
+                </div>
               </div>
-              <div>
-                <Label htmlFor="year">Tahun</Label>
-                <Input
-                  id="year"
-                  type="number"
-                  value={year}
-                  onChange={(e) =>
-                    setYear(
-                      parseInt(e.target.value) || new Date().getFullYear()
-                    )
-                  }
-                  min="2020"
-                  max="2030"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="semester">Semester</Label>
-                <Select
-                  value={semester.toString()}
-                  onValueChange={(value) => setSemester(parseInt(value))}
-                >
-                  <SelectTrigger className="mt-1">
-                    <SelectValue placeholder="Pilih semester" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value={"1"}>Semester 1</SelectItem>
-                    <SelectItem value="2">Semester 2</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            </div>
+
+            {/* Action Button */}
+            <div className="flex items-center space-x-3">
+              <Button
+                onClick={handleCreateWorkPaper}
+                disabled={isCreating || !organizationId || signers.length === 0}
+                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                {isCreating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Membuat...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    <span>Buat Work Paper</span>
+                  </>
+                )}
+              </Button>
             </div>
           </div>
 
-          {/* Signers Management */}
-          <div>
-            <div className="space-y-4">
-              <Label className="text-sm font-medium">Daftar Signers</Label>
+          {/* Basic Information Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Briefcase className="w-5 h-5" />
+                <span>Informasi Dasar</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Organisasi
+                  </Label>
+                  <SearchableSelect
+                    value={organizationId}
+                    onValueChange={setOrganizationId}
+                    placeholder="Pilih organisasi"
+                    disabled={isLoadingOrgs}
+                    loading={isLoadingOrgs}
+                    options={organizations.map((org) => ({
+                      value: org.id,
+                      label: org.name,
+                      subtitle: org.code,
+                    }))}
+                    onSearch={loadOrganizations}
+                    searchPlaceholder="Cari organisasi..."
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Tahun
+                  </Label>
+                  <Input
+                    id="year"
+                    type="number"
+                    value={year}
+                    onChange={(e) =>
+                      setYear(
+                        parseInt(e.target.value) || new Date().getFullYear()
+                      )
+                    }
+                    min="2020"
+                    max="2030"
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Semester
+                  </Label>
+                  <Select
+                    value={semester.toString()}
+                    onValueChange={(value) => setSemester(parseInt(value))}
+                  >
+                    <SelectTrigger className="mt-1">
+                      <SelectValue placeholder="Pilih semester" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value={"1"}>Semester 1</SelectItem>
+                      <SelectItem value="2">Semester 2</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
+          {/* Signers Management Card */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <User className="w-5 h-5" />
+                <span>Daftar Signers</span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               {/* Signer Rows */}
               {signers.map((signer, index) => (
                 <div
                   key={signer.id}
-                  className="border rounded-lg p-4 space-y-4"
+                  className="border rounded-lg p-4 space-y-4 bg-gray-50"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -383,7 +425,9 @@ export default function WorkPaperCreatePage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                      <Label className="text-sm">Pilih User</Label>
+                      <Label className="text-sm font-medium text-gray-700">
+                        Pilih User
+                      </Label>
                       <SearchableSelect
                         value={signer.user_id}
                         onValueChange={(value) => {
@@ -394,7 +438,7 @@ export default function WorkPaperCreatePage() {
                             updateSigner(signer.id, {
                               user_id: selectedUser.id,
                               user_name: `${selectedUser.first_name} ${selectedUser.last_name}`,
-                              user_email: selectedUser.phone_number, // Using phone number since no email field
+                              user_email: selectedUser.phone_number,
                               user_role: selectedUser.roles[0]?.name || "Staff",
                             });
                           }
@@ -414,7 +458,9 @@ export default function WorkPaperCreatePage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm">Nama Lengkap</Label>
+                      <Label className="text-sm font-medium text-gray-700">
+                        Nama Lengkap
+                      </Label>
                       <Input
                         value={signer.user_name}
                         onChange={(e) =>
@@ -426,7 +472,9 @@ export default function WorkPaperCreatePage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm">Email</Label>
+                      <Label className="text-sm font-medium text-gray-700">
+                        Email
+                      </Label>
                       <Input
                         type="email"
                         value={signer.user_email}
@@ -441,7 +489,9 @@ export default function WorkPaperCreatePage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm">Role/Jabatan</Label>
+                      <Label className="text-sm font-medium text-gray-700">
+                        Role/Jabatan
+                      </Label>
                       <Input
                         value={signer.user_role}
                         onChange={(e) =>
@@ -455,7 +505,9 @@ export default function WorkPaperCreatePage() {
 
                   <div className="flex items-end">
                     <div className="flex-1">
-                      <Label className="text-sm">Tipe Tanda Tangan</Label>
+                      <Label className="text-sm font-medium text-gray-700">
+                        Tipe Tanda Tangan
+                      </Label>
                       <Select
                         value={signer.signature_type}
                         onValueChange={(
@@ -492,90 +544,62 @@ export default function WorkPaperCreatePage() {
                   </div>
                 </div>
               ))}
-            </div>
 
-            {/* Add Signer Button */}
-            <div className="pt-4">
-              <Button
-                onClick={addNewSigner}
-                variant="outline"
-                className="flex items-center space-x-2"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Tambah Signer Baru</span>
-              </Button>
-            </div>
+              {/* Add Signer Button */}
+              <div className="pt-4">
+                <Button
+                  onClick={addNewSigner}
+                  variant="outline"
+                  className="flex items-center space-x-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Tambah Signer Baru</span>
+                </Button>
+              </div>
 
-            {/* Signers Summary */}
-            {signers.length > 0 && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium text-blue-900">
-                      Ringkasan Signers
-                    </h4>
-                    <p className="text-sm text-blue-700 mt-1">
-                      Total {signers.length} signer akan ditambahkan ke work
-                      paper ini
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {Object.entries(
-                        signers.reduce((acc, signer) => {
-                          acc[signer.signature_type] =
-                            (acc[signer.signature_type] || 0) + 1;
-                          return acc;
-                        }, {} as Record<string, number>)
-                      ).map(([type, count]) => (
-                        <span
-                          key={type}
-                          className={`px-2 py-1 rounded-full text-xs font-medium ${
-                            signatureTypeColors[
-                              type as keyof typeof signatureTypeColors
-                            ]
-                          }`}
-                        >
-                          {
-                            signatureTypeLabels[
-                              type as keyof typeof signatureTypeLabels
-                            ]
-                          }
-                          : {count}
-                        </span>
-                      ))}
+              {/* Signers Summary */}
+              {signers.length > 0 && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="font-medium text-blue-900">
+                        Ringkasan Signers
+                      </h4>
+                      <p className="text-sm text-blue-700 mt-1">
+                        Total {signers.length} signer akan ditambahkan ke work
+                        paper ini
+                      </p>
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {Object.entries(
+                          signers.reduce((acc, signer) => {
+                            acc[signer.signature_type] =
+                              (acc[signer.signature_type] || 0) + 1;
+                            return acc;
+                          }, {} as Record<string, number>)
+                        ).map(([type, count]) => (
+                          <span
+                            key={type}
+                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              signatureTypeColors[
+                                type as keyof typeof signatureTypeColors
+                              ]
+                            }`}
+                          >
+                            {
+                              signatureTypeLabels[
+                                type as keyof typeof signatureTypeLabels
+                              ]
+                            }
+                            : {count}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex items-center justify-end space-x-4 pt-6 border-t">
-            <Button
-              variant="outline"
-              onClick={() => setLocation("/work-papers")}
-              disabled={isCreating}
-            >
-              Batal
-            </Button>
-            <Button
-              onClick={handleCreateWorkPaper}
-              disabled={isCreating || !organizationId || signers.length === 0}
-              className="flex items-center space-x-2"
-            >
-              {isCreating ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Membuat...</span>
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  <span>Buat Work Paper</span>
-                </>
               )}
-            </Button>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>

@@ -5,9 +5,10 @@ import { Card } from "@/components/ui/card";
 
 interface UploadFormProps {
   onUploaded: (data: any) => void;
+  disabled?: boolean;
 }
 
-export default function UploadForm({ onUploaded }: UploadFormProps) {
+export default function UploadForm({ onUploaded, disabled = false }: UploadFormProps) {
   const [files, setFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,13 +105,14 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
             htmlFor="file-upload"
             className={`
               flex flex-col items-center justify-center w-full h-32 
-              border-2 border-dashed rounded-lg cursor-pointer
+              border-2 border-dashed rounded-lg
               transition-colors
               ${
                 success
                   ? "border-chart-2 bg-chart-2/5"
                   : "border-input hover:border-primary/50 bg-muted/30"
               }
+              ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
             `}
             data-testid="label-file-upload"
           >
@@ -142,6 +144,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
               multiple
               accept=".pdf,.jpg,.jpeg,.png"
               onChange={handleFileChange}
+              disabled={disabled}
               data-testid="input-file"
             />
           </label>
@@ -170,6 +173,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
                     size="icon"
                     variant="ghost"
                     onClick={() => removeFile(index)}
+                    disabled={disabled}
                     className="h-6 w-6 flex-shrink-0"
                     data-testid={`button-remove-${index}`}
                   >
@@ -193,7 +197,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
 
         <Button
           onClick={handleUpload}
-          disabled={files.length === 0 || uploading}
+          disabled={files.length === 0 || uploading || disabled}
           className="modern-btn-success w-full sm:w-auto"
           data-testid="button-upload"
         >

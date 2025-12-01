@@ -28,7 +28,7 @@ import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate, formatDateTime } from "@/utils/dateFormat";
 
-export type BusinessTripStatus = 'draft' | 'ongoing' | 'completed' | 'canceled';
+export type BusinessTripStatus = 'draft' | 'ongoing' | 'ready_to_verify' | 'completed' | 'canceled';
 
 interface BusinessTrip {
   id: string;
@@ -219,6 +219,11 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
         text: "text-blue-800",
         label: "Ongoing"
       },
+      ready_to_verify: {
+        bg: "bg-purple-100",
+        text: "text-purple-800",
+        label: "Ready to Verify"
+      },
       completed: {
         bg: "bg-green-100",
         text: "text-green-800",
@@ -266,6 +271,7 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
+              <SelectItem value="ready_to_verify">Ready to Verify</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
               <SelectItem value="canceled">Canceled</SelectItem>
             </SelectContent>

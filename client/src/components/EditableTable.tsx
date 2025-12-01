@@ -15,11 +15,13 @@ import { Assignee, PaymentType, Transaction } from "@shared/types";
 interface EditableTableProps {
   assignees: Assignee[];
   onUpdateAssignees: (assignees: Assignee[]) => void;
+  disabled?: boolean;
 }
 
 export default function EditableTable({
   assignees,
   onUpdateAssignees,
+  disabled = false,
 }: EditableTableProps) {
   const updateTransaction = (
     assigneeIndex: number,
@@ -250,6 +252,7 @@ export default function EditableTable({
         <h2 className="text-lg font-semibold">Transaksi</h2>
         <Button
           onClick={addAssignee}
+          disabled={disabled}
           className="modern-btn-secondary"
           data-testid="button-add-assignee"
         >
@@ -268,6 +271,7 @@ export default function EditableTable({
               size="icon"
               variant="ghost"
               onClick={() => deleteAssignee(assigneeIndex)}
+              disabled={disabled}
               className="text-destructive hover:text-destructive"
               data-testid={`button-delete-assignee-${assigneeIndex}`}
             >
@@ -285,6 +289,7 @@ export default function EditableTable({
                 onChange={(e) =>
                   updateAssigneeField(assigneeIndex, "name", e.target.value)
                 }
+                disabled={disabled}
                 placeholder="Nama Data Pegawai"
                 className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-name-${assigneeIndex}`}
@@ -302,6 +307,7 @@ export default function EditableTable({
                     e.target.value
                   )
                 }
+                disabled={disabled}
                 placeholder="No. SPD"
                 className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-spd-${assigneeIndex}`}
@@ -320,6 +326,7 @@ export default function EditableTable({
                     e.target.value
                   )
                 }
+                disabled={disabled}
                 placeholder="NIP"
                 className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-employee-number-${assigneeIndex}`}
@@ -334,6 +341,7 @@ export default function EditableTable({
                 onChange={(e) =>
                   updateAssigneeField(assigneeIndex, "position", e.target.value)
                 }
+                disabled={disabled}
                 placeholder="Jabatan"
                 className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-position-${assigneeIndex}`}
@@ -348,6 +356,7 @@ export default function EditableTable({
                 onChange={(e) =>
                   updateAssigneeField(assigneeIndex, "rank", e.target.value)
                 }
+                disabled={disabled}
                 placeholder="Golongan"
                 className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-rank-${assigneeIndex}`}
@@ -402,6 +411,7 @@ export default function EditableTable({
                               e.target.value
                             )
                           }
+                          disabled={disabled}
                           placeholder="Tipe"
                           className="h-9 text-sm"
                           data-testid={`input-type-${assigneeIndex}-${transactionIndex}`}
@@ -418,6 +428,7 @@ export default function EditableTable({
                               e.target.value
                             )
                           }
+                          disabled={disabled}
                           placeholder="Subtipe"
                           className="h-9 text-sm"
                           data-testid={`input-subtype-${assigneeIndex}-${transactionIndex}`}
@@ -434,6 +445,7 @@ export default function EditableTable({
                               e.target.value
                             )
                           }
+                          disabled={disabled}
                           placeholder="Deskripsi"
                           className="h-9 text-sm"
                           data-testid={`input-description-${assigneeIndex}-${transactionIndex}`}
@@ -454,6 +466,7 @@ export default function EditableTable({
                               e.target.value
                             )
                           }
+                          disabled={disabled}
                           placeholder="0"
                           className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
                           data-testid={`input-amount-${assigneeIndex}-${transactionIndex}`}
@@ -483,6 +496,7 @@ export default function EditableTable({
                                 e.target.value
                               )
                             }
+                            disabled={disabled}
                             placeholder="0"
                             className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
                             data-testid={`input-subtotal-${assigneeIndex}-${transactionIndex}`}
@@ -500,6 +514,7 @@ export default function EditableTable({
                               value
                             )
                           }
+                          disabled={disabled}
                         >
                           <SelectTrigger
                             className="h-9 text-sm rounded-md"
@@ -525,6 +540,7 @@ export default function EditableTable({
                                 value
                               )
                             }
+                            disabled={disabled}
                           >
                             <SelectTrigger
                               className="h-9 text-sm rounded-md"
@@ -564,6 +580,7 @@ export default function EditableTable({
                                 e.target.value
                               )
                             }
+                            disabled={disabled}
                             placeholder={isHotel ? "Jml malam" : "Jml hari"}
                             className="h-9 text-sm text-center"
                             type="number"
@@ -585,6 +602,7 @@ export default function EditableTable({
                           onClick={() =>
                             deleteTransaction(assigneeIndex, transactionIndex)
                           }
+                          disabled={disabled}
                           className="h-8 w-8 text-destructive hover:text-destructive"
                           data-testid={`button-delete-transaction-${assigneeIndex}-${transactionIndex}`}
                         >
@@ -624,6 +642,7 @@ export default function EditableTable({
           <div className="flex justify-end mt-4">
             <Button
               onClick={() => addTransaction(assigneeIndex)}
+              disabled={disabled}
               className="modern-btn-secondary"
               data-testid={`button-add-transaction-${assigneeIndex}`}
             >

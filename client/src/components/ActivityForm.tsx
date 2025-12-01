@@ -20,12 +20,14 @@ interface ActivityFormProps {
   activity: ActivityFormPropsData;
   onChange: (activity: ActivityFormPropsData) => void;
   errors?: Partial<Record<keyof ActivityFormPropsData, string>>; // Add errors prop
+  disabled?: boolean;
 }
 
 export default function ActivityForm({
   activity,
   onChange,
   errors,
+  disabled = false,
 }: ActivityFormProps) {
   const handleChange = (field: keyof ActivityFormPropsData, value: string) => {
     onChange({
@@ -66,6 +68,7 @@ export default function ActivityForm({
             type="date"
             value={activity.startDate}
             onChange={(e) => handleChange("startDate", e.target.value)}
+            disabled={disabled}
             className={`w-full ${
               errors?.startDate
                 ? "border-destructive focus-visible:ring-destructive"
@@ -87,6 +90,7 @@ export default function ActivityForm({
             type="date"
             value={activity.endDate}
             onChange={(e) => handleChange("endDate", e.target.value)}
+            disabled={disabled}
             className={`w-full ${
               errors?.endDate
                 ? "border-destructive focus-visible:ring-destructive"
@@ -108,6 +112,7 @@ export default function ActivityForm({
             type="text"
             value={activity.activityPurpose}
             onChange={(e) => handleChange("activityPurpose", e.target.value)}
+            disabled={disabled}
             placeholder="Contoh: Monitoring and Evaluation"
             className={`w-full ${
               errors?.activityPurpose
@@ -130,6 +135,7 @@ export default function ActivityForm({
             type="text"
             value={activity.destinationCity}
             onChange={(e) => handleChange("destinationCity", e.target.value)}
+            disabled={disabled}
             placeholder="Contoh: Balikpapan"
             className={`w-full ${
               errors?.destinationCity
@@ -152,6 +158,7 @@ export default function ActivityForm({
             type="date"
             value={activity.spdDate}
             onChange={(e) => handleChange("spdDate", e.target.value)}
+            disabled={disabled}
             className={`w-full ${
               errors?.spdDate
                 ? "border-destructive focus-visible:ring-destructive"
@@ -173,6 +180,7 @@ export default function ActivityForm({
             type="date"
             value={activity.departureDate}
             onChange={(e) => handleChange("departureDate", e.target.value)}
+            disabled={disabled}
             className={`w-full ${
               errors?.departureDate
                 ? "border-destructive focus-visible:ring-destructive"
@@ -194,6 +202,7 @@ export default function ActivityForm({
             type="date"
             value={activity.returnDate}
             onChange={(e) => handleChange("returnDate", e.target.value)}
+            disabled={disabled}
             className={`w-full ${
               errors?.returnDate
                 ? "border-destructive focus-visible:ring-destructive"
@@ -217,6 +226,7 @@ export default function ActivityForm({
             onChange={(e) =>
               handleChange("receiptSignatureDate", e.target.value)
             }
+            disabled={disabled}
             className={`w-full ${
               errors?.receiptSignatureDate
                 ? "border-destructive focus-visible:ring-destructive"
@@ -241,6 +251,7 @@ export default function ActivityForm({
           type="url"
           value={activity.documentLink || ""}
           onChange={(e) => handleChange("documentLink", e.target.value)}
+          disabled={disabled}
           placeholder="https://drive.google.com/..."
           className={`w-full ${
             errors?.documentLink

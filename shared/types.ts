@@ -23,7 +23,7 @@ export interface Assignee {
   transactions: Transaction[];
 }
 
-export type BusinessTripStatus = "draft" | "ongoing" | "completed" | "canceled";
+export type BusinessTripStatus = "draft" | "ongoing" | "ready_to_verify" | "completed" | "canceled";
 
 export interface KwitansiData {
   businessTripNumber?: string;

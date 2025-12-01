@@ -28,7 +28,8 @@ export const validateStatusTransition = (
   // Define allowed transitions
   const allowedTransitions: Record<BusinessTripStatus, BusinessTripStatus[]> = {
     draft: ['ongoing', 'canceled'],
-    ongoing: ['completed', 'draft', 'canceled'],
+    ongoing: ['ready_to_verify', 'completed', 'draft', 'canceled'],
+    ready_to_verify: ['completed', 'ongoing', 'canceled'],
     completed: [], // No transitions allowed from completed
     canceled: [], // No transitions allowed from canceled
   };
@@ -50,7 +51,8 @@ export const getNextAvailableStatuses = (
   // Define allowed transitions (excluding current status)
   const allowedTransitions: Record<BusinessTripStatus, BusinessTripStatus[]> = {
     draft: ['ongoing', 'canceled'],
-    ongoing: ['completed', 'draft', 'canceled'],
+    ongoing: ['ready_to_verify', 'completed', 'draft', 'canceled'],
+    ready_to_verify: ['completed', 'ongoing', 'canceled'],
     completed: [],
     canceled: [],
   };
@@ -76,6 +78,7 @@ export const getStatusDescription = (status: BusinessTripStatus): string => {
   const descriptions: Record<BusinessTripStatus, string> = {
     draft: 'Draft - Business trip baru dibuat',
     ongoing: 'Ongoing - Sedang berjalan',
+    ready_to_verify: 'Ready to Verify - Siap untuk diverifikasi',
     completed: 'Completed - Telah selesai',
     canceled: 'Canceled - Dibatalkan',
   };

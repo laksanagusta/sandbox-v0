@@ -51,8 +51,8 @@ export default function LoginPage() {
         const token = localStorage.getItem("auth_token");
         const userData = localStorage.getItem("user_data");
         console.log('After login - localStorage:', { token, userData });
-        console.log('Redirecting to / after delay');
-        setLocation("/");
+        console.log('Redirecting to /business-trips/report after delay');
+        setLocation("/business-trips/report");
       }, 100);
     } catch (err) {
       console.error('Login error:', err);

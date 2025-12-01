@@ -104,10 +104,16 @@ export default function BusinessTripVerificationsPage() {
 
       params.append("order", `${filters.sortOrder === "desc" ? "-" : ""}${filters.sortBy}`);
 
-      const response = await apiClient(
-        `/api/v1/business-trips/verifications?${params.toString()}`,
+      const token = localStorage.getItem("auth_token");
+      const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
+      const response = await fetch(
+        `${baseUrl}/api/v1/business-trips/verifications?${params.toString()}`,
         {
           method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -200,18 +206,25 @@ export default function BusinessTripVerificationsPage() {
 
   const handleApprove = async (verificationId: string) => {
     try {
-      const response = await apiClient(
-        `/api/v1/business-trips/verifications/${verificationId}/approve`,
-        {
-          method: "POST",
-        }
-      );
+      const token = localStorage.getItem("auth_token");
+      console.log("Token from localStorage:", token);
+      // const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
+      // const response = await fetch(
+      //   `${baseUrl}/api/v1/business-trips/verifications/${verificationId}/approve`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Authorization": `Bearer ${token}`,
+      //       "Content-Type": "application/json",
+      //     },
+      //   }
+      // );
 
-      if (!response.ok) {
-        throw new Error(`Gagal menyetujui verifikasi: ${response.status}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`Gagal menyetujui verifikasi: ${response.status}`);
+      // }
 
-      await fetchVerifications();
+      // await fetchVerifications();
       toast({
         title: "Success",
         description: "Verifikasi berhasil disetujui",
@@ -231,24 +244,28 @@ export default function BusinessTripVerificationsPage() {
 
   const handleReject = async (verificationId: string, notes?: string) => {
     try {
-      const response = await apiClient(
-        `/api/v1/business-trips/verifications/${verificationId}/reject`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            verification_notes: notes,
-          }),
-        }
-      );
+      const token = localStorage.getItem("auth_token");
+      console.log("Token from localStorage:", token);
+      // const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
+      // const response = await fetch(
+      //   `${baseUrl}/api/v1/business-trips/verifications/${verificationId}/reject`,
+      //   {
+      //     method: "POST",
+      //     headers: {
+      //       "Authorization": `Bearer ${token}`,
+      //       "Content-Type": "application/json",
+      //     },
+      //     body: JSON.stringify({
+      //       verification_notes: notes,
+      //     }),
+      //   }
+      // );
 
-      if (!response.ok) {
-        throw new Error(`Gagal menolak verifikasi: ${response.status}`);
-      }
+      // if (!response.ok) {
+      //   throw new Error(`Gagal menolak verifikasi: ${response.status}`);
+      // }
 
-      await fetchVerifications();
+      // await fetchVerifications();
       toast({
         title: "Success",
         description: "Verifikasi berhasil ditolak",

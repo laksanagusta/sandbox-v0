@@ -103,7 +103,7 @@ export function WorkPaperItemsTable({ className = "" }: WorkPaperItemsTableProps
         params.sort = `${sortField} ${sortOrder}`;
       }
 
-      const response = await apiClient.getWorkPaperItems(params);
+      const response = (await apiClient.getWorkPaperItems(params)) as WorkPaperItemResponse;
 
       // Handle the response structure
       const items = response.data || [];
@@ -168,63 +168,57 @@ export function WorkPaperItemsTable({ className = "" }: WorkPaperItemsTableProps
     );
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMM yyyy", { locale: id as any });
-    } catch (error) {
-      return "-";
-    }
-  };
+
 
   
   const getTypeBadge = (type: string) => {
     const typeConfig: Record<string, { bg: string; text: string; label: string }> = {
       A: {
-        bg: "bg-blue-50 border-blue-200",
-        text: "text-blue-700",
+        bg: "bg-blue-100",
+        text: "text-blue-800",
         label: "Type A"
       },
       B: {
-        bg: "bg-green-50 border-green-200",
-        text: "text-green-700",
+        bg: "bg-green-100",
+        text: "text-green-800",
         label: "Type B"
       },
       C: {
-        bg: "bg-purple-50 border-purple-200",
-        text: "text-purple-700",
+        bg: "bg-purple-100",
+        text: "text-purple-800",
         label: "Type C"
       },
       Q: {
-        bg: "bg-orange-50 border-orange-200",
-        text: "text-orange-700",
+        bg: "bg-orange-100",
+        text: "text-orange-800",
         label: "Type Q"
       }
     };
 
     const config = typeConfig[type] || {
-      bg: "bg-gray-50 border-gray-200",
-      text: "text-gray-700",
+      bg: "bg-gray-100",
+      text: "text-gray-800",
       label: `Type ${type}`
     };
 
     return (
-      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${config.bg} ${config.text}`}>
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
         {config.label}
       </span>
     );
   };
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-4 ${className}`}>
       {/* Search and Filter Controls */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder="Search work paper items..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-10"
+            className="pl-10"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -233,7 +227,7 @@ export function WorkPaperItemsTable({ className = "" }: WorkPaperItemsTableProps
             value={statusFilter}
             onValueChange={(value: string) => setStatusFilter(value)}
           >
-            <SelectTrigger className="w-40 h-10">
+            <SelectTrigger className="w-40">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
@@ -249,79 +243,90 @@ export function WorkPaperItemsTable({ className = "" }: WorkPaperItemsTableProps
           variant="outline"
           onClick={fetchWorkPaperItems}
           disabled={loading}
-          className="h-10"
         >
           Refresh
         </Button>
       </div>
 
       {/* Table */}
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-border">
-              <TableHead
-                className="font-medium text-muted-foreground py-3 px-4 cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("id")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>ID</span>
-                  {getSortIcon("id")}
-                </div>
+            <TableRow>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("id")}
+                >
+                  ID
+                  <span className="ml-2">{getSortIcon("id")}</span>
+                </Button>
               </TableHead>
-              <TableHead
-                className="font-medium text-muted-foreground py-3 px-4 cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("number")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>No</span>
-                  {getSortIcon("number")}
-                </div>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("number")}
+                >
+                  No
+                  <span className="ml-2">{getSortIcon("number")}</span>
+                </Button>
               </TableHead>
-              <TableHead
-                className="font-medium text-muted-foreground py-3 px-4 cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("type")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Type</span>
-                  {getSortIcon("type")}
-                </div>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("type")}
+                >
+                  Type
+                  <span className="ml-2">{getSortIcon("type")}</span>
+                </Button>
               </TableHead>
-              <TableHead
-                className="font-medium text-muted-foreground py-3 px-4 cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("statement")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Statement</span>
-                  {getSortIcon("statement")}
-                </div>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("statement")}
+                >
+                  Statement
+                  <span className="ml-2">{getSortIcon("statement")}</span>
+                </Button>
               </TableHead>
-              <TableHead
-                className="font-medium text-muted-foreground py-3 px-4 cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("level")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Level</span>
-                  {getSortIcon("level")}
-                </div>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("level")}
+                >
+                  Level
+                  <span className="ml-2">{getSortIcon("level")}</span>
+                </Button>
               </TableHead>
-              <TableHead
-                className="font-medium text-muted-foreground py-3 px-4 cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("created_at")}
-              >
-                <div className="flex items-center space-x-1">
-                  <span>Created</span>
-                  {getSortIcon("created_at")}
-                </div>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("created_at")}
+                >
+                  Created
+                  <span className="ml-2">{getSortIcon("created_at")}</span>
+                </Button>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-12">
+                <TableCell colSpan={6} className="text-center py-8">
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
                     <span>Loading...</span>
                   </div>
                 </TableCell>
@@ -330,54 +335,52 @@ export function WorkPaperItemsTable({ className = "" }: WorkPaperItemsTableProps
               <TableRow>
                 <TableCell
                   colSpan={6}
-                  className="text-center py-16"
+                  className="text-center py-8 text-gray-500"
                 >
-                  <div className="flex flex-col items-center">
-                    <FileText className="h-12 w-12 text-muted-foreground mb-3" />
-                    <p className="text-muted-foreground text-sm mb-1">Tidak ada data work paper items</p>
-                    {debouncedSearchTerm && (
-                      <p className="text-xs text-muted-foreground/60">Coba kata kunci pencarian lain</p>
-                    )}
-                  </div>
+                  <FileText className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                  <p>Tidak ada data work paper items</p>
+                  {debouncedSearchTerm && (
+                    <p className="text-sm">Coba kata kunci pencarian lain</p>
+                  )}
                 </TableCell>
               </TableRow>
             ) : workPaperItems?.map((item) => (
-              <TableRow key={item.id} className="border-b hover:bg-muted/50 transition-colors">
-                <TableCell className="py-3 px-4">
+              <TableRow key={item.id}>
+                <TableCell className="font-medium">
                   <button
                     onClick={() => setLocation(`/work-paper-items/${item.id}`)}
-                    className="flex items-start space-x-3 hover:text-primary transition-colors group text-left"
+                    className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                   >
-                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                    <span className="break-words font-mono text-sm">
+                    <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0" />
+                    <span className="font-mono text-sm">
                       {item.id}
                     </span>
                   </button>
                 </TableCell>
-                <TableCell className="py-3 px-4">
+                <TableCell>
                   <div className="flex items-center space-x-2">
-                    {item.parent_id && <ChevronRight className="h-3 w-3 text-muted-foreground" />}
+                    {item.parent_id && <ChevronRight className="h-3 w-3 text-gray-400" />}
                     <span className="text-sm font-medium">{item.number}</span>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 px-4">
+                <TableCell>
                   {getTypeBadge(item.type)}
                 </TableCell>
-                <TableCell className="py-3 px-4">
+                <TableCell>
                   <div className="flex items-start space-x-2">
-                    <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
+                    <FileText className="h-4 w-4 text-gray-500 flex-shrink-0 mt-0.5" />
                     <span className="text-sm break-words max-w-xs">
                       {item.statement}
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 px-4">
+                <TableCell>
                   <span className="text-sm">Level {item.level}</span>
                 </TableCell>
-                <TableCell className="py-3 px-4">
-                  <div className="flex items-start space-x-2">
-                    <User className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-                    <span className="text-xs text-muted-foreground/60">
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <User className="h-4 w-4 text-gray-500" />
+                    <span className="text-xs text-gray-500">
                       {formatDateTime(item.created_at)}
                     </span>
                   </div>
@@ -391,8 +394,8 @@ export function WorkPaperItemsTable({ className = "" }: WorkPaperItemsTableProps
       {/* Pagination */}
       {!loading && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Menampilkan <span className="font-medium">{pagination.count}</span> dari <span className="font-medium">{pagination.total_count}</span> data
+          <p className="text-sm text-gray-600">
+            Menampilkan {pagination.count} dari {pagination.total_count} data
           </p>
           {pagination.total_page > 1 && (
             <div>

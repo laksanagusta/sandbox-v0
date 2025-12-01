@@ -129,7 +129,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
         );
       }
 
+
       localStorage.setItem("auth_token", token);
+      
+      // Verify token was saved successfully
+      const savedToken = localStorage.getItem("auth_token");
+      if (!savedToken || savedToken !== token) {
+        console.error("Token was not saved properly to localStorage!");
+        throw new Error("Gagal menyimpan token. Silakan coba lagi.");
+      }
+      console.log("Token saved successfully to localStorage:", {
+        tokenLength: token.length,
+        tokenPreview: token.substring(0, 20) + "...",
+        verified: savedToken === token,
+      });
+
 
       // Get user data dari /whoami
       try {

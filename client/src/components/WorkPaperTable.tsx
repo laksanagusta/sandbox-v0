@@ -189,30 +189,24 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
     );
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      return format(new Date(dateString), "dd MMM yyyy", { locale: id as any });
-    } catch (error) {
-      return "-";
-    }
-  };
+
 
   
   const getStatusBadge = (status: WorkPaperStatus) => {
     const statusConfig = {
       ongoing: {
-        bg: "bg-blue-50 border-blue-200",
-        text: "text-blue-700",
+        bg: "bg-blue-100",
+        text: "text-blue-800",
         label: "Ongoing"
       },
       completed: {
-        bg: "bg-green-50 border-green-200",
-        text: "text-green-700",
+        bg: "bg-green-100",
+        text: "text-green-800",
         label: "Completed"
       },
       draft: {
-        bg: "bg-gray-50 border-gray-200",
-        text: "text-gray-700",
+        bg: "bg-gray-100",
+        text: "text-gray-800",
         label: "Draft"
       }
     };
@@ -220,7 +214,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
     const config = statusConfig[status] || statusConfig.draft;
 
     return (
-      <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border ${config.bg} ${config.text}`}>
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
         {config.label}
       </span>
     );
@@ -231,16 +225,16 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
   };
 
   return (
-    <div className={`space-y-6 ${className}`}>
+    <div className={`space-y-4 ${className}`}>
       {/* Search and Filter Controls */}
-      <div className="flex items-center space-x-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
             placeholder="Search work paper..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 h-10"
+            className="pl-10"
           />
         </div>
         <div className="flex items-center space-x-2">
@@ -249,7 +243,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
             value={statusFilter}
             onValueChange={(value: WorkPaperStatus | "all") => setStatusFilter(value)}
           >
-            <SelectTrigger className="w-40 h-10">
+            <SelectTrigger className="w-40">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -264,43 +258,80 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
           variant="outline"
           onClick={fetchWorkPapers}
           disabled={loading}
-          className="h-10"
         >
           Refresh
         </Button>
       </div>
 
       {/* Table */}
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className="rounded-md border">
         <Table>
           <TableHeader>
-            <TableRow className="border-b border-border">
-              <TableHead className="font-medium text-muted-foreground py-3 px-4">
-                Work Paper ID
+            <TableRow>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("id")}
+                >
+                  Work Paper ID
+                  <span className="ml-2">{getSortIcon("id")}</span>
+                </Button>
               </TableHead>
-              <TableHead className="font-medium text-muted-foreground py-3 px-4">
-                Tahun
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("year")}
+                >
+                  Tahun
+                  <span className="ml-2">{getSortIcon("year")}</span>
+                </Button>
               </TableHead>
-              <TableHead className="font-medium text-muted-foreground py-3 px-4">
-                Semester
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("semester")}
+                >
+                  Semester
+                  <span className="ml-2">{getSortIcon("semester")}</span>
+                </Button>
               </TableHead>
-              <TableHead className="font-medium text-muted-foreground py-3 px-4">
-                Organization
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("organization_id")}
+                >
+                  Organization
+                  <span className="ml-2">{getSortIcon("organization_id")}</span>
+                </Button>
               </TableHead>
-              <TableHead className="font-medium text-muted-foreground py-3 px-4">
-                Status
-              </TableHead>
-              <TableHead className="font-medium text-muted-foreground py-3 px-4">
-                Created
+              <TableHead>Status</TableHead>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("created_at")}
+                >
+                  Created
+                  <span className="ml-2">{getSortIcon("created_at")}</span>
+                </Button>
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-12">
+                <TableCell colSpan={6} className="text-center py-8">
                   <div className="flex items-center justify-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
                     <span>Loading...</span>
                   </div>
                 </TableCell>
@@ -308,50 +339,48 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
             ) : !workPapers || workPapers.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
-                  className="text-center py-16"
+                  colSpan={6}
+                  className="text-center py-8 text-gray-500"
                 >
-                  <div className="flex flex-col items-center">
-                    <FileText className="h-12 w-12 text-muted-foreground mb-3" />
-                    <p className="text-muted-foreground text-sm mb-1">Tidak ada data work paper</p>
-                    {debouncedSearchTerm && (
-                      <p className="text-xs text-muted-foreground/60">Coba kata kunci pencarian lain</p>
-                    )}
-                  </div>
+                  <FileText className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                  <p>Tidak ada data work paper</p>
+                  {debouncedSearchTerm && (
+                    <p className="text-sm">Coba kata kunci pencarian lain</p>
+                  )}
                 </TableCell>
               </TableRow>
             ) : workPapers?.map((workPaper) => (
-              <TableRow key={workPaper.id} className="border-b hover:bg-muted/50 transition-colors">
-                <TableCell className="py-3 px-4">
+              <TableRow key={workPaper.id}>
+                <TableCell className="font-medium">
                   <button
                     onClick={() => handleViewDetail(workPaper.id)}
-                    className="flex items-start space-x-3 hover:text-primary transition-colors group text-left"
+                    className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                   >
-                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                    <span className="break-words font-mono text-sm">
+                    <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0" />
+                    <span className="font-mono text-sm">
                       {workPaper.id}
                     </span>
                   </button>
                 </TableCell>
-                <TableCell className="py-3 px-4">
+                <TableCell>
                   <span className="text-sm">{workPaper.year}</span>
                 </TableCell>
-                <TableCell className="py-3 px-4">
-                  <span className="text-sm text-muted-foreground">{workPaper.semester}</span>
+                <TableCell>
+                  <span className="text-sm text-gray-500">{workPaper.semester}</span>
                 </TableCell>
-                <TableCell className="py-3 px-4">
-                  <div className="flex items-start space-x-2">
-                    <Building className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <span className="break-words font-mono text-sm text-muted-foreground">{workPaper.organization_id}</span>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Building className="h-4 w-4 text-gray-500" />
+                    <span className="font-mono text-sm text-gray-500">{workPaper.organization_id}</span>
                   </div>
                 </TableCell>
-                <TableCell className="py-3 px-4">
+                <TableCell>
                   {getStatusBadge(workPaper.status)}
                 </TableCell>
-                <TableCell className="py-3 px-4">
-                  <div className="flex items-start space-x-2">
-                    <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground/60">
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Calendar className="h-4 w-4 text-gray-500" />
+                    <span className="text-xs text-gray-500">
                       {formatDateTime(workPaper.created_at)}
                     </span>
                   </div>
@@ -365,8 +394,8 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
       {/* Pagination */}
       {!loading && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Menampilkan <span className="font-medium">{pagination.count}</span> dari <span className="font-medium">{pagination.total_count}</span> data
+          <p className="text-sm text-gray-600">
+            Menampilkan {pagination.count} dari {pagination.total_count} data
           </p>
           {pagination.total_page > 1 && (
             <div>

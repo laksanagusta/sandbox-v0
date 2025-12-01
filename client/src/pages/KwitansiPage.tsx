@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { useParams } from "wouter";
-import { Save, Plus, Edit } from "lucide-react";
+import { Save, Plus, Edit, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { SearchableSelect } from "@/components/SearchableSelect";
 import UploadForm from "@/components/UploadForm";
 import ActivityForm from "@/components/ActivityForm";
 import EditableTable from "@/components/EditableTable";
@@ -26,6 +30,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal } from "lucide-react";
+import { VerificatorsSection } from "@/components/VerificatorsSection";
+import { apiClient } from "@/lib/api-client";
 
 interface ActivityFormInput {
   startDate: string;
@@ -37,6 +43,33 @@ interface ActivityFormInput {
   returnDate: string;
   receiptSignatureDate: string;
   documentLink?: string;
+}
+
+interface Verificator {
+  id: string;
+  user_id: string;
+  user_name: string;
+  employee_number: string;
+  position: string;
+}
+
+interface UserData {
+  id: string;
+  employee_id: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  roles: {
+    id: string;
+    name: string;
+    description: string;
+  }[];
+  organizations: {
+    id: string;
+    name: string;
+  };
+  created_at: string;
 }
 
 // Helper function to normalize date format to YYYY-MM-DD for input fields
@@ -92,6 +125,13 @@ export default function KwitansiPage() {
   const [hasChanges, setHasChanges] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
+  // Verificators state
+  const [verificators, setVerificators] = useState<Verificator[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [isLoadingUsers, setIsLoadingUsers] = useState(false);
+  const [userSearch, setUserSearch] = useState("");
+  const [debouncedUserSearch, setDebouncedUserSearch] = useState("");
+
   const handleStatusChange = (newStatus: BusinessTripStatus) => {
     // Validate status transition
     if (validateStatusTransition(kwitansiData.status, newStatus)) {
@@ -111,6 +151,11 @@ export default function KwitansiPage() {
         text: "text-blue-800",
         label: "Ongoing",
       },
+      ready_to_verify: {
+        bg: "bg-purple-100 hover:bg-purple-200",
+        text: "text-purple-800",
+        label: "Ready to Verify",
+      },
       completed: {
         bg: "bg-green-100 hover:bg-green-200",
         text: "text-green-800",
@@ -125,7 +170,7 @@ export default function KwitansiPage() {
 
     const config = statusConfig[status] || statusConfig.draft;
     const availableStatuses = getNextAvailableStatuses(status);
-    const canChangeStatus = status === "draft" || status === "ongoing";
+    const canChangeStatus = status === "draft" || status === "ongoing" || status === "ready_to_verify";
 
     if (canChangeStatus) {
       return (
@@ -146,6 +191,7 @@ export default function KwitansiPage() {
                 const nextStatusConfig = {
                   draft: "bg-gray-100 text-gray-800",
                   ongoing: "bg-blue-100 text-blue-800",
+                  ready_to_verify: "bg-purple-100 text-purple-800",
                   completed: "bg-green-100 text-green-800",
                   canceled: "bg-red-100 text-red-800",
                 };
@@ -188,6 +234,73 @@ export default function KwitansiPage() {
     Partial<Record<keyof ActivityFormInput, string>>
   >({});
 
+  // Debounce user search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedUserSearch(userSearch);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [userSearch]);
+
+  // Load users when debounced search term changes
+  useEffect(() => {
+    if (debouncedUserSearch || users.length === 0) {
+      loadUsers(debouncedUserSearch);
+    }
+  }, [debouncedUserSearch]);
+
+  const loadUsers = async (searchTerm?: string) => {
+    try {
+      setIsLoadingUsers(true);
+      const params: any = {
+        page: 1,
+        limit: 50,
+      };
+      if (searchTerm) {
+        params.search = searchTerm;
+      }
+      const response = (await apiClient.getUsers(params)) as any;
+      setUsers(response.data || []);
+    } catch (error) {
+      console.error("Error loading users:", error);
+      toast({
+        title: "Error",
+        description: "Gagal memuat data pengguna",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingUsers(false);
+    }
+  };
+
+  const loadUsersDebounced = (searchTerm: string) => {
+    setUserSearch(searchTerm);
+  };
+
+  const updateVerificator = (verificatorId: string, updates: Partial<Verificator>) => {
+    setVerificators(
+      verificators.map((verificator) =>
+        verificator.id === verificatorId ? { ...verificator, ...updates } : verificator
+      )
+    );
+  };
+
+  const addNewVerificator = () => {
+    const newVerificator: Verificator = {
+      id: Date.now().toString(),
+      user_id: "",
+      user_name: "",
+      employee_number: "",
+      position: "",
+    };
+    setVerificators([...verificators, newVerificator]);
+  };
+
+  const removeVerificator = (id: string) => {
+    setVerificators(verificators.filter((verificator) => verificator.id !== id));
+  };
+
+
   // Fetch business trip data if in edit mode
   useEffect(() => {
     if (isEditMode && businessTripId) {
@@ -212,11 +325,12 @@ export default function KwitansiPage() {
         kwitansiData.departureDate !== "" ||
         kwitansiData.returnDate !== "" ||
         kwitansiData.documentLink !== "" ||
-        kwitansiData.assignees.length > 0;
+        kwitansiData.assignees.length > 0 ||
+        verificators.length > 0;
 
       setHasChanges(hasAnyData);
     }
-  }, [kwitansiData, originalKwitansiData]);
+  }, [kwitansiData, originalKwitansiData, verificators]);
 
   const fetchBusinessTripData = async (id: string) => {
     setIsLoading(true);
@@ -515,7 +629,7 @@ export default function KwitansiPage() {
     setIsSaving(true);
 
     // Prepare payload for API
-    const payload = {
+    const payload: any = {
       start_date: activityFormInput.startDate,
       end_date: activityFormInput.endDate,
       activity_purpose: activityFormInput.activityPurpose,
@@ -544,6 +658,16 @@ export default function KwitansiPage() {
         })),
       })),
     };
+
+    // Add verificators only when creating new business trip
+    if (!isEditMode && verificators.length > 0) {
+      payload.verificators = verificators.map((verificator) => ({
+        user_id: verificator.user_id,
+        user_name: verificator.user_name,
+        employee_number: verificator.employee_number,
+        position: verificator.position,
+      }));
+    }
 
     try {
       const token = localStorage.getItem("auth_token");
@@ -860,6 +984,9 @@ export default function KwitansiPage() {
     );
   }
 
+  // Check if status is completed to disable all fields
+  const isCompleted = kwitansiData.status === "completed";
+
   return (
     <div className="bg-background min-h-screen">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -872,7 +999,7 @@ export default function KwitansiPage() {
               {getStatusBadge(kwitansiData.status)}
               <Button
                 onClick={handleSave}
-                disabled={!hasChanges || isSaving}
+                disabled={!hasChanges || isSaving || isCompleted}
                 className="modern-btn-primary"
                 data-testid="button-save"
               >
@@ -894,7 +1021,7 @@ export default function KwitansiPage() {
           {!isEditMode && <LLMDisclaimer className="mb-6" />}
 
           <div id="upload">
-            <UploadForm onUploaded={handleUploaded} />
+            <UploadForm onUploaded={handleUploaded} disabled={isCompleted} />
           </div>
 
           <div id="activity">
@@ -902,6 +1029,7 @@ export default function KwitansiPage() {
               activity={kwitansiData}
               onChange={handleActivityChange}
               errors={activityErrors}
+              disabled={isCompleted}
             />
           </div>
 
@@ -909,8 +1037,162 @@ export default function KwitansiPage() {
             <EditableTable
               assignees={kwitansiData.assignees}
               onUpdateAssignees={handleUpdateAssignees}
+              disabled={isCompleted}
             />
           </div>
+
+          {/* Verificators Section */}
+          {!isEditMode ? (
+            /* Create Mode: Show form to add verificators */
+            <div id="verificators">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <User className="w-5 h-5" />
+                    <span>Daftar Verificators</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Verificator Rows */}
+                  {verificators.map((verificator, index) => (
+                    <div
+                      key={verificator.id}
+                      className="border rounded-lg p-4 space-y-4 bg-gray-50"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <User className="w-5 h-5 text-muted-foreground" />
+                          <span className="font-medium">Verificator #{index + 1}</span>
+                        </div>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => removeVerificator(verificator.id)}
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div>
+                          <Label className="text-sm font-medium text-gray-700">
+                            Pilih User
+                          </Label>
+                          <SearchableSelect
+                            value={verificator.user_id}
+                            onValueChange={(value) => {
+                              const selectedUser = users.find(
+                                (user) => user.id === value
+                              );
+                              if (selectedUser) {
+                                updateVerificator(verificator.id, {
+                                  user_id: selectedUser.id,
+                                  user_name: `${selectedUser.first_name} ${selectedUser.last_name}`,
+                                  employee_number: selectedUser.employee_id,
+                                  position: selectedUser.roles[0]?.name || "",
+                                });
+                              }
+                            }}
+                            placeholder="Pilih user"
+                            disabled={isLoadingUsers}
+                            loading={isLoadingUsers}
+                            options={users.map((user) => ({
+                              value: user.id,
+                              label: `${user.first_name} ${user.last_name}`,
+                              subtitle: user.username,
+                            }))}
+                            onSearch={loadUsersDebounced}
+                            searchPlaceholder="Cari user..."
+                            className="mt-1"
+                          />
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-medium text-gray-700">
+                            Nama Lengkap
+                          </Label>
+                          <Input
+                            value={verificator.user_name}
+                            onChange={(e) =>
+                              updateVerificator(verificator.id, { user_name: e.target.value })
+                            }
+                            placeholder="Masukkan nama"
+                            className="mt-1"
+                          />
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-medium text-gray-700">
+                            Employee Number
+                          </Label>
+                          <Input
+                            value={verificator.employee_number}
+                            onChange={(e) =>
+                              updateVerificator(verificator.id, {
+                                employee_number: e.target.value,
+                              })
+                            }
+                            placeholder="Nomor pegawai"
+                            className="mt-1"
+                          />
+                        </div>
+
+                        <div>
+                          <Label className="text-sm font-medium text-gray-700">
+                            Position
+                          </Label>
+                          <Input
+                            value={verificator.position}
+                            onChange={(e) =>
+                              updateVerificator(verificator.id, { position: e.target.value })
+                            }
+                            placeholder="Jabatan"
+                            className="mt-1"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* Add Verificator Button */}
+                  <div className="pt-4">
+                    <Button
+                      onClick={addNewVerificator}
+                      variant="outline"
+                      className="flex items-center space-x-2"
+                    >
+                      <Plus className="w-4 h-4" />
+                      <span>Tambah Verificator Baru</span>
+                    </Button>
+                  </div>
+
+                  {/* Verificators Summary */}
+                  {verificators.length > 0 && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium text-blue-900">
+                            Ringkasan Verificators
+                          </h4>
+                          <p className="text-sm text-blue-700 mt-1">
+                            Total {verificators.length} verificator akan ditambahkan untuk verifikasi business trip ini
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            /* Edit Mode: Show existing verificators */
+            businessTripId && (
+              <div id="verificators">
+                <VerificatorsSection businessTripId={businessTripId} />
+              </div>
+            )
+          )}
         </div>
 
         <Footer />

@@ -46,11 +46,21 @@ class ApiClient {
 
     // Add Authorization header for authenticated requests
     if (!skipAuth) {
-      const token = this.getAuthToken();
+      let token = this.getAuthToken();
+      
+      // Retry mechanism: if no token found, wait a bit and check again
+      // This handles race conditions where localStorage might not be immediately available
+      if (!token) {
+        console.warn("No token found on first attempt, retrying after delay...");
+        await new Promise(resolve => setTimeout(resolve, 100)); // Wait 100ms
+        token = this.getAuthToken();
+      }
+      
       if (token) {
         headers.Authorization = `Bearer ${token}`;
       } else {
-        // If token is required but not found, redirect to login
+        // If token is still not found after retry, redirect to login
+        console.error("No authentication token found after retry. Redirecting to login.");
         this.handleUnauthorized();
         throw new Error("Authentication required. Please login.");
       }
@@ -58,14 +68,43 @@ class ApiClient {
 
     const url = this.buildUrl(endpoint, useIdentityApi);
 
+    // Debug logging for authentication
+    console.log("ApiClient request:", {
+      url,
+      method: fetchOptions.method || "GET",
+      skipAuth,
+      hasAuthHeader: !!headers.Authorization,
+      authHeaderValue: headers.Authorization 
+        ? `${headers.Authorization.substring(0, 20)}...` 
+        : "NOT SET",
+      allHeaders: Object.keys(headers),
+      token: this.getAuthToken() ? "TOKEN EXISTS" : "NO TOKEN",
+    });
+
+    // Log the actual fetch options
+    const fetchConfig = {
+      ...fetchOptions,
+      headers,
+    };
+    console.log("Fetch config:", {
+      url,
+      headers: { ...fetchConfig.headers }, // Clone to show actual values
+      method: fetchConfig.method || "GET",
+    });
+
     try {
-      const response = await fetch(url, {
-        ...fetchOptions,
-        headers,
-      });
+      const response = await fetch(url, fetchConfig);
 
       // Handle 401 Unauthorized
       if (response.status === 401 && !skipAuth) {
+        console.error("Received 401 Unauthorized - Details:", {
+          url,
+          endpoint,
+          hadToken: !!this.getAuthToken(),
+          timestamp: new Date().toISOString(),
+        });
+        const errorBody = await response.text().catch(() => "No error body");
+        console.error("401 Response body:", errorBody);
         this.handleUnauthorized();
         throw new Error("Sesi Anda telah berakhir. Silakan login kembali.");
       }
