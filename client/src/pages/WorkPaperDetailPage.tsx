@@ -18,6 +18,7 @@ import {
   ChevronDown,
   MoreHorizontal,
   PenTool,
+  Download,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -800,6 +801,52 @@ export default function WorkPaperDetailPage() {
     }
   };
 
+  const handleExportDocx = async () => {
+    try {
+      const token = localStorage.getItem("auth_token");
+      if (!token) {
+        throw new Error("Token tidak ditemukan. Silakan login kembali.");
+      }
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-papers/${id}/docx`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Gagal mengunduh dokumen: ${response.status}`);
+      }
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `work_paper_${workPaper?.np_waper || id}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast({
+        title: "Success",
+        description: "Dokumen berhasil diunduh",
+      });
+    } catch (error) {
+      console.error("Error exporting docx:", error);
+      toast({
+        title: "Error",
+        description:
+          error instanceof Error ? error.message : "Gagal mengunduh dokumen",
+        variant: "destructive",
+      });
+    }
+  };
+
   const handleApproval = async () => {
     try {
       const token = localStorage.getItem("auth_token");
@@ -898,6 +945,16 @@ export default function WorkPaperDetailPage() {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 {getStatusBadge(workPaper.status)}
+                {workPaper.status === "completed" && (
+                  <Button
+                    variant="outline"
+                    onClick={handleExportDocx}
+                    className="flex items-center space-x-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Export CHR</span>
+                  </Button>
+                )}
               </div>
             </div>
           </div>
