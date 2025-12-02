@@ -27,6 +27,7 @@ import {
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { formatDateTime } from "@/utils/dateFormat";
+import { OrganizationBadge } from "@/components/OrganizationBadge";
 
 export type WorkPaperStatus = 'ongoing' | 'completed' | 'draft';
 
@@ -284,6 +285,17 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
                   variant="ghost"
                   size="sm"
                   className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("organization_id")}
+                >
+                  Organization
+                  <span className="ml-2">{getSortIcon("organization_id")}</span>
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
                   onClick={() => handleSort("year")}
                 >
                   Tahun
@@ -299,17 +311,6 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
                 >
                   Semester
                   <span className="ml-2">{getSortIcon("semester")}</span>
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("organization_id")}
-                >
-                  Organization
-                  <span className="ml-2">{getSortIcon("organization_id")}</span>
                 </Button>
               </TableHead>
               <TableHead>Status</TableHead>
@@ -363,16 +364,15 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
                   </button>
                 </TableCell>
                 <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <OrganizationBadge organizationId={workPaper.organization_id} />
+                  </div>
+                </TableCell>
+                <TableCell>
                   <span className="text-sm">{workPaper.year}</span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm text-gray-500">{workPaper.semester}</span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Building className="h-4 w-4 text-gray-500" />
-                    <span className="font-mono text-sm text-gray-500">{workPaper.organization_id}</span>
-                  </div>
                 </TableCell>
                 <TableCell>
                   {getStatusBadge(workPaper.status)}

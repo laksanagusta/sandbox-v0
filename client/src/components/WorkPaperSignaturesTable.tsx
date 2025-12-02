@@ -34,6 +34,8 @@ import { formatDateTime, getSignedAtTimestamp } from "@/utils/dateFormat";
 import { vaccinesApi } from "@/services/vaccines-api";
 import { useAuth } from "@/hooks/use-auth";
 import workPaperApi from "@/services/work-paper-api";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 export type SignatureStatus = "pending" | "signed" | "rejected";
 export type SignatureType = "digital" | "manual";
@@ -262,8 +264,8 @@ export function WorkPaperSignaturesTable({
   );
 
   const handleRowClick = (signature: WorkPaperSignature) => {
-    // Navigate to work paper detail or signature page
-    setLocation(`/work-papers/${signature.work_paper_id}`);
+    // Navigate to work paper detail with action=sign query param
+    setLocation(`/work-papers/${signature.work_paper_id}?action=sign`);
   };
 
   return (

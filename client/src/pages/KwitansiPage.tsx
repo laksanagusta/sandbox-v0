@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "wouter";
 import { Save, Plus, Edit, User, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -131,6 +131,24 @@ export default function KwitansiPage() {
   const [isLoadingUsers, setIsLoadingUsers] = useState(false);
   const [userSearch, setUserSearch] = useState("");
   const [debouncedUserSearch, setDebouncedUserSearch] = useState("");
+  const verificatorsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const action = searchParams.get("action");
+
+    if (action === "verify" && !isLoading) {
+      setTimeout(() => {
+        if (verificatorsRef.current) {
+          verificatorsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+          verificatorsRef.current.classList.add("ring-2", "ring-blue-500", "ring-offset-2", "rounded-lg");
+          setTimeout(() => {
+            verificatorsRef.current?.classList.remove("ring-2", "ring-blue-500", "ring-offset-2", "rounded-lg");
+          }, 2000);
+        }
+      }, 500);
+    }
+  }, [isLoading]);
 
   const handleStatusChange = (newStatus: BusinessTripStatus) => {
     // Validate status transition
@@ -485,21 +503,11 @@ export default function KwitansiPage() {
 
   const handleUpdateAssignees = (updatedAssignees: Assignee[]) => {
     setKwitansiData((prev) => {
-      // For new business trips, auto-update status based on assignees count
-      let newStatus = prev.status;
-
-      // Only auto-update if it's a new business trip (not in edit mode)
-      if (
-        !isEditMode &&
-        (prev.status === "draft" || prev.status === "ongoing")
-      ) {
-        newStatus = getInitialStatus(updatedAssignees.length > 0);
-      }
-
+      // For new business trips, do NOT auto-update status to ongoing
+      // Status should remain 'draft' until manually changed or saved
       return {
         ...prev,
         assignees: updatedAssignees,
-        status: newStatus,
       };
     });
   };
@@ -509,11 +517,11 @@ export default function KwitansiPage() {
       kwitansiData;
     const newErrors: Partial<Record<keyof ActivityFormInput, string>> = {};
 
-    // Use status from form (for edit mode) or auto-determine for new
+    // Use status from form (for edit mode) or default to draft for new
     let calculatedStatus: BusinessTripStatus;
     if (!isEditMode) {
-      // For new business trips, determine status based on assignees
-      calculatedStatus = getInitialStatus(assignees.length > 0);
+      // For new business trips, always start as draft
+      calculatedStatus = "draft";
     } else {
       // For existing business trips, use current status from state
       calculatedStatus = kwitansiData.status;
@@ -624,6 +632,16 @@ export default function KwitansiPage() {
           return;
         }
       }
+    }
+
+    // Validate verificators for new business trip
+    if (!isEditMode && verificators.length === 0) {
+      toast({
+        title: "Error",
+        description: "Minimal harus ada satu verificator untuk membuat business trip",
+        variant: "destructive",
+      });
+      return;
     }
 
     setIsSaving(true);
@@ -984,8 +1002,10 @@ export default function KwitansiPage() {
     );
   }
 
-  // Check if status is completed to disable all fields
-  const isCompleted = kwitansiData.status === "completed";
+  // Check if status is completed or ready_to_verify to disable all fields
+  // Use originalKwitansiData (saved state) to determine disabled state
+  const savedStatus = originalKwitansiData?.status || "draft";
+  const isFormDisabled = savedStatus === "completed" || savedStatus === "ready_to_verify";
 
   return (
     <div className="bg-background min-h-screen">
@@ -999,7 +1019,7 @@ export default function KwitansiPage() {
               {getStatusBadge(kwitansiData.status)}
               <Button
                 onClick={handleSave}
-                disabled={!hasChanges || isSaving || isCompleted}
+                disabled={!hasChanges || isSaving}
                 className="modern-btn-primary"
                 data-testid="button-save"
               >
@@ -1021,7 +1041,7 @@ export default function KwitansiPage() {
           {!isEditMode && <LLMDisclaimer className="mb-6" />}
 
           <div id="upload">
-            <UploadForm onUploaded={handleUploaded} disabled={isCompleted} />
+            <UploadForm onUploaded={handleUploaded} disabled={isFormDisabled} />
           </div>
 
           <div id="activity">
@@ -1029,7 +1049,7 @@ export default function KwitansiPage() {
               activity={kwitansiData}
               onChange={handleActivityChange}
               errors={activityErrors}
-              disabled={isCompleted}
+              disabled={isFormDisabled}
             />
           </div>
 
@@ -1037,7 +1057,7 @@ export default function KwitansiPage() {
             <EditableTable
               assignees={kwitansiData.assignees}
               onUpdateAssignees={handleUpdateAssignees}
-              disabled={isCompleted}
+              disabled={isFormDisabled}
             />
           </div>
 
@@ -1068,6 +1088,7 @@ export default function KwitansiPage() {
                           variant="outline"
                           size="sm"
                           onClick={() => removeVerificator(verificator.id)}
+                          disabled={isFormDisabled}
                           className="text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200"
                         >
                           <X className="w-4 h-4" />
@@ -1095,7 +1116,7 @@ export default function KwitansiPage() {
                               }
                             }}
                             placeholder="Pilih user"
-                            disabled={isLoadingUsers}
+                            disabled={isLoadingUsers || isFormDisabled}
                             loading={isLoadingUsers}
                             options={users.map((user) => ({
                               value: user.id,
@@ -1119,6 +1140,7 @@ export default function KwitansiPage() {
                             }
                             placeholder="Masukkan nama"
                             className="mt-1"
+                            disabled={isFormDisabled}
                           />
                         </div>
 
@@ -1135,6 +1157,7 @@ export default function KwitansiPage() {
                             }
                             placeholder="Nomor pegawai"
                             className="mt-1"
+                            disabled={isFormDisabled}
                           />
                         </div>
 
@@ -1149,6 +1172,7 @@ export default function KwitansiPage() {
                             }
                             placeholder="Jabatan"
                             className="mt-1"
+                            disabled={isFormDisabled}
                           />
                         </div>
                       </div>
@@ -1160,6 +1184,7 @@ export default function KwitansiPage() {
                     <Button
                       onClick={addNewVerificator}
                       variant="outline"
+                      disabled={isFormDisabled}
                       className="flex items-center space-x-2"
                     >
                       <Plus className="w-4 h-4" />
@@ -1188,8 +1213,11 @@ export default function KwitansiPage() {
           ) : (
             /* Edit Mode: Show existing verificators */
             businessTripId && (
-              <div id="verificators">
-                <VerificatorsSection businessTripId={businessTripId} />
+              <div id="verificators" ref={verificatorsRef}>
+                <VerificatorsSection 
+                  businessTripId={businessTripId} 
+                  businessTripStatus={savedStatus}
+                />
               </div>
             )
           )}

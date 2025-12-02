@@ -48,7 +48,7 @@ export function AppSidebar() {
   const [isWorkPaperOpen, setIsWorkPaperOpen] = useState(false);
 
   return (
-    <Sidebar>
+    <Sidebar className="border-r">
       {/* Header dengan logo yang sederhana */}
       <SidebarHeader className="bg-white p-6">
         <div className="flex items-center space-x-3">

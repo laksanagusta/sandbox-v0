@@ -130,7 +130,7 @@ export function BusinessTripVerificationTable({
       }
 
       if (statusFilter !== "all") {
-        params.append("status", `eq.${statusFilter}`);
+        params.append("status", `eq ${statusFilter}`);
       }
 
       const apiResponse = await apiClient.get<any>(
@@ -400,7 +400,7 @@ export function BusinessTripVerificationTable({
               <TableRow key={verification.id}>
                 <TableCell>
                   <button
-                    onClick={() => setLocation(`/kwitansi/${verification.business_trip_id}`)}
+                    onClick={() => setLocation(`/kwitansi/${verification.business_trip_id}?action=verify`)}
                     className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                   >
                     <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors" />

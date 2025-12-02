@@ -40,7 +40,7 @@ function AuthenticatedLayout() {
       <div className="flex h-screen w-full bg-muted/20">
         <AppSidebar />
         <div className="flex flex-col flex-1 min-w-0">
-          <header className="flex items-center h-14 px-6 bg-background/80 backdrop-blur-md supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40 transition-all duration-200">
+          <header className="flex items-center h-14 px-6 bg-white border-b sticky top-0 z-40 transition-all duration-200">
             <SidebarTrigger data-testid="button-sidebar-toggle" className="text-muted-foreground hover:text-foreground transition-colors" />
           </header>
           <main className="flex-1 overflow-auto p-6">

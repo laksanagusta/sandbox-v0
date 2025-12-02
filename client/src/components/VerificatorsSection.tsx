@@ -43,9 +43,10 @@ interface Verificator {
 
 interface VerificatorsSectionProps {
   businessTripId: string;
+  businessTripStatus?: string;
 }
 
-export function VerificatorsSection({ businessTripId }: VerificatorsSectionProps) {
+export function VerificatorsSection({ businessTripId, businessTripStatus }: VerificatorsSectionProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [verificators, setVerificators] = useState<Verificator[]>([]);
@@ -63,7 +64,7 @@ export function VerificatorsSection({ businessTripId }: VerificatorsSectionProps
     try {
       setLoading(true);
       const params = new URLSearchParams({
-        business_trip_id: `eq.${businessTripId}`,
+        business_trip_id: `eq ${businessTripId}`,
         sort: "created_at desc",
       });
 
@@ -252,7 +253,8 @@ export function VerificatorsSection({ businessTripId }: VerificatorsSectionProps
                     </TableCell>
                     <TableCell>
                       {isCurrentUser(verificator.user_id) &&
-                      verificator.status === "pending" ? (
+                      verificator.status === "pending" &&
+                      businessTripStatus === "ready_to_verify" ? (
                         <div className="flex items-center space-x-2">
                           <Button
                             onClick={() => openVerificationDialog("approve")}

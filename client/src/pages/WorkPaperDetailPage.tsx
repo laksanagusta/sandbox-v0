@@ -1,5 +1,5 @@
 import { useParams, useLocation } from "wouter";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   ArrowLeft,
   FileText,
@@ -60,6 +60,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate, formatDateTime, getSignedAtTimestamp } from "@/utils/dateFormat";
+import { OrganizationBadge } from "@/components/OrganizationBadge";
 
 export type WorkPaperStatus =
   | "draft"
@@ -170,6 +171,27 @@ export default function WorkPaperDetailPage() {
   const [confirmSignDialog, setConfirmSignDialog] = useState<string | null>(
     null
   );
+  const signaturesRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Check for action=sign in query params
+    const searchParams = new URLSearchParams(window.location.search);
+    const action = searchParams.get("action");
+
+    if (action === "sign" && (workPaper?.status === "ready_to_sign" || workPaper?.status === "completed") && !loading && workPaperSignatures.length > 0) {
+      // Small timeout to ensure rendering is complete
+      setTimeout(() => {
+        if (signaturesRef.current) {
+          signaturesRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+          // Optional: Add a highlight effect or focus
+          signaturesRef.current.classList.add("ring-2", "ring-blue-500", "ring-offset-2");
+          setTimeout(() => {
+            signaturesRef.current?.classList.remove("ring-2", "ring-blue-500", "ring-offset-2");
+          }, 2000);
+        }
+      }, 500);
+    }
+  }, [workPaper, loading, workPaperSignatures]);
 
   const generateAIAnswerForNote = async (noteId: string) => {
     try {
@@ -968,6 +990,18 @@ export default function WorkPaperDetailPage() {
                   <CardTitle>Informasi Umum</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700">
+                      Organization
+                    </Label>
+                    <div className="mt-1 p-2 bg-gray-50 rounded-md border border-gray-200">
+                      <OrganizationBadge 
+                        organizationId={workPaper.organization_id} 
+                        className="text-gray-900"
+                      />
+                    </div>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <Label className="text-sm font-medium text-gray-700">
@@ -1291,7 +1325,7 @@ export default function WorkPaperDetailPage() {
               {/* Signatures Section */}
               {(workPaper.status === "ready_to_sign" ||
                 workPaper.status === "completed") && (
-                <Card>
+                <Card ref={signaturesRef} className="transition-all duration-300">
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
                       <PenTool className="w-5 h-5" />
