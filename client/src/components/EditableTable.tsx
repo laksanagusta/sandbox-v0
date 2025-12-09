@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Assignee, PaymentType, Transaction } from "@shared/types";
 
 interface EditableTableProps {
@@ -27,7 +28,7 @@ export default function EditableTable({
     assigneeIndex: number,
     transactionIndex: number,
     field: keyof Transaction,
-    value: string | number
+    value: string | number | boolean
   ) => {
     const updatedAssignees = assignees.map((assignee, aIdx) => {
       if (aIdx === assigneeIndex) {
@@ -55,6 +56,9 @@ export default function EditableTable({
                 field === "spd_number"
                   ? value as string
                   : "";
+
+              // For boolean fields
+              const boolValue: boolean = typeof value === "boolean" ? value : false;
 
               // For daily allowance, calculate subtotal automatically
               const isDailyAllowance =
@@ -92,10 +96,11 @@ export default function EditableTable({
                     field === "subtype" ||
                     field === "description" ||
                     field === "spd_number";
+                  const isBooleanField = field === "is_valid";
 
                   return {
                     ...transaction,
-                    [field]: isStringField ? stringValue : numValue,
+                    [field]: isBooleanField ? boolValue : (isStringField ? stringValue : numValue),
                   };
                 }
               }
@@ -107,10 +112,11 @@ export default function EditableTable({
                 field === "subtype" ||
                 field === "description" ||
                 field === "spd_number";
+              const isBooleanField = field === "is_valid";
 
               return {
                 ...transaction,
-                [field]: isStringField ? stringValue : numValue,
+                [field]: isBooleanField ? boolValue : (isStringField ? stringValue : numValue),
               };
             }
             return transaction;
@@ -157,6 +163,7 @@ export default function EditableTable({
               transport_detail: "",
               total_night: 0,
               spd_number: "",
+              is_valid: false,
             },
           ],
         };
@@ -175,6 +182,7 @@ export default function EditableTable({
         employee_number: "",
         position: "",
         rank: "",
+        employee_id: "",
         transactions: [],
       },
     ]);
@@ -368,23 +376,26 @@ export default function EditableTable({
             <table className="min-w-[1800px] w-full modern-table">
               <thead>
                 <tr>
-                  <th className="whitespace-nowrap w-[10%]">Tipe</th>
-                  <th className="whitespace-nowrap w-[12%]">Subtipe</th>
-                  <th className="whitespace-nowrap w-[28%]">Deskripsi</th>
+                  <th className="whitespace-nowrap w-[9%]">Tipe</th>
+                  <th className="whitespace-nowrap w-[10%]">Subtipe</th>
+                  <th className="whitespace-nowrap w-[25%]">Deskripsi</th>
                   <th className="text-right whitespace-nowrap w-[10%]">
                     Jumlah (Rp)
                   </th>
                   <th className="text-right whitespace-nowrap w-[10%]">
                     Subtotal (Rp)
                   </th>
-                  <th className="whitespace-nowrap w-[12%]">Tipe Pembayaran</th>
+                  <th className="whitespace-nowrap w-[11%]">Tipe Pembayaran</th>
                   <th className="whitespace-nowrap w-[10%]">
                     Detail Transport
                   </th>
-                  <th className="text-center whitespace-nowrap w-[6%]">
+                  <th className="text-center whitespace-nowrap w-[5%]">
                     Hari/Malam
                   </th>
-                  <th className="text-center whitespace-nowrap w-[6%]">Aksi</th>
+                  <th className="text-center whitespace-nowrap w-[5%]">
+                    Valid?
+                  </th>
+                  <th className="text-center whitespace-nowrap w-[5%]">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -595,6 +606,23 @@ export default function EditableTable({
                           </div>
                         )}
                       </td>
+                      <td className="text-center whitespace-nowrap">
+                        <div className="flex justify-center">
+                          <Checkbox
+                            checked={transaction.is_valid ?? false}
+                            onCheckedChange={(checked) =>
+                              updateTransaction(
+                                assigneeIndex,
+                                transactionIndex,
+                                "is_valid",
+                                checked === true
+                              )
+                            }
+                            disabled={disabled}
+                            data-testid={`checkbox-is-valid-${assigneeIndex}-${transactionIndex}`}
+                          />
+                        </div>
+                      </td>
                       <td className="py-2 px-2 text-center whitespace-nowrap">
                         <Button
                           size="icon"
@@ -634,7 +662,7 @@ export default function EditableTable({
                       )
                     )}
                   </td>
-                  <td colSpan={4} className="whitespace-nowrap"></td>
+                  <td colSpan={5} className="whitespace-nowrap"></td>
                 </tr>
               </tfoot>
             </table>

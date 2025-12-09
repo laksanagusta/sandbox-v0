@@ -13,6 +13,7 @@ import {
   Building,
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -29,7 +30,7 @@ import { useToast } from "@/hooks/use-toast";
 import { formatDateTime } from "@/utils/dateFormat";
 import { OrganizationBadge } from "@/components/OrganizationBadge";
 
-export type WorkPaperStatus = 'ongoing' | 'completed' | 'draft';
+export type WorkPaperStatus = 'ongoing' | 'completed' | 'draft' | 'ready_to_sign';
 
 interface WorkPaper {
   id: string;
@@ -55,6 +56,7 @@ interface WorkPaperTableProps {
 
 export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [workPapers, setWorkPapers] = useState<WorkPaper[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,6 +108,11 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
         params.append("status", `eq ${statusFilter}`);
       }
 
+      // Add organization_id filter
+      if (user?.organization?.id) {
+        params.append("organization_id", `eq ${user.organization.id}`);
+      }
+
       const response = await fetch(
         `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-papers?${params}`,
         {
@@ -147,6 +154,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
             ? error.message
             : "Gagal mengambil data work paper",
         variant: "destructive",
+        duration: 3000,
       });
       setWorkPapers([]);
       setPagination({
@@ -209,6 +217,11 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
         bg: "bg-gray-100",
         text: "text-gray-800",
         label: "Draft"
+      },
+      ready_to_sign: {
+        bg: "bg-purple-100",
+        text: "text-purple-800",
+        label: "Ready to Sign"
       }
     };
 
@@ -251,6 +264,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
               <SelectItem value="ongoing">Ongoing</SelectItem>
+              <SelectItem value="ready_to_sign">Ready to Sign</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
             </SelectContent>
           </Select>

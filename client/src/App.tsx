@@ -1,4 +1,5 @@
-import { Switch, Route } from "wouter";
+import { useEffect } from "react";
+import { Switch, Route, useLocation } from "wouter";
 import { AuthProvider } from "@/contexts/auth-context";
 import { ProtectedRoute } from "@/components/protected-route";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -28,6 +29,14 @@ import BusinessTripVerificationsPage from "@/pages/BusinessTripVerificationsPage
 import BusinessTripVerificatorPage from "@/pages/BusinessTripVerificatorPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
+
+function RedirectToReport() {
+  const [, setLocation] = useLocation();
+  useEffect(() => {
+    setLocation("/business-trips/report");
+  }, [setLocation]);
+  return null;
+}
 
 function AuthenticatedLayout() {
   const style = {
@@ -85,6 +94,7 @@ export default function App() {
         <TooltipProvider>
           <Switch>
             <Route path="/login" component={LoginPage} />
+            <Route path="/" component={RedirectToReport} />
             <Route path="/kwitansi">
               <ProtectedRoute>
                 <AuthenticatedLayout />

@@ -32,6 +32,7 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { VerificatorsSection } from "@/components/VerificatorsSection";
 import { apiClient } from "@/lib/api-client";
+import { BusinessTripHistory } from "@/components/BusinessTripHistory";
 
 interface ActivityFormInput {
   startDate: string;
@@ -412,6 +413,7 @@ export default function KwitansiPage() {
                 ? Number(transaction.total_night)
                 : undefined,
               name: transaction.name || "",
+              is_valid: transaction.is_valid,
             })
           ),
         })),
@@ -483,6 +485,7 @@ export default function KwitansiPage() {
             total_night: transactionItem.total_night
               ? Number(transactionItem.total_night)
               : undefined,
+            is_valid: transactionItem.is_valid,
           })
         ),
       })
@@ -673,6 +676,7 @@ export default function KwitansiPage() {
           total_night: transaction.total_night
             ? Number(transaction.total_night)
             : undefined,
+          is_valid: transaction.is_valid,
         })),
       })),
     };
@@ -1016,6 +1020,9 @@ export default function KwitansiPage() {
               {isEditMode ? "Edit Kwitansi" : "Buat Kwitansi"}
             </h1>
             <div className="flex flex-wrap items-center gap-2">
+              {isEditMode && businessTripId && (
+                <BusinessTripHistory businessTripId={businessTripId} />
+              )}
               {getStatusBadge(kwitansiData.status)}
               <Button
                 onClick={handleSave}

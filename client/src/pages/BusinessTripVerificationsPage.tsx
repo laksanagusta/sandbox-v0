@@ -103,6 +103,11 @@ export default function BusinessTripVerificationsPage() {
       }
 
       params.append("order", `${filters.sortOrder === "desc" ? "-" : ""}${filters.sortBy}`);
+      
+      // Add user_id filter
+      if (user?.id) {
+        params.append("user_id", `eq ${user.id}`);
+      }
 
       const token = localStorage.getItem("auth_token");
       const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";

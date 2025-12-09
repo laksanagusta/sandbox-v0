@@ -245,7 +245,7 @@ export function AppSidebar() {
                 </Collapsible>
               </SidebarMenuItem>
 
-              <SidebarMenuItem>
+              {/* <SidebarMenuItem>
                 <SidebarMenuButton
                   asChild
                   className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-3 rounded-lg group"
@@ -263,7 +263,7 @@ export function AppSidebar() {
                     </span>
                   </Link>
                 </SidebarMenuButton>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
 
               <SidebarMenuItem>
                 <Collapsible

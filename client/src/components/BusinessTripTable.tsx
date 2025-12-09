@@ -13,6 +13,7 @@ import {
   Filter,
 } from "lucide-react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -62,6 +63,7 @@ interface BusinessTripTableProps {
 
 export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [, setLocation] = useLocation();
   const [businessTrips, setBusinessTrips] = useState<BusinessTrip[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,8 +71,8 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<BusinessTripStatus | "all">("all");
   const [currentPage, setCurrentPage] = useState(1);
-  const [sortField, setSortField] = useState<string>("start_date");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortField, setSortField] = useState<string>("created_at");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [pagination, setPagination] = useState({
     count: 0,
     total_count: 0,
@@ -111,6 +113,11 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
 
       if (statusFilter !== "all") {
         params.append("status", `eq ${statusFilter}`);
+      }
+
+      // Add organization_id filter
+      if (user?.organization?.id) {
+        params.append("organization_id", `eq ${user.organization.id}`);
       }
 
       const response = await fetch(

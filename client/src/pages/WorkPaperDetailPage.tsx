@@ -487,7 +487,7 @@ export default function WorkPaperDetailPage() {
       const response = await fetch(
         `${
           import.meta.env.VITE_API_BASE_URL
-        }/api/v1/desk/work-paper-signatures?page=1&limit=100&work_paper_id=eq.${id}`,
+        }/api/v1/desk/work-paper-signatures?page=1&limit=100&work_paper_id=eq ${id}`,
         {
           method: "GET",
           headers: {

@@ -11,6 +11,7 @@ export interface Transaction {
   transport_detail?: string;
   spd_number?: string;
   total_night?: number; // Number of nights for hotel transactions
+  is_valid?: boolean;
 }
 
 export interface Assignee {
