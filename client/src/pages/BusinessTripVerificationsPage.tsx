@@ -39,6 +39,7 @@ import { formatDate, formatDateTime } from "@/utils/dateFormat";
 import { apiClient } from "@/lib/api-client";
 import { useAuth } from "@/hooks/use-auth";
 import { Pagination } from "@/components/Pagination";
+import { getApiBaseUrl } from "@/lib/env";
 
 export type VerificationStatus = "pending" | "approved" | "rejected";
 
@@ -110,7 +111,7 @@ export default function BusinessTripVerificationsPage() {
       }
 
       const token = localStorage.getItem("auth_token");
-      const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
+      const baseUrl = getApiBaseUrl() || getApiBaseUrl();
       const response = await fetch(
         `${baseUrl}/api/v1/business-trips/verifications?${params.toString()}`,
         {
@@ -213,7 +214,7 @@ export default function BusinessTripVerificationsPage() {
     try {
       const token = localStorage.getItem("auth_token");
       console.log("Token from localStorage:", token);
-      // const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
+      // const baseUrl = getApiBaseUrl() || getApiBaseUrl();
       // const response = await fetch(
       //   `${baseUrl}/api/v1/business-trips/verifications/${verificationId}/approve`,
       //   {
@@ -251,7 +252,7 @@ export default function BusinessTripVerificationsPage() {
     try {
       const token = localStorage.getItem("auth_token");
       console.log("Token from localStorage:", token);
-      // const baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
+      // const baseUrl = getApiBaseUrl() || getApiBaseUrl();
       // const response = await fetch(
       //   `${baseUrl}/api/v1/business-trips/verifications/${verificationId}/reject`,
       //   {

@@ -1,7 +1,8 @@
 import serviceHelper from "./general";
+import { getApiBaseUrl } from "@/lib/env";
 
 const DESK_API_BASE = `${
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:5002"
+  getApiBaseUrl() || getApiBaseUrl()
 }/api/v1/desk`;
 
 export const workPaperApi = {

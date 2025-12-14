@@ -12,6 +12,7 @@ import { History, CheckCircle2, AlertCircle, Edit2, FileText, ArrowRight } from 
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getApiBaseUrl } from "@/lib/env";
 
 interface HistoryItem {
   id: string;
@@ -45,7 +46,7 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
     try {
       const token = localStorage.getItem("auth_token");
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips/${businessTripId}/histories`,
+        `${getApiBaseUrl()}/api/v1/business-trips/${businessTripId}/histories`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
+import { getApiIdentityUrl } from "@/lib/env";
 
 interface Organization {
   id: string;
@@ -85,7 +86,7 @@ export function OrganizationTable({ className = "" }: OrganizationTableProps) {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/organizations?${params}`,
+        `${getApiIdentityUrl()}/api/v1/organizations?${params}`,
         {
           method: "GET",
           headers: {
@@ -174,16 +175,23 @@ export function OrganizationTable({ className = "" }: OrganizationTableProps) {
 
   const getTypeBadge = (type: string) => {
     const colors: Record<string, string> = {
-      directorate: "bg-blue-100 text-blue-800",
-      division: "bg-green-100 text-green-800",
-      department: "bg-purple-100 text-purple-800",
-      unit: "bg-orange-100 text-orange-800",
+      eselon_1: "bg-red-100 text-red-800",
+      eselon_2: "bg-blue-100 text-blue-800",
+      timker: "bg-green-100 text-green-800",
+    };
+
+    const labels: Record<string, string> = {
+      eselon_1: "Eselon 1",
+      eselon_2: "Eselon 2",
+      timker: "Tim Kerja",
     };
 
     const colorClass = colors[type] || "bg-gray-100 text-gray-800";
+    const label = labels[type] || type;
+
     return (
       <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
-        {type}
+        {label}
       </span>
     );
   };
@@ -207,61 +215,51 @@ export function OrganizationTable({ className = "" }: OrganizationTableProps) {
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("name")}
-                >
-                  Nama
-                  <span className="ml-2">{getSortIcon("name")}</span>
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("type")}
-                >
-                  Tipe
-                  <span className="ml-2">{getSortIcon("type")}</span>
-                </Button>
-              </TableHead>
-              <TableHead>Alamat</TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("created_by")}
-                >
-                  Dibuat oleh
-                  <span className="ml-2">{getSortIcon("created_by")}</span>
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("created_at")}
-                >
-                  Tanggal Dibuat
-                  <span className="ml-2">{getSortIcon("created_at")}</span>
-                </Button>
-              </TableHead>
-            </TableRow>
-          </TableHeader>
+      <div className="rounded-md border overflow-hidden">
+        <div className="overflow-x-auto overflow-y-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 hover:scrollbar-thumb-gray-400">
+          <Table className="min-w-[800px]">
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[300px] min-w-[250px]">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("name")}
+                  >
+                    Nama
+                    <span className="ml-2">{getSortIcon("name")}</span>
+                  </Button>
+                </TableHead>
+                <TableHead className="w-[120px]">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("type")}
+                  >
+                    Tipe
+                    <span className="ml-2">{getSortIcon("type")}</span>
+                  </Button>
+                </TableHead>
+                <TableHead className="min-w-[300px] max-w-[400px]">Alamat</TableHead>
+                <TableHead className="w-[160px]">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("created_at")}
+                  >
+                    Tanggal Dibuat
+                    <span className="ml-2">{getSortIcon("created_at")}</span>
+                  </Button>
+                </TableHead>
+              </TableRow>
+            </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
+                <TableCell colSpan={4} className="text-center py-8">
                   <div className="flex items-center justify-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
                     <span>Loading...</span>
@@ -270,7 +268,7 @@ export function OrganizationTable({ className = "" }: OrganizationTableProps) {
               </TableRow>
             ) : organizations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={4} className="text-center py-8 text-gray-500">
                   <Building className="mx-auto h-12 w-12 text-gray-300 mb-2" />
                   <p>Tidak ada data organization</p>
                   {debouncedSearchTerm && (
@@ -284,30 +282,23 @@ export function OrganizationTable({ className = "" }: OrganizationTableProps) {
                   <TableCell className="font-medium">
                     <button
                       onClick={() => setLocation(`/organization/${org.id}`)}
-                      className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
+                      className="hover:text-blue-600 transition-colors group text-left w-full"
                     >
-                      <Building className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
-                      <span>{org.name}</span>
+                      <span className="break-words leading-tight">{org.name}</span>
                     </button>
                   </TableCell>
                   <TableCell>{getTypeBadge(org.type)}</TableCell>
                   <TableCell>
                     {org.address ? (
-                      <div className="flex items-center space-x-2 max-w-xs">
-                        <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0" />
-                        <span className="truncate">{org.address}</span>
+                      <div className="flex items-start space-x-2">
+                        <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-0.5" />
+                        <span className="break-words leading-tight">{org.address}</span>
                       </div>
                     ) : (
                       <span className="text-gray-400">-</span>
                     )}
                   </TableCell>
-                  <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-gray-500" />
-                      <span>{org.created_by}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
+                    <TableCell>
                     <div className="flex items-center space-x-2">
                       <Calendar className="h-4 w-4 text-gray-500" />
                       <span className="text-sm">{formatDate(org.created_at)}</span>
@@ -318,6 +309,7 @@ export function OrganizationTable({ className = "" }: OrganizationTableProps) {
             )}
           </TableBody>
         </Table>
+        </div>
       </div>
 
       {/* Pagination */}

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
+import { getApiIdentityUrl } from "@/lib/env";
 
 interface Permission {
   id: string;
@@ -83,7 +84,7 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/permissions?${params}`,
+        `${getApiIdentityUrl()}/api/v1/permissions?${params}`,
         {
           method: "GET",
           headers: {

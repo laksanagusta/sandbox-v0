@@ -1,3 +1,4 @@
+import { getApiIdentityUrl } from "@/lib/env";
 import {
   createContext,
   useContext,
@@ -80,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_IDENTITY_URL}/api/public/v1/login`,
+        `${getApiIdentityUrl()}/api/public/v1/login`,
         {
           method: "POST",
           headers: {
@@ -149,7 +150,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       try {
         console.log("Fetching user data from /whoami...");
         const userResponse = await fetch(
-          `${import.meta.env.VITE_API_IDENTITY_URL}/api/v1/users/whoami`,
+          `${getApiIdentityUrl()}/api/v1/users/whoami`,
           {
             method: "GET",
             headers: {

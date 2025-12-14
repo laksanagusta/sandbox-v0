@@ -15,6 +15,7 @@ import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/utils/dateFormat";
+import { getApiIdentityUrl } from "@/lib/env";
 
 interface Role {
   id: string;
@@ -98,7 +99,7 @@ export function UserTable({ className = "" }: UserTableProps) {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/users?${params}`,
+        `${getApiIdentityUrl()}/api/v1/users?${params}`,
         {
           method: "GET",
           headers: {

@@ -33,6 +33,7 @@ import { MoreHorizontal } from "lucide-react";
 import { VerificatorsSection } from "@/components/VerificatorsSection";
 import { apiClient } from "@/lib/api-client";
 import { BusinessTripHistory } from "@/components/BusinessTripHistory";
+import { getApiBaseUrl } from "@/lib/env";
 
 interface ActivityFormInput {
   startDate: string;
@@ -360,7 +361,7 @@ export default function KwitansiPage() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips/${id}`,
+        `${getApiBaseUrl()}/api/v1/business-trips/${id}`,
         {
           method: "GET",
           headers: {
@@ -702,7 +703,7 @@ export default function KwitansiPage() {
         // Update existing business trip
         response = await fetch(
           `${
-            import.meta.env.VITE_API_BASE_URL
+            getApiBaseUrl()
           }/api/v1/business-trips/${businessTripId}/with-assignees`,
           {
             method: "PUT",
@@ -719,7 +720,7 @@ export default function KwitansiPage() {
       } else {
         // Create new business trip
         response = await fetch(
-          `${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips`,
+          `${getApiBaseUrl()}/api/v1/business-trips`,
           {
             method: "POST",
             headers: {
@@ -954,7 +955,7 @@ export default function KwitansiPage() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/report/excel`,
+        `${getApiBaseUrl()}/api/report/excel`,
         {
           method: "POST",
           headers: {

@@ -3,8 +3,9 @@ import {
   VaccineRecommendationResponse,
 } from "../../../shared/types";
 import serviceHelper from "./general";
+import { getApiBaseUrl } from "@/lib/env";
 
-const VACCINES_API_BASE = "http://localhost:5002/api/v1/vaccines";
+const VACCINES_API_BASE = `${getApiBaseUrl()}/api/v1/vaccines`;
 
 export const vaccinesApi = {
   // Get countries with optional search and pagination

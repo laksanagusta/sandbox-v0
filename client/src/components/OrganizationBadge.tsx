@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Building } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { getApiIdentityUrl } from "@/lib/env";
 
 interface OrganizationBadgeProps {
   organizationId: string;
@@ -26,7 +27,7 @@ export function OrganizationBadge({
         setLoading(true);
         const token = localStorage.getItem("auth_token");
         // We use the identity URL (port 5001) for organizations
-        const baseUrl = import.meta.env.VITE_API_IDENTITY_URL || "http://localhost:5001";
+        const baseUrl = getApiIdentityUrl() || getApiIdentityUrl();
         
         const response = await fetch(
           `${baseUrl}/api/v1/organizations/${organizationId}`,

@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { getApiIdentityUrl } from "@/lib/env";
 
 interface Role {
   id: string;
@@ -48,7 +49,7 @@ export default function UserDetailPage() {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/users/${id}`,
+        `${getApiIdentityUrl()}/api/v1/users/${id}`,
         {
           method: "GET",
           headers: {
@@ -105,7 +106,7 @@ export default function UserDetailPage() {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/users/${id}`,
+        `${getApiIdentityUrl()}/api/v1/users/${id}`,
         {
           method: "PATCH",
           headers: {

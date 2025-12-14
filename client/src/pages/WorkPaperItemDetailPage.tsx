@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { apiClient } from "@/lib/api-client";
+import { getApiBaseUrl } from "@/lib/env";
 
 interface WorkPaperItemDetail {
   id: string;
@@ -172,8 +173,8 @@ export default function WorkPaperItemDetailPage() {
       }
 
       const url = isNew
-        ? `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-paper-items`
-        : `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-paper-items/${id}`;
+        ? `${getApiBaseUrl()}/api/v1/desk/work-paper-items`
+        : `${getApiBaseUrl()}/api/v1/desk/work-paper-items/${id}`;
 
       const method = isNew ? "POST" : "PUT";
 

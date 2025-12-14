@@ -8,14 +8,31 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TreeNode } from "@/components/OrganizationTreeNode";
+import { apiClient } from "@/lib/api-client";
+
+interface ParentOrganization {
+  id: string;
+  name: string;
+  code: string;
+  address: string | null;
+  type: string;
+}
 
 interface Organization {
   id: string;
   name: string;
+  code: string;
   address: string | null;
+  latitude: string | null;
+  longitude: string | null;
   type: string;
+  parent?: ParentOrganization;
+  parent_id?: string;
   organizations: Organization[] | null;
   created_at: string;
   created_by: string;
@@ -24,54 +41,35 @@ interface Organization {
 export default function OrganizationDetailPage() {
   const { id } = useParams<{ id: string }>();
   const [, setLocation] = useLocation();
+  const isNew = id === "new";
   const { toast } = useToast();
   const [organization, setOrganization] = useState<Organization | null>(null);
+  const [parentOrganizations, setParentOrganizations] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
+  const [parentOrgPage, setParentOrgPage] = useState(1);
+  const [hasMoreParentOrgs, setHasMoreParentOrgs] = useState(true);
+  const [loadingParentOrgs, setLoadingParentOrgs] = useState(false);
+  const [isOpenParentSelect, setIsOpenParentSelect] = useState(false);
+  const [selectedParentId, setSelectedParentId] = useState<string>("none");
+  const [selectedParentName, setSelectedParentName] = useState<string>("");
 
   const organizationTypes = [
-    { value: "directorate", label: "Directorate" },
-    { value: "division", label: "Division" },
-    { value: "department", label: "Department" },
-    { value: "unit", label: "Unit" },
+    { value: "eselon_1", label: "Eselon 1" },
+    { value: "eselon_2", label: "Eselon 2" },
+    { value: "timker", label: "Tim Kerja" },
   ];
 
   const fetchOrganizationDetail = async () => {
+    if (isNew) {
+      setLoading(false);
+      return;
+    }
+
     try {
       setLoading(true);
-
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        throw new Error("Token tidak ditemukan. Silakan login kembali.");
-      }
-
-      const response = await fetch(
-        `http://localhost:5001/api/v1/organizations/${id}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Handle response - http.StatusOK (200) dari Golang akan masuk ke sini
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("user_data");
-          window.location.href = "/login";
-          throw new Error("Sesi Anda telah berakhir. Silakan login kembali.");
-        }
-        if (response.status === 404) {
-          throw new Error("Organization tidak ditemukan");
-        }
-        throw new Error(`Gagal mengambil data: ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await apiClient.getOrganization(id!) as { data: Organization };
       setOrganization(data.data);
     } catch (error) {
       console.error("Error fetching organization detail:", error);
@@ -87,53 +85,108 @@ export default function OrganizationDetailPage() {
     }
   };
 
-  const handleSave = async (formData: { name: string; address: string; type: string }) => {
-    if (!organization) return;
+  const fetchParentOrganizations = async (page: number = 1, reset: boolean = false) => {
+    try {
+      if (reset) {
+        setParentOrgPage(1);
+        setHasMoreParentOrgs(true);
+        setParentOrganizations([]);
+      }
 
+      setLoadingParentOrgs(true);
+      const response = await apiClient.getOrganizations({
+        page,
+        limit: 10
+      }) as {
+        data: Organization[];
+        metadata: {
+          total_count: number;
+          total_page: number;
+          current_page: number;
+        };
+      };
+
+      if (page === 1) {
+        setParentOrganizations(response.data || []);
+      } else {
+        setParentOrganizations(prev => [...prev, ...(response.data || [])]);
+      }
+
+      setParentOrgPage(page);
+      setHasMoreParentOrgs(response.metadata?.current_page < response.metadata?.total_page);
+    } catch (error) {
+      console.error("Error fetching parent organizations:", error);
+    } finally {
+      setLoadingParentOrgs(false);
+    }
+  };
+
+  const handleScrollParentSelect = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    const threshold = 100; // Distance from bottom to trigger load more
+
+    if (
+      scrollHeight - (scrollTop + clientHeight) < threshold &&
+      hasMoreParentOrgs &&
+      !loadingParentOrgs &&
+      isOpenParentSelect
+    ) {
+      fetchParentOrganizations(parentOrgPage + 1, false);
+    }
+  };
+
+  const handleSave = async (formData: {
+    name: string;
+    code: string;
+    address: string;
+    latitude: string;
+    longitude: string;
+    type: string;
+    parent_id?: string;
+  }) => {
     try {
       setIsSaving(true);
 
-      const token = localStorage.getItem("auth_token");
-      if (!token) {
-        throw new Error("Token tidak ditemukan. Silakan login kembali.");
+      if (isNew) {
+        // Create new organization
+        const payload = {
+          name: formData.name,
+          code: formData.code || "",
+          address: formData.address || "123 Main Street",
+          latitude: formData.latitude || "-6.200000",
+          longitude: formData.longitude || "106.816666",
+          type: formData.type,
+          parent_id: formData.parent_id && formData.parent_id !== "none" ? formData.parent_id : undefined,
+        };
+
+        await apiClient.createOrganization(payload);
+
+        toast({
+          title: "Berhasil!",
+          description: "Organization berhasil dibuat",
+        });
+
+        // Redirect to organization list
+        setTimeout(() => setLocation("/organization"), 1500);
+      } else {
+        // Update existing organization
+        if (!organization) return;
+
+        await apiClient.updateOrganization(id!, formData);
+
+        // Refresh data setelah successful update
+        await fetchOrganizationDetail();
+
+        toast({
+          title: "Berhasil!",
+          description: "Organization berhasil diperbarui",
+        });
       }
-
-      const response = await fetch(
-        `http://localhost:5001/api/v1/organizations/${id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
-          },
-          body: JSON.stringify(formData),
-        }
-      );
-
-      // Handle response - http.StatusOK (200) dari Golang akan masuk ke sini
-      if (!response.ok) {
-        if (response.status === 401) {
-          localStorage.removeItem("auth_token");
-          localStorage.removeItem("user_data");
-          window.location.href = "/login";
-          throw new Error("Sesi Anda telah berakhir. Silakan login kembali.");
-        }
-        throw new Error(`Gagal update data: ${response.status}`);
-      }
-
-      // Backend mengembalikan http.StatusOK ("OK"), bukan JSON
-      // Refresh data setelah successful update
-      await fetchOrganizationDetail();
-
-      toast({
-        title: "Berhasil!",
-        description: "Organization berhasil diperbarui",
-      });
     } catch (error) {
-      console.error("Error updating organization:", error);
+      console.error("Error saving organization:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Gagal memperbarui organization",
+        description: error instanceof Error ? error.message : `Gagal ${isNew ? "membuat" : "memperbarui"} organization`,
         variant: "destructive",
       });
     } finally {
@@ -156,8 +209,43 @@ export default function OrganizationDetailPage() {
   useEffect(() => {
     if (id) {
       fetchOrganizationDetail();
+      fetchParentOrganizations(1, true);
     }
   }, [id]);
+
+  const fetchParentName = async (parentId: string) => {
+    try {
+      const parentData = await apiClient.getOrganization(parentId) as { data: Organization };
+      setSelectedParentName(parentData.data.name || "");
+    } catch (error) {
+      console.error("Error fetching parent name:", error);
+      setSelectedParentName("");
+    }
+  };
+
+  useEffect(() => {
+    if (organization?.parent) {
+      // Use parent data from API response
+      setSelectedParentId(organization.parent.id);
+      setSelectedParentName(organization.parent.name);
+    } else if (organization?.parent_id) {
+      // Fallback for backward compatibility
+      setSelectedParentId(organization.parent_id);
+      setSelectedParentName(""); // Reset first
+
+      // Try to find parent in loaded list
+      const parentInList = parentOrganizations.find(org => org.id === organization.parent_id);
+      if (parentInList) {
+        setSelectedParentName(parentInList.name);
+      } else {
+        // Fetch parent name if not in list
+        fetchParentName(organization.parent_id);
+      }
+    } else if (!isNew) {
+      setSelectedParentId("none");
+      setSelectedParentName("");
+    }
+  }, [organization?.parent, organization?.parent_id, organization?.name, isNew, parentOrganizations]);
 
   if (loading) {
     return (
@@ -174,7 +262,7 @@ export default function OrganizationDetailPage() {
     );
   }
 
-  if (!organization) {
+  if (!organization && !isNew) {
     return (
       <div className="bg-background min-h-screen">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -199,17 +287,19 @@ export default function OrganizationDetailPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Building className="w-8 h-8 text-gray-600" />
-              <h1 className="text-2xl font-semibold">Detail Organization</h1>
+              <h1 className="text-2xl font-semibold">
+                {isNew ? "Tambah Organization" : "Detail Organization"}
+              </h1>
             </div>
             <div className="flex items-center space-x-2">
               <Button
                 type="submit"
                 form="organization-form"
                 variant="default"
-                disabled={isSaving || !organization}
+                disabled={isSaving}
               >
                 <Save className="w-4 h-4 mr-2" />
-                {isSaving ? "Menyimpan..." : "Simpan"}
+                {isSaving ? "Menyimpan..." : (isNew ? "Buat" : "Simpan")}
               </Button>
             </div>
           </div>
@@ -220,11 +310,16 @@ export default function OrganizationDetailPage() {
             onSubmit={(e) => {
               e.preventDefault();
               const formData = new FormData(e.currentTarget);
-              handleSave({
+              const submitData = {
                 name: formData.get("name") as string,
+                code: formData.get("code") as string,
                 address: formData.get("address") as string,
+                latitude: formData.get("latitude") as string,
+                longitude: formData.get("longitude") as string,
                 type: formData.get("type") as string,
-              });
+                parent_id: selectedParentId && selectedParentId !== "none" ? selectedParentId : undefined,
+              };
+              handleSave(submitData);
             }}
             className="space-y-6"
           >
@@ -242,6 +337,17 @@ export default function OrganizationDetailPage() {
                     placeholder="Masukkan nama organization"
                     className="mt-1"
                     required
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="code">Kode Organization</Label>
+                  <Input
+                    id="code"
+                    name="code"
+                    defaultValue={organization?.code || ""}
+                    placeholder="Masukkan kode organization"
+                    className="mt-1"
                   />
                 </div>
 
@@ -275,11 +381,117 @@ export default function OrganizationDetailPage() {
                     rows={3}
                   />
                 </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="latitude">Latitude</Label>
+                    <Input
+                      id="latitude"
+                      name="latitude"
+                      defaultValue={organization?.latitude || ""}
+                      placeholder="Contoh: -6.200000"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="longitude">Longitude</Label>
+                    <Input
+                      id="longitude"
+                      name="longitude"
+                      defaultValue={organization?.longitude || ""}
+                      placeholder="Contoh: 106.816666"
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="parent_id">Parent Organization</Label>
+                  <input
+                    type="hidden"
+                    name="parent_id"
+                    value={selectedParentId}
+                  />
+                  <Popover open={isOpenParentSelect} onOpenChange={setIsOpenParentSelect}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="w-full justify-between mt-1"
+                      >
+                        {selectedParentId === "none"
+                          ? "Pilih parent organization (opsional)"
+                          : parentOrganizations.find(org => org.id === selectedParentId)?.name ||
+                            selectedParentName ||
+                            selectedParentId ||
+                            "Loading parent..."
+                        }
+                        <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-full p-0" align="start">
+                      <ScrollArea
+                        className="max-h-60 w-full"
+                        onScroll={handleScrollParentSelect}
+                      >
+                        <div className="p-1">
+                          <button
+                            type="button"
+                            className={`w-full text-left px-2 py-1.5 rounded-sm hover:bg-accent ${
+                              selectedParentId === "none" ? "bg-accent" : ""
+                            }`}
+                            onClick={() => {
+                              setSelectedParentId("none");
+                              setSelectedParentName("");
+                              setIsOpenParentSelect(false);
+                            }}
+                          >
+                            Tidak ada parent
+                          </button>
+                          {parentOrganizations
+                            .filter(org => {
+                              // In create mode, show all organizations
+                              if (isNew) return true;
+                              // In edit mode, exclude current organization from list
+                              return org.id !== organization?.id;
+                            })
+                            .map((org) => (
+                              <button
+                                key={org.id}
+                                type="button"
+                                className={`w-full text-left px-2 py-1.5 rounded-sm hover:bg-accent ${
+                                  selectedParentId === org.id ? "bg-accent" : ""
+                                }`}
+                                onClick={() => {
+                                  setSelectedParentId(org.id);
+                                  setSelectedParentName(org.name);
+                                  setIsOpenParentSelect(false);
+                                }}
+                              >
+                                {org.name}
+                              </button>
+                            ))}
+                          {loadingParentOrgs && (
+                            <div className="flex items-center justify-center p-2">
+                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-2"></div>
+                              <span className="text-sm text-gray-500">Loading...</span>
+                            </div>
+                          )}
+                          {!hasMoreParentOrgs && parentOrganizations.length > 0 && (
+                            <div className="text-center p-2 text-sm text-gray-500">
+                              End of results
+                            </div>
+                          )}
+                        </div>
+                      </ScrollArea>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </CardContent>
             </Card>
 
-            {/* Organization Tree */}
-            {organization && organization.organizations && organization.organizations.length > 0 && (
+            {/* Organization Tree - Only show for existing organizations */}
+            {!isNew && organization && organization.organizations && organization.organizations.length > 0 && (
               <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">

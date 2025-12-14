@@ -61,6 +61,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { formatDate, formatDateTime, getSignedAtTimestamp } from "@/utils/dateFormat";
 import { OrganizationBadge } from "@/components/OrganizationBadge";
+import { getApiBaseUrl } from "@/lib/env";
 
 export type WorkPaperStatus =
   | "draft"
@@ -208,7 +209,7 @@ export default function WorkPaperDetailPage() {
 
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_BASE_URL
+          getApiBaseUrl()
         }/api/v1/desk/work-paper-notes/check`,
         {
           method: "POST",
@@ -318,7 +319,7 @@ export default function WorkPaperDetailPage() {
 
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_BASE_URL
+          getApiBaseUrl()
         }/api/v1/desk/work-papers/${id}/status`,
         {
           method: "PUT",
@@ -364,7 +365,7 @@ export default function WorkPaperDetailPage() {
 
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_BASE_URL
+          getApiBaseUrl()
         }/api/v1/desk/work-paper-notes/${noteId}`,
         {
           method: "PUT",
@@ -434,7 +435,7 @@ export default function WorkPaperDetailPage() {
 
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_BASE_URL
+          getApiBaseUrl()
         }/api/v1/desk/work-paper-notes/${noteId}`,
         {
           method: "PUT",
@@ -486,7 +487,7 @@ export default function WorkPaperDetailPage() {
 
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_BASE_URL
+          getApiBaseUrl()
         }/api/v1/desk/work-paper-signatures?page=1&limit=100&work_paper_id=eq ${id}`,
         {
           method: "GET",
@@ -536,7 +537,7 @@ export default function WorkPaperDetailPage() {
 
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_BASE_URL
+          getApiBaseUrl()
         }/api/v1/desk/work-paper-signatures/${signatureId}/digital-sign`,
         {
           method: "POST",
@@ -707,7 +708,7 @@ export default function WorkPaperDetailPage() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-papers/${id}`,
+        `${getApiBaseUrl()}/api/v1/desk/work-papers/${id}`,
         {
           method: "GET",
           headers: {
@@ -784,7 +785,7 @@ export default function WorkPaperDetailPage() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-papers/${id}`,
+        `${getApiBaseUrl()}/api/v1/desk/work-papers/${id}`,
         {
           method: "PUT",
           headers: {
@@ -831,7 +832,7 @@ export default function WorkPaperDetailPage() {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-papers/${id}/docx`,
+        `${getApiBaseUrl()}/api/v1/desk/work-papers/${id}/docx`,
         {
           method: "GET",
           headers: {
@@ -878,7 +879,7 @@ export default function WorkPaperDetailPage() {
 
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_BASE_URL
+          getApiBaseUrl()
         }/api/v1/desk/work-papers/${id}/approval`,
         {
           method: "POST",

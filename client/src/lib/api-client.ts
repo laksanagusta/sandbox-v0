@@ -1,3 +1,5 @@
+import { getApiBaseUrl, getApiIdentityUrl } from "./env";
+
 interface ApiRequestOptions extends RequestInit {
   skipAuth?: boolean;
 }
@@ -7,9 +9,8 @@ class ApiClient {
   private identityUrl: string;
 
   constructor() {
-    this.baseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:5002";
-    this.identityUrl =
-      import.meta.env.VITE_API_IDENTITY_URL || "http://localhost:5001";
+    this.baseUrl = getApiBaseUrl();
+    this.identityUrl = getApiIdentityUrl();
   }
 
   private getAuthToken(): string | null {
@@ -191,6 +192,38 @@ class ApiClient {
     }`;
 
     return this.request(endpoint, {}, true);
+  }
+
+  async getOrganization(id: string) {
+    return this.request(`api/v1/organizations/${id}`, {}, true);
+  }
+
+  async createOrganization(data: {
+    name: string;
+    address: string;
+    latitude: string;
+    longitude: string;
+    type: string;
+    parent_id?: string;
+  }) {
+    return this.request("api/v1/organizations", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }, true);
+  }
+
+  async updateOrganization(id: string, data: {
+    name: string;
+    address: string;
+    latitude: string;
+    longitude: string;
+    type: string;
+    parent_id?: string;
+  }) {
+    return this.request(`api/v1/organizations/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+    }, true);
   }
 
   // Work Paper API methods

@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { getApiIdentityUrl } from "@/lib/env";
 
 interface Permission {
   id: string;
@@ -43,7 +44,7 @@ export default function PermissionDetailPage() {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/permissions/${id}`,
+        `${getApiIdentityUrl()}/api/v1/permissions/${id}`,
         {
           method: "GET",
           headers: {
@@ -95,7 +96,7 @@ export default function PermissionDetailPage() {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/permissions/${id}`,
+        `${getApiIdentityUrl()}/api/v1/permissions/${id}`,
         {
           method: "PATCH",
           headers: {

@@ -1,8 +1,15 @@
 import { Building, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { OrganizationTable } from "@/components/OrganizationTable";
+import { useLocation } from "wouter";
 
 export default function OrganizationPage() {
+  const [, setLocation] = useLocation();
+
+  const handleAddOrganization = () => {
+    setLocation("/organization/new");
+  };
+
   return (
     <div className="bg-background min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -14,7 +21,7 @@ export default function OrganizationPage() {
                 Organization Management
               </h1>
             </div>
-            <Button>
+            <Button onClick={handleAddOrganization}>
               <Plus className="w-4 h-4 mr-2" />
               Tambah Organization
             </Button>

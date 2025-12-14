@@ -28,6 +28,7 @@ import {
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate, formatDateTime } from "@/utils/dateFormat";
+import { getApiBaseUrl } from "@/lib/env";
 
 export type BusinessTripStatus = 'draft' | 'ongoing' | 'ready_to_verify' | 'completed' | 'canceled';
 
@@ -121,7 +122,7 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/business-trips?${params}`,
+        `${getApiBaseUrl()}/api/v1/business-trips?${params}`,
         {
           method: "GET",
           headers: {

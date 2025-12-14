@@ -29,6 +29,7 @@ import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { formatDateTime } from "@/utils/dateFormat";
 import { OrganizationBadge } from "@/components/OrganizationBadge";
+import { getApiBaseUrl } from "@/lib/env";
 
 export type WorkPaperStatus = 'ongoing' | 'completed' | 'draft' | 'ready_to_sign';
 
@@ -114,7 +115,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/v1/desk/work-papers?${params}`,
+        `${getApiBaseUrl()}/api/v1/desk/work-papers?${params}`,
         {
           method: "GET",
           headers: {

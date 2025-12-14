@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Upload, FileText, X, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { getApiBaseUrl } from "@/lib/env";
 
 interface UploadFormProps {
   onUploaded: (data: any) => void;
@@ -61,7 +62,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
       }
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_BASE_URL}/api/upload`,
+        `${getApiBaseUrl()}/api/upload`,
         {
           method: "POST",
           headers: {

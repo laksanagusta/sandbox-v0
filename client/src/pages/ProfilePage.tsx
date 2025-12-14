@@ -29,6 +29,7 @@ import {
 } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
+import { getApiIdentityUrl } from "@/lib/env";
 
 interface Role {
   id: string;
@@ -88,7 +89,7 @@ export default function ProfilePage() {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/users/${userId}`,
+        `${getApiIdentityUrl()}/api/v1/users/${userId}`,
         {
           method: "GET",
           headers: {
@@ -155,7 +156,7 @@ export default function ProfilePage() {
       }
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/users/${profile.id}`,
+        `${getApiIdentityUrl()}/api/v1/users/${profile.id}`,
         {
           method: "PATCH",
           headers: {
@@ -231,7 +232,7 @@ export default function ProfilePage() {
       };
 
       const response = await fetch(
-        `http://localhost:5001/api/v1/users/${profile.id}/change-password`,
+        `${getApiIdentityUrl()}/api/v1/users/${profile.id}/change-password`,
         {
           method: "POST",
           headers: {
