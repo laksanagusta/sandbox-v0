@@ -44,9 +44,10 @@ interface Verificator {
 interface VerificatorsSectionProps {
   businessTripId: string;
   businessTripStatus?: string;
+  onVerificatorsUpdate?: (verificators: Verificator[]) => void;
 }
 
-export function VerificatorsSection({ businessTripId, businessTripStatus }: VerificatorsSectionProps) {
+export function VerificatorsSection({ businessTripId, businessTripStatus, onVerificatorsUpdate }: VerificatorsSectionProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [verificators, setVerificators] = useState<Verificator[]>([]);
@@ -72,6 +73,9 @@ export function VerificatorsSection({ businessTripId, businessTripStatus }: Veri
         `/api/v1/business-trips/verificators?${params.toString()}`
       );
       setVerificators(response.data || []);
+      if (onVerificatorsUpdate) {
+        onVerificatorsUpdate(response.data || []);
+      }
     } catch (error) {
       console.error("Error fetching verificators:", error);
       toast({

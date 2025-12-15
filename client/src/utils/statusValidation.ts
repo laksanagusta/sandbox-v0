@@ -25,11 +25,16 @@ export const validateStatusTransition = (
     return false;
   }
 
-  // Define allowed transitions
+  // Define allowed allowedTransitions
+  // draft -> ongoing, canceled
+  // ongoing -> ready_to_verify, canceled
+  // ready_to_verify -> completed, canceled
+  // completed -> terminal
+  // canceled -> terminal
   const allowedTransitions: Record<BusinessTripStatus, BusinessTripStatus[]> = {
     draft: ['ongoing', 'canceled'],
-    ongoing: ['ready_to_verify', 'completed', 'draft', 'canceled'],
-    ready_to_verify: ['completed', 'ongoing', 'canceled'],
+    ongoing: ['ready_to_verify', 'canceled'],
+    ready_to_verify: ['completed', 'canceled'],
     completed: [], // No transitions allowed from completed
     canceled: [], // No transitions allowed from canceled
   };
@@ -51,8 +56,8 @@ export const getNextAvailableStatuses = (
   // Define allowed transitions (excluding current status)
   const allowedTransitions: Record<BusinessTripStatus, BusinessTripStatus[]> = {
     draft: ['ongoing', 'canceled'],
-    ongoing: ['ready_to_verify', 'completed', 'draft', 'canceled'],
-    ready_to_verify: ['completed', 'ongoing', 'canceled'],
+    ongoing: ['ready_to_verify', 'canceled'],
+    ready_to_verify: ['completed', 'canceled'],
     completed: [],
     canceled: [],
   };
@@ -65,8 +70,8 @@ export const getNextAvailableStatuses = (
  * @param hasAssignees Whether the business trip has assignees
  * @returns Initial status
  */
-export const getInitialStatus = (hasAssignees: boolean): BusinessTripStatus => {
-  return hasAssignees ? 'ongoing' : 'draft';
+export const getInitialStatus = (_hasAssignees: boolean): BusinessTripStatus => {
+  return 'draft';
 };
 
 /**

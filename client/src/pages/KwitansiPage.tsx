@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import UploadForm from "@/components/UploadForm";
 import ActivityForm from "@/components/ActivityForm";
-import EditableTable from "@/components/EditableTable";
+import EditableTable, { ValidationError } from "@/components/EditableTable";
 import LLMDisclaimer from "@/components/LLMDisclaimer";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
@@ -34,6 +34,16 @@ import { VerificatorsSection } from "@/components/VerificatorsSection";
 import { apiClient } from "@/lib/api-client";
 import { BusinessTripHistory } from "@/components/BusinessTripHistory";
 import { getApiBaseUrl } from "@/lib/env";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface ActivityFormInput {
   startDate: string;
@@ -152,12 +162,127 @@ export default function KwitansiPage() {
     }
   }, [isLoading]);
 
-  const handleStatusChange = (newStatus: BusinessTripStatus) => {
+
+
+  const handleStatusChangeWithConfirmation = (newStatus: BusinessTripStatus) => {
     // Validate status transition
     if (validateStatusTransition(kwitansiData.status, newStatus)) {
-      setKwitansiData((prev) => ({ ...prev, status: newStatus }));
+      // Validate if all verificators approved before completed
+      if (newStatus === "completed") {
+        if (existingVerificators.length === 0) {
+           toast({
+            title: "Validasi Gagal",
+            description: "Tidak ada verifikator yang ditugaskan. Silakan tambahkan verifikator terlebih dahulu.",
+            variant: "destructive",
+          });
+          return;
+        }
+
+        const allApproved = existingVerificators.every(v => v.status === "approved");
+        if (!allApproved) {
+          toast({
+            title: "Validasi Gagal",
+            description: "Semua verifikator harus menyetujui sebelum status dapat diubah menjadi Completed.",
+            variant: "destructive",
+          });
+          return;
+        }
+      }
+
+      setPendingStatus(newStatus);
+      setIsStatusDialogOpen(true);
     }
   };
+
+  const confirmStatusChange = async () => {
+    if (pendingStatus) {
+      // NEW: Validation for document link when status becomes completed
+      // User requested validation after clicking OK on the confirmation dialog
+      if (pendingStatus === "completed" && !kwitansiData.documentLink) {
+        setActivityErrors((prev) => ({
+          ...prev,
+          documentLink: "Link dokumen wajib diisi",
+        }));
+        
+        toast({
+          title: "Validasi Gagal",
+          description: "Link dokumen wajib diisi sebelum mengubah status menjadi Completed",
+          variant: "destructive",
+        });
+        setIsStatusDialogOpen(false);
+        setPendingStatus(null);
+        return;
+      }
+
+      // Update local state first to reflect change immediately
+      setKwitansiData((prev) => ({ ...prev, status: pendingStatus }));
+      
+      // If we are in edit mode, we should also save the change to backend immediately
+      if (isEditMode) {
+        try {
+          // Prepare minimal payload for status update to avoid validation errors on other fields
+          const token = localStorage.getItem("auth_token");
+          // But since backend expects full object or specific endpoint, let's just use handleSave() logic partially
+          // Or better, just call handleSave() after state update? 
+          // Re-reading user request: "jika oke akan langsung update statusnya".
+          // This implies making an API call.
+          
+          // Let's use a specific patch or just save the whole form.
+          // Since handleSave validates everything, it is safer to reuse parts of it or duplicate purely status update logic.
+          // However, handleSave is complex. Let's try to just update status via API if possible, or trigger save.
+          
+          // For now, let's trigger the full save process which includes status update.
+          // But handleSave relies on current state 'kwitansiData'. 
+          // Since setState is async, we can't call handleSave immediately after setKwitansiData in the same closure without waiting.
+          // An alternative: pass the new status to handleSave or have a specialized updateStatus function.
+          
+          // Given the complexity of existing handleSave, let's create a specialized function to update just status
+          // OR, trust that the user will click "Save" later? 
+          // "jika oke akan langsung update statusnya" -> implies immediate persistence.
+          
+          const response = await fetch(
+            `${getApiBaseUrl()}/api/v1/business-trips/${businessTripId}/status`, 
+            {
+               method: 'PATCH',
+               headers: {
+                 'Content-Type': 'application/json',
+                 'Authorization': `Bearer ${token}`
+               },
+               body: JSON.stringify({ status: pendingStatus })
+            }
+          );
+
+          if (!response.ok) {
+             throw new Error("Gagal mengupdate status");
+          }
+           
+           toast({
+            title: "Berhasil",
+            description: "Status berhasil diperbarui",
+          });
+          
+          // Refresh data to ensure sync
+          fetchBusinessTripData(businessTripId!);
+          
+        } catch (error) {
+           console.error("Failed to update status immediately", error);
+           toast({
+            title: "Error",
+            description: "Gagal mengupdate status di server",
+            variant: "destructive",
+           });
+           // Revert local state if server update failed
+           setKwitansiData((prev) => ({ ...prev, status: originalKwitansiData?.status || "draft" }));
+        }
+      }
+      
+      setIsStatusDialogOpen(false);
+      setPendingStatus(null);
+    }
+  };
+
+  const [isStatusDialogOpen, setIsStatusDialogOpen] = useState(false);
+  const [pendingStatus, setPendingStatus] = useState<BusinessTripStatus | null>(null);
 
   const getStatusBadge = (status: BusinessTripStatus) => {
     const statusConfig = {
@@ -190,7 +315,10 @@ export default function KwitansiPage() {
 
     const config = statusConfig[status] || statusConfig.draft;
     const availableStatuses = getNextAvailableStatuses(status);
-    const canChangeStatus = status === "draft" || status === "ongoing" || status === "ready_to_verify";
+    // User can only change status if:
+    // 1. We are in edit mode (business trip exists)
+    // 2. The current status allows transitions (draft, ongoing, ready_to_verify)
+    const canChangeStatus = isEditMode && (status === "draft" || status === "ongoing" || status === "ready_to_verify");
 
     if (canChangeStatus) {
       return (
@@ -219,7 +347,7 @@ export default function KwitansiPage() {
                 return (
                   <DropdownMenuItem
                     key={nextStatus}
-                    onClick={() => handleStatusChange(nextStatus)}
+                    onClick={() => handleStatusChangeWithConfirmation(nextStatus)}
                     className="cursor-pointer"
                   >
                     <div className="flex items-center w-full">
@@ -253,6 +381,7 @@ export default function KwitansiPage() {
   const [activityErrors, setActivityErrors] = useState<
     Partial<Record<keyof ActivityFormInput, string>>
   >({});
+  const [validationErrors, setValidationErrors] = useState<ValidationError[]>([]);
 
   // Debounce user search term
   useEffect(() => {
@@ -262,6 +391,13 @@ export default function KwitansiPage() {
     return () => clearTimeout(timer);
   }, [userSearch]);
 
+  // State for verificators in edit mode
+  const [existingVerificators, setExistingVerificators] = useState<any[]>([]);
+
+  const handleVerificatorsUpdate = (verificators: any[]) => {
+    setExistingVerificators(verificators);
+  };
+    
   // Load users when debounced search term changes
   useEffect(() => {
     if (debouncedUserSearch || users.length === 0) {
@@ -506,6 +642,7 @@ export default function KwitansiPage() {
   };
 
   const handleUpdateAssignees = (updatedAssignees: Assignee[]) => {
+    setValidationErrors([]);
     setKwitansiData((prev) => {
       // For new business trips, do NOT auto-update status to ongoing
       // Status should remain 'draft' until manually changed or saved
@@ -582,6 +719,37 @@ export default function KwitansiPage() {
         variant: "destructive",
       });
       return;
+    }
+
+    // Validate documentLink if status is completed
+    if (calculatedStatus === "completed") {
+      if (!activityFormInput.documentLink) {
+        toast({
+          title: "Validasi Gagal",
+          description: "Link dokumen harus diisi jika status adalah Completed",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (existingVerificators.length === 0) {
+           toast({
+            title: "Validasi Gagal",
+            description: "Tidak ada verifikator yang ditugaskan. Silakan tambahkan verifikator terlebih dahulu.",
+            variant: "destructive",
+          });
+          return;
+      }
+
+      const allApproved = existingVerificators.every(v => v.status === "approved");
+      if (!allApproved) {
+        toast({
+          title: "Validasi Gagal",
+          description: "Semua verifikator harus menyetujui sebelum status dapat diubah menjadi Completed.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     // Validate assignees
@@ -733,6 +901,27 @@ export default function KwitansiPage() {
       }
 
       if (!response.ok) {
+        try {
+            const errorData = await response.json();
+            if (
+              errorData &&
+              errorData.error_type === "employee_validation_error" &&
+              Array.isArray(errorData.invalid_employees)
+            ) {
+              setValidationErrors(errorData.invalid_employees);
+              toast({
+                title: "Validasi Gagal",
+                description: errorData.error || "Terdapat kesalahan validasi pada data pegawai",
+                variant: "destructive",
+              });
+              setIsSaving(false);
+              return;
+            }
+        } catch (e) {
+            // Include JSON parsing error or just ignore and throw standard error below
+            console.error("Error parsing response JSON", e);
+        }
+
         throw new Error(
           `Gagal ${
             isEditMode ? "mengupdate" : "menyimpan"
@@ -1010,11 +1199,14 @@ export default function KwitansiPage() {
   // Check if status is completed or ready_to_verify to disable all fields
   // Use originalKwitansiData (saved state) to determine disabled state
   const savedStatus = originalKwitansiData?.status || "draft";
-  const isFormDisabled = savedStatus === "completed" || savedStatus === "ready_to_verify";
+  const isFormDisabled =
+    savedStatus === "completed" ||
+    savedStatus === "ready_to_verify" ||
+    savedStatus === "canceled";
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-8 py-8">
         <div className="space-y-6">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <h1 className="text-2xl font-semibold" data-testid="text-title">
@@ -1058,6 +1250,7 @@ export default function KwitansiPage() {
               onChange={handleActivityChange}
               errors={activityErrors}
               disabled={isFormDisabled}
+              isDocumentLinkEnabled={savedStatus === "ready_to_verify"}
             />
           </div>
 
@@ -1066,6 +1259,7 @@ export default function KwitansiPage() {
               assignees={kwitansiData.assignees}
               onUpdateAssignees={handleUpdateAssignees}
               disabled={isFormDisabled}
+              validationErrors={validationErrors}
             />
           </div>
 
@@ -1225,6 +1419,7 @@ export default function KwitansiPage() {
                 <VerificatorsSection 
                   businessTripId={businessTripId} 
                   businessTripStatus={savedStatus}
+                  onVerificatorsUpdate={handleVerificatorsUpdate}
                 />
               </div>
             )
@@ -1233,6 +1428,45 @@ export default function KwitansiPage() {
 
         <Footer />
       </div>
+
+      <AlertDialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Perubahan Status</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin mengubah status business trip ini menjadi{" "}
+              <span className="font-semibold">
+                {pendingStatus === "ready_to_verify"
+                  ? "Ready to Verify"
+                  : pendingStatus === "completed"
+                  ? "Completed"
+                  : pendingStatus === "canceled"
+                  ? "Canceled"
+                  : pendingStatus}
+              </span>
+              ?
+              {pendingStatus === "canceled" && (
+                <span className="block mt-2 text-destructive">
+                  Perhatian: Tindakan ini tidak dapat dibatalkan.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingStatus(null)}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmStatusChange}
+              className={
+                pendingStatus === "canceled" ? "bg-red-600 hover:bg-red-700" : ""
+              }
+            >
+              Ya, Ubah Status
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

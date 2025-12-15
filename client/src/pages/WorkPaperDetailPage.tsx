@@ -172,6 +172,7 @@ export default function WorkPaperDetailPage() {
   const [confirmSignDialog, setConfirmSignDialog] = useState<string | null>(
     null
   );
+  const [validationErrors, setValidationErrors] = useState<Set<string>>(new Set());
   const signaturesRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -294,12 +295,42 @@ export default function WorkPaperDetailPage() {
   const handleUpdateStatus = async (newStatus: WorkPaperStatus) => {
     try {
       // Validasi untuk status "completed"
+      // Validasi untuk status "completed"
       if (newStatus === "completed") {
+        setValidationErrors(new Set()); // Reset errors
+        // Validasi link dokumen
+        const errors = new Set<string>();
+        workPaperNotes.forEach((note) => {
+          // Check effective link value (editing value takes precedence if exists)
+          // editingDriveLinks uses note.id as key
+          const hasEdits = Object.prototype.hasOwnProperty.call(
+            editingDriveLinks,
+            note.id
+          );
+          const currentLink = hasEdits
+            ? editingDriveLinks[note.id]
+            : note.gdrive_link;
+
+          if (!currentLink || currentLink.trim() === "" || currentLink === "-") {
+            errors.add(note.id);
+          }
+        });
+
+        if (errors.size > 0) {
+          setValidationErrors(errors);
+          toast({
+            title: "Tidak Dapat Mengubah Status",
+            description: `Status tidak dapat diubah menjadi "Completed" karena masih ada ${errors.size} item yang belum memiliki link dokumen. Harap lengkapi semua link dokumen.`,
+            variant: "destructive",
+          });
+          return;
+        }
+
         const allSigned = checkAllSignaturesSigned();
 
         if (!allSigned) {
           const pendingSignatures = workPaperSignatures.filter(
-            signature => signature.status !== "signed"
+            (signature) => signature.status !== "signed"
           );
 
           toast({
@@ -915,7 +946,7 @@ export default function WorkPaperDetailPage() {
   if (loading) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto px-8 py-8">
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
@@ -930,7 +961,7 @@ export default function WorkPaperDetailPage() {
   if (!workPaper) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto px-8 py-8">
           <div className="text-center py-12">
             <p>Work Paper tidak ditemukan</p>
           </div>
@@ -941,7 +972,7 @@ export default function WorkPaperDetailPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-8 py-8">
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
@@ -1207,18 +1238,30 @@ export default function WorkPaperDetailPage() {
                                   {workPaper.status === "draft" ? (
                                     <Input
                                       value={
-                                        editingDriveLinks[note.id] ||
-                                        note.gdrive_link ||
-                                        ""
+                                        editingDriveLinks[note.id] !== undefined
+                                          ? editingDriveLinks[note.id]
+                                          : note.gdrive_link || ""
                                       }
-                                      onChange={(e) =>
+                                      onChange={(e) => {
                                         handleDriveLinkChange(
                                           note.id,
                                           e.target.value
-                                        )
-                                      }
+                                        );
+                                        // Clear validation error when user types
+                                        if (validationErrors.has(note.id)) {
+                                          setValidationErrors((prev) => {
+                                            const newErrors = new Set(prev);
+                                            newErrors.delete(note.id);
+                                            return newErrors;
+                                          });
+                                        }
+                                      }}
                                       placeholder="Masukkan drive link"
-                                      className="w-full text-sm"
+                                      className={`w-full text-sm ${
+                                        validationErrors.has(note.id)
+                                          ? "border-red-500 focus-visible:ring-red-500"
+                                          : ""
+                                      }`}
                                     />
                                   ) : (
                                     <div className="flex items-center space-x-2">

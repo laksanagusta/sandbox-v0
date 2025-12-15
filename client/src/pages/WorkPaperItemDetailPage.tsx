@@ -233,7 +233,7 @@ export default function WorkPaperItemDetailPage() {
   if (loading) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto px-8 py-8">
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
@@ -248,7 +248,7 @@ export default function WorkPaperItemDetailPage() {
   if (!workPaperItem && !isNew) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto px-8 py-8">
           <div className="text-center py-12">
             <p>Work Paper Item tidak ditemukan</p>
           </div>
@@ -259,7 +259,7 @@ export default function WorkPaperItemDetailPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-8 py-8">
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">

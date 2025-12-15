@@ -21,6 +21,7 @@ interface ActivityFormProps {
   onChange: (activity: ActivityFormPropsData) => void;
   errors?: Partial<Record<keyof ActivityFormPropsData, string>>; // Add errors prop
   disabled?: boolean;
+  isDocumentLinkEnabled?: boolean;
 }
 
 export default function ActivityForm({
@@ -28,6 +29,7 @@ export default function ActivityForm({
   onChange,
   errors,
   disabled = false,
+  isDocumentLinkEnabled = false,
 }: ActivityFormProps) {
   const handleChange = (field: keyof ActivityFormPropsData, value: string) => {
     onChange({
@@ -244,14 +246,14 @@ export default function ActivityForm({
 
       <div className="mt-6 space-y-2">
         <Label htmlFor="documentLink" className="text-sm font-medium">
-          Link Document (Google Drive)
+          Link Dokumen
         </Label>
         <Input
           id="documentLink"
           type="url"
           value={activity.documentLink || ""}
           onChange={(e) => handleChange("documentLink", e.target.value)}
-          disabled={disabled}
+          disabled={disabled && !isDocumentLinkEnabled}
           placeholder="https://drive.google.com/..."
           className={`w-full ${
             errors?.documentLink

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
-import { Building, ArrowLeft, Save } from "lucide-react";
+import { Building, ArrowLeft, Save, Check, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -14,6 +14,15 @@ import { ChevronDown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { TreeNode } from "@/components/OrganizationTreeNode";
 import { apiClient } from "@/lib/api-client";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import { cn } from "@/lib/utils";
 
 interface ParentOrganization {
   id: string;
@@ -54,6 +63,7 @@ export default function OrganizationDetailPage() {
   const [isOpenParentSelect, setIsOpenParentSelect] = useState(false);
   const [selectedParentId, setSelectedParentId] = useState<string>("none");
   const [selectedParentName, setSelectedParentName] = useState<string>("");
+  const [parentOrgSearch, setParentOrgSearch] = useState("");
 
   const organizationTypes = [
     { value: "eselon_1", label: "Eselon 1" },
@@ -85,18 +95,13 @@ export default function OrganizationDetailPage() {
     }
   };
 
-  const fetchParentOrganizations = async (page: number = 1, reset: boolean = false) => {
+  const fetchParentOrganizations = async (page: number = 1, search: string = "") => {
     try {
-      if (reset) {
-        setParentOrgPage(1);
-        setHasMoreParentOrgs(true);
-        setParentOrganizations([]);
-      }
-
       setLoadingParentOrgs(true);
-      const response = await apiClient.getOrganizations({
+      const data = await apiClient.getOrganizations({
         page,
-        limit: 10
+        limit: 10,
+        search,
       }) as {
         data: Organization[];
         metadata: {
@@ -107,13 +112,13 @@ export default function OrganizationDetailPage() {
       };
 
       if (page === 1) {
-        setParentOrganizations(response.data || []);
+        setParentOrganizations(data.data || []);
       } else {
-        setParentOrganizations(prev => [...prev, ...(response.data || [])]);
+        setParentOrganizations(prev => [...prev, ...(data.data || [])]);
       }
 
       setParentOrgPage(page);
-      setHasMoreParentOrgs(response.metadata?.current_page < response.metadata?.total_page);
+      setHasMoreParentOrgs(data.metadata?.current_page < data.metadata?.total_page);
     } catch (error) {
       console.error("Error fetching parent organizations:", error);
     } finally {
@@ -123,17 +128,32 @@ export default function OrganizationDetailPage() {
 
   const handleScrollParentSelect = (e: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
-    const threshold = 100; // Distance from bottom to trigger load more
-
-    if (
-      scrollHeight - (scrollTop + clientHeight) < threshold &&
-      hasMoreParentOrgs &&
-      !loadingParentOrgs &&
-      isOpenParentSelect
-    ) {
-      fetchParentOrganizations(parentOrgPage + 1, false);
+    if (scrollHeight - scrollTop <= clientHeight * 1.5 && hasMoreParentOrgs && !loadingParentOrgs) {
+      const nextPage = parentOrgPage + 1;
+      setParentOrgPage(nextPage);
+      fetchParentOrganizations(nextPage, parentOrgSearch);
     }
   };
+
+  // Debounce parent org search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isOpenParentSelect) {
+        setParentOrgPage(1);
+        setParentOrganizations([]);
+        setHasMoreParentOrgs(true);
+        fetchParentOrganizations(1, parentOrgSearch);
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [parentOrgSearch]);
+
+  // Fetch parent orgs when dropdown opens
+  useEffect(() => {
+    if (isOpenParentSelect && parentOrganizations.length === 0) {
+      fetchParentOrganizations(1, "");
+    }
+  }, [isOpenParentSelect]);
 
   const handleSave = async (formData: {
     name: string;
@@ -209,7 +229,7 @@ export default function OrganizationDetailPage() {
   useEffect(() => {
     if (id) {
       fetchOrganizationDetail();
-      fetchParentOrganizations(1, true);
+      fetchParentOrganizations(1, "");
     }
   }, [id]);
 
@@ -250,7 +270,7 @@ export default function OrganizationDetailPage() {
   if (loading) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full mx-auto px-8 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
@@ -265,7 +285,7 @@ export default function OrganizationDetailPage() {
   if (!organization && !isNew) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full mx-auto px-8 py-8">
           <div className="text-center">
             <Building className="mx-auto h-16 w-16 text-gray-300 mb-4" />
             <h2 className="text-lg font-medium text-gray-900 mb-2">Organization tidak ditemukan</h2>
@@ -282,7 +302,7 @@ export default function OrganizationDetailPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full mx-auto px-8 py-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -429,61 +449,71 @@ export default function OrganizationDetailPage() {
                         <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                       </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-full p-0" align="start">
-                      <ScrollArea
-                        className="max-h-60 w-full"
-                        onScroll={handleScrollParentSelect}
-                      >
-                        <div className="p-1">
-                          <button
-                            type="button"
-                            className={`w-full text-left px-2 py-1.5 rounded-sm hover:bg-accent ${
-                              selectedParentId === "none" ? "bg-accent" : ""
-                            }`}
-                            onClick={() => {
-                              setSelectedParentId("none");
-                              setSelectedParentName("");
-                              setIsOpenParentSelect(false);
-                            }}
-                          >
-                            Tidak ada parent
-                          </button>
-                          {parentOrganizations
-                            .filter(org => {
-                              // In create mode, show all organizations
-                              if (isNew) return true;
-                              // In edit mode, exclude current organization from list
-                              return org.id !== organization?.id;
-                            })
-                            .map((org) => (
-                              <button
-                                key={org.id}
-                                type="button"
-                                className={`w-full text-left px-2 py-1.5 rounded-sm hover:bg-accent ${
-                                  selectedParentId === org.id ? "bg-accent" : ""
-                                }`}
-                                onClick={() => {
-                                  setSelectedParentId(org.id);
-                                  setSelectedParentName(org.name);
-                                  setIsOpenParentSelect(false);
-                                }}
-                              >
-                                {org.name}
-                              </button>
-                            ))}
-                          {loadingParentOrgs && (
-                            <div className="flex items-center justify-center p-2">
-                              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900 mr-2"></div>
-                              <span className="text-sm text-gray-500">Loading...</span>
-                            </div>
-                          )}
-                          {!hasMoreParentOrgs && parentOrganizations.length > 0 && (
-                            <div className="text-center p-2 text-sm text-gray-500">
-                              End of results
-                            </div>
-                          )}
-                        </div>
-                      </ScrollArea>
+                    <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+                      <Command shouldFilter={false}>
+                        <CommandInput 
+                          placeholder="Cari parent organization..." 
+                          value={parentOrgSearch}
+                          onValueChange={setParentOrgSearch}
+                        />
+                        <CommandList 
+                          className="max-h-[300px] overflow-y-auto" 
+                          onScroll={handleScrollParentSelect}
+                        >
+                          <CommandEmpty>
+                            {loadingParentOrgs ? "Loading..." : "Tidak ada parent organization."}
+                          </CommandEmpty>
+                          <CommandGroup>
+                            <CommandItem
+                              value="none"
+                              onSelect={() => {
+                                setSelectedParentId("none");
+                                setSelectedParentName("");
+                                setIsOpenParentSelect(false);
+                              }}
+                              className="cursor-pointer"
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  selectedParentId === "none" ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              Tidak ada parent
+                            </CommandItem>
+                            {parentOrganizations
+                              .filter(org => {
+                                if (isNew) return true;
+                                return org.id !== organization?.id;
+                              })
+                              .map((org) => (
+                                <CommandItem
+                                  key={org.id}
+                                  value={org.id}
+                                  onSelect={() => {
+                                    setSelectedParentId(org.id);
+                                    setSelectedParentName(org.name);
+                                    setIsOpenParentSelect(false);
+                                  }}
+                                  className="cursor-pointer"
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      selectedParentId === org.id ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                  {org.name}
+                                </CommandItem>
+                              ))}
+                            {loadingParentOrgs && (
+                              <div className="p-2 flex items-center justify-center">
+                                <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                              </div>
+                            )}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
                     </PopoverContent>
                   </Popover>
                 </div>
@@ -494,10 +524,7 @@ export default function OrganizationDetailPage() {
             {!isNew && organization && organization.organizations && organization.organizations.length > 0 && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Building className="w-5 h-5" />
-                    <span>Struktur Organization</span>
-                  </CardTitle>
+                  <CardTitle>Struktur Organization</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-1">

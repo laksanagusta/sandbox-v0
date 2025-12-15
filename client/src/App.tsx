@@ -22,6 +22,7 @@ import PermissionDetailPage from "@/pages/PermissionDetailPage";
 import UserPage from "@/pages/UserPage";
 import UserDetailPage from "@/pages/UserDetailPage";
 import ProfilePage from "@/pages/ProfilePage";
+import RolePage from "@/pages/RolePage";
 import VaccinesPage from "@/pages/VaccinesPage";
 import WorkPaperCreatePage from "@/pages/WorkPaperCreatePage";
 import BusinessTripReportPage from "@/pages/BusinessTripReportPage";
@@ -52,8 +53,8 @@ function AuthenticatedLayout() {
           <header className="flex items-center h-14 px-6 bg-white border-b sticky top-0 z-40 transition-all duration-200">
             <SidebarTrigger data-testid="button-sidebar-toggle" className="text-muted-foreground hover:text-foreground transition-colors" />
           </header>
-          <main className="flex-1 overflow-auto p-6">
-            <div className="max-w-7xl mx-auto space-y-6 animate-in fade-in duration-500 slide-in-from-bottom-4">
+          <main className="flex-1 overflow-auto">
+            <div className="w-full space-y-6 animate-in fade-in duration-500 slide-in-from-bottom-4">
               <Switch>
                 <Route path="/kwitansi" component={KwitansiPage} />
                 <Route path="/kwitansi/:id" component={KwitansiPage} />
@@ -77,6 +78,7 @@ function AuthenticatedLayout() {
                 <Route path="/users/:id" component={UserDetailPage} />
                 <Route path="/users" component={UserPage} />
                 <Route path="/profile" component={ProfilePage} />
+                <Route path="/roles" component={RolePage} />
                 <Route component={NotFound} />
               </Switch>
             </div>
@@ -126,6 +128,11 @@ export default function App() {
               </ProtectedRoute>
             </Route>
             <Route path="/users">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/roles">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>

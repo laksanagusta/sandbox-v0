@@ -181,7 +181,7 @@ export default function BusinessTripReportPage() {
   if (isLoading) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto px-8 py-8">
           <div className="animate-pulse space-y-6">
             <div className="h-8 bg-gray-200 rounded w-1/3"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -198,7 +198,7 @@ export default function BusinessTripReportPage() {
   if (error) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mx-auto px-8 py-8">
           <div className="text-center">
             <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h2 className="text-xl font-semibold text-gray-900 mb-2">
@@ -215,7 +215,7 @@ export default function BusinessTripReportPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-8 py-8">
         <div className="space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between">

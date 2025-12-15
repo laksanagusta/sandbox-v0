@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -12,17 +12,26 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Assignee, PaymentType, Transaction } from "@shared/types";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+
+export interface ValidationError {
+  index: number;
+  field: string;
+  message: string;
+}
 
 interface EditableTableProps {
   assignees: Assignee[];
   onUpdateAssignees: (assignees: Assignee[]) => void;
   disabled?: boolean;
+  validationErrors?: ValidationError[];
 }
 
 export default function EditableTable({
   assignees,
   onUpdateAssignees,
   disabled = false,
+  validationErrors = [],
 }: EditableTableProps) {
   const updateTransaction = (
     assigneeIndex: number,
@@ -254,6 +263,12 @@ export default function EditableTable({
     onUpdateAssignees(updatedAssignees);
   };
 
+  const getError = (index: number, field: string) => {
+    return validationErrors.find(
+      (e) => e.index === index && e.field === field
+    );
+  };
+
   return (
     <Card className="p-6">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -325,20 +340,47 @@ export default function EditableTable({
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 NIP
               </label>
-              <Input
-                value={assignee.employee_number}
-                onChange={(e) =>
-                  updateAssigneeField(
-                    assigneeIndex,
-                    "employee_number",
-                    e.target.value
-                  )
-                }
-                disabled={disabled}
-                placeholder="NIP"
-                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
-                data-testid={`input-assignee-employee-number-${assigneeIndex}`}
-              />
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="relative">
+                      <Input
+                        value={assignee.employee_number}
+                        onChange={(e) =>
+                          updateAssigneeField(
+                            assigneeIndex,
+                            "employee_number",
+                            e.target.value
+                          )
+                        }
+                        disabled={disabled}
+                        placeholder="NIP"
+                        className={`h-9 text-sm border bg-white focus:ring-1 ${
+                          getError(assigneeIndex, "employee_number")
+                            ? "border-red-500 focus:border-red-500 focus:ring-red-500 pr-10"
+                            : "border-gray-300 focus:border-blue-400 focus:ring-blue-400"
+                        }`}
+                        data-testid={`input-assignee-employee-number-${assigneeIndex}`}
+                      />
+                      {getError(assigneeIndex, "employee_number") && (
+                        <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-red-500">
+                          <AlertCircle className="h-5 w-5" />
+                        </div>
+                      )}
+                    </div>
+                  </TooltipTrigger>
+                  {getError(assigneeIndex, "employee_number") && (
+                    <TooltipContent className="bg-red-500 text-white border-red-600">
+                      <p>{getError(assigneeIndex, "employee_number")?.message}</p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+              {getError(assigneeIndex, "employee_number") && (
+                 <p className="mt-1 text-xs text-red-500">
+                   {getError(assigneeIndex, "employee_number")?.message}
+                 </p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -21,7 +21,11 @@ interface HistoryItem {
   field_name: string;
   old_value?: string;
   new_value?: string;
-  changed_by_user_name: string;
+  changed_by_user_name?: string;
+  user_name?: string;
+  changer_name?: string;
+  username?: string;
+  changed_by?: string;
   notes?: string;
   created_at: string;
 }
@@ -82,6 +86,17 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
     return val.replace(/_/g, " ");
   };
 
+  const getUserName = (item: any) => {
+    return (
+      item.changed_by_user_name ||
+      item.user_name ||
+      item.changer_name ||
+      item.username ||
+      item.changed_by ||
+      "Unknown User"
+    );
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -120,7 +135,7 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
                   <div className="flex-1 space-y-1">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-medium text-foreground">
-                        {item.changed_by_user_name}
+                        {getUserName(item)}
                       </p>
                       <span className="text-xs text-muted-foreground">
                         {format(new Date(item.created_at), "dd MMM HH:mm", {

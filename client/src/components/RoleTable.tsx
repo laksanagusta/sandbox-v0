@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { Search, Shield, ArrowUpDown, ArrowUp, ArrowDown, Pencil } from "lucide-react";
-import { PermissionModal } from "./PermissionModal";
 import { useLocation } from "wouter";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -15,32 +14,35 @@ import {
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { getApiIdentityUrl } from "@/lib/env";
+import { RoleModal } from "./RoleModal";
 
-interface Permission {
+export interface Role {
   id: string;
   name: string;
-  action: string;
-  resource: string;
+  description: string;
+  permission_ids?: string[];
+  permissions?: { id: string; name: string }[];
   created_at: string;
   created_by: string;
 }
 
-interface PermissionResponse {
-  data: Permission[];
+interface RoleResponse {
+  data: Role[];
   page: number;
   limit: number;
   total_items: number;
   total_pages: number;
 }
 
-interface PermissionTableProps {
+interface RoleTableProps {
   className?: string;
+  key?: number;
 }
 
-export function PermissionTable({ className = "" }: PermissionTableProps) {
+export function RoleTable({ className = "" }: RoleTableProps) {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
-  const [permissions, setPermissions] = useState<Permission[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
@@ -54,10 +56,10 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
     total_page: 1,
   });
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedPermission, setSelectedPermission] = useState<Permission | null>(null);
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 
-  const handleEdit = (permission: Permission) => {
-    setSelectedPermission(permission);
+  const handleEdit = (role: Role) => {
+    setSelectedRole(role);
     setIsEditOpen(true);
   };
 
@@ -71,7 +73,7 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
     return () => clearTimeout(timer);
   }, [searchTerm, sortField, sortOrder]);
 
-  const fetchPermissions = useCallback(async () => {
+  const fetchRoles = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -92,7 +94,7 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
       }
 
       const response = await fetch(
-        `${getApiIdentityUrl()}/api/v1/permissions?${params}`,
+        `${getApiIdentityUrl()}/api/v1/roles/list?${params}`,
         {
           method: "GET",
           headers: {
@@ -113,8 +115,8 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
         throw new Error(`Gagal mengambil data: ${response.status}`);
       }
 
-      const result: PermissionResponse = await response.json();
-      setPermissions(result.data);
+      const result: RoleResponse = await response.json();
+      setRoles(result.data);
       setPagination({
         count: result.data.length,
         total_count: result.total_items,
@@ -122,13 +124,13 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
         total_page: result.total_pages,
       });
     } catch (error) {
-      console.error("Error fetching permissions:", error);
+      console.error("Error fetching roles:", error);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Gagal mengambil data permissions",
+        description: error instanceof Error ? error.message : "Gagal mengambil data roles",
         variant: "destructive",
       });
-      setPermissions([]);
+      setRoles([]);
       setPagination({
         count: 0,
         total_count: 0,
@@ -141,8 +143,8 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
   }, [currentPage, debouncedSearchTerm, sortField, sortOrder, toast]);
 
   useEffect(() => {
-    fetchPermissions();
-  }, [fetchPermissions]);
+    fetchRoles();
+  }, [fetchRoles]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -185,22 +187,6 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
     }
   };
 
-  const getActionBadge = (action: string) => {
-    const colors: Record<string, string> = {
-      read: "bg-blue-100 text-blue-800",
-      write: "bg-green-100 text-green-800",
-      update: "bg-yellow-100 text-yellow-800",
-      delete: "bg-red-100 text-red-800",
-    };
-
-    const colorClass = colors[action] || "bg-gray-100 text-gray-800";
-    return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${colorClass}`}>
-        {action}
-      </span>
-    );
-  };
-
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Search Box */}
@@ -208,13 +194,13 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
         <div className="relative flex-1 max-w-md">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
-            placeholder="Search permission..."
+            placeholder="Search role..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
           />
         </div>
-        <Button variant="outline" onClick={fetchPermissions} disabled={loading}>
+        <Button variant="outline" onClick={fetchRoles} disabled={loading}>
           Refresh
         </Button>
       </div>
@@ -240,32 +226,10 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
                   variant="ghost"
                   size="sm"
                   className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("action")}
+                  onClick={() => handleSort("description")}
                 >
-                  Action
-                  <span className="ml-2">{getSortIcon("action")}</span>
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("resource")}
-                >
-                  Resource
-                  <span className="ml-2">{getSortIcon("resource")}</span>
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("created_by")}
-                >
-                  Dibuat oleh
-                  <span className="ml-2">{getSortIcon("created_by")}</span>
+                  Deskripsi
+                  <span className="ml-2">{getSortIcon("description")}</span>
                 </Button>
               </TableHead>
               <TableHead>
@@ -279,64 +243,48 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
                   <span className="ml-2">{getSortIcon("created_at")}</span>
                 </Button>
               </TableHead>
-              <TableHead className="w-[100px]">Opsi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8">
+                <TableCell colSpan={3} className="text-center py-8">
                   <div className="flex items-center justify-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
                     <span>Loading...</span>
                   </div>
                 </TableCell>
               </TableRow>
-            ) : permissions.length === 0 ? (
+            ) : roles.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={3} className="text-center py-8 text-gray-500">
                   <Shield className="mx-auto h-12 w-12 text-gray-300 mb-2" />
-                  <p>Tidak ada data permission</p>
+                  <p>Tidak ada data role</p>
                   {debouncedSearchTerm && (
                     <p className="text-sm">Coba kata kunci pencarian lain</p>
                   )}
                 </TableCell>
               </TableRow>
             ) : (
-              permissions.map((permission) => (
-                <TableRow key={permission.id}>
+              roles.map((role) => (
+                <TableRow key={role.id}>
                   <TableCell className="font-medium">
                     <button
-                      onClick={() => setLocation(`/permission/${permission.id}`)}
-                      className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
+                      onClick={(e) => {
+                         e.stopPropagation();
+                         handleEdit(role);
+                      }}
+                       className="flex items-center space-x-2 hover:underline text-left"
                     >
-                      <Shield className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
-                      <span>{permission.name}</span>
+                      <Shield className="h-4 w-4 text-gray-500" />
+                      <span>{role.name}</span>
                     </button>
                   </TableCell>
-                  <TableCell>{getActionBadge(permission.action)}</TableCell>
-                  <TableCell>
-                    <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
-                      {permission.resource}
-                    </span>
-                  </TableCell>
-                  <TableCell>{permission.created_by}</TableCell>
+                  <TableCell>{role.description}</TableCell>
                   <TableCell>
                     <div className="text-sm text-gray-600">
-                      {formatDate(permission.created_at)}
+                      {formatDate(role.created_at)}
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleEdit(permission);
-                      }}
-                    >
-                      <Pencil className="w-4 h-4 text-gray-500 hover:text-blue-600" />
-                    </Button>
                   </TableCell>
                 </TableRow>
               ))
@@ -362,11 +310,11 @@ export function PermissionTable({ className = "" }: PermissionTableProps) {
       )}
 
       {isEditOpen && (
-        <PermissionModal
+        <RoleModal
           open={isEditOpen}
           onOpenChange={setIsEditOpen}
-          permission={selectedPermission}
-          onSuccess={fetchPermissions}
+          role={selectedRole}
+          onSuccess={fetchRoles}
         />
       )}
     </div>

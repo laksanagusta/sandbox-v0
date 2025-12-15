@@ -291,7 +291,7 @@ export default function BusinessTripVerificationsPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-8 py-8">
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">

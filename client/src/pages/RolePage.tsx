@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Shield, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PermissionTable } from "@/components/PermissionTable";
-import { PermissionModal } from "@/components/PermissionModal";
+import { RoleTable } from "@/components/RoleTable";
+import { RoleModal } from "@/components/RoleModal";
 
-export default function PermissionPage() {
+export default function RolePage() {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -20,27 +20,27 @@ export default function PermissionPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Shield className="w-8 h-8 text-gray-600" />
-              <h1 className="text-2xl font-semibold">Permissions</h1>
+              <h1 className="text-2xl font-semibold">Roles</h1>
             </div>
             <div className="flex items-center space-x-2">
               <Button onClick={() => setIsCreateOpen(true)}>
                 <Plus className="w-4 h-4 mr-2" />
-                Tambah Permission
+                Tambah Role
               </Button>
             </div>
           </div>
 
-          {/* Permissions Table */}
+          {/* Roles Table */}
           <Card>
             <CardHeader>
-              <CardTitle>Daftar Permissions</CardTitle>
+              <CardTitle>Daftar Roles</CardTitle>
             </CardHeader>
             <CardContent>
-              <PermissionTable key={refreshKey} />
+              <RoleTable key={refreshKey} />
             </CardContent>
           </Card>
 
-          <PermissionModal
+          <RoleModal
             open={isCreateOpen}
             onOpenChange={setIsCreateOpen}
             onSuccess={handleCreateSuccess}

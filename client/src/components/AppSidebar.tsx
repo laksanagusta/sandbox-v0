@@ -349,6 +349,25 @@ export function AppSidebar() {
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          className="hover:bg-sidebar-accent hover:shadow-sm transition-all duration-200 px-4 py-2 rounded-lg group"
+                          data-testid="nav-roles"
+                        >
+                          <Link
+                            href="/roles"
+                            className="flex items-center space-x-3"
+                          >
+                            <div className="w-4 h-4 flex items-center justify-center">
+                              <Shield className="w-4 h-4 text-muted-foreground group-hover:text-sidebar-foreground transition-colors" />
+                            </div>
+                            <span className="text-muted-foreground group-hover:text-sidebar-foreground transition-colors text-sm">
+                              Roles
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </Collapsible>

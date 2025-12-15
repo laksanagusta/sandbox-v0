@@ -147,7 +147,7 @@ export default function PermissionDetailPage() {
   if (loading) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full mx-auto px-8 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
@@ -162,7 +162,7 @@ export default function PermissionDetailPage() {
   if (!permission) {
     return (
       <div className="bg-background min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="w-full mx-auto px-8 py-8">
           <div className="text-center">
             <Shield className="mx-auto h-16 w-16 text-gray-300 mb-4" />
             <h2 className="text-lg font-medium text-gray-900 mb-2">Permission tidak ditemukan</h2>
@@ -195,7 +195,7 @@ export default function PermissionDetailPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="w-full mx-auto px-8 py-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">

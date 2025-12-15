@@ -12,7 +12,7 @@ export default function WorkPaperListPage() {
 
   return (
     <div className="bg-background min-h-screen">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="mx-auto px-8 py-8">
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -22,7 +22,7 @@ export default function WorkPaperListPage() {
               </h1>
             </div>
             <Button onClick={handleCreateWorkPaper}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4" />
               Buat Work Paper
             </Button>
           </div>
