@@ -381,6 +381,12 @@ class ApiClient {
     });
   }
 
+  async deleteBusinessTrip(id: string) {
+    return this.request(`api/v1/business-trips/${id}`, {
+      method: "DELETE",
+    });
+  }
+
   async getBusinessTripDashboard(params?: {
     start_date?: string;
     end_date?: string;

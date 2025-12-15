@@ -28,6 +28,7 @@ export type BusinessTripStatus = "draft" | "ongoing" | "ready_to_verify" | "comp
 
 export interface KwitansiData {
   businessTripNumber?: string;
+  assignmentLetterNumber?: string;
   startDate: string;
   endDate: string;
   activityPurpose: string;

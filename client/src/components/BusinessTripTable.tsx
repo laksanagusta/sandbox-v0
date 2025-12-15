@@ -11,7 +11,19 @@ import {
   Building2,
   ExternalLink,
   Filter,
+  Trash2,
 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { apiClient } from "@/lib/api-client";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
@@ -35,6 +47,7 @@ export type BusinessTripStatus = 'draft' | 'ongoing' | 'ready_to_verify' | 'comp
 interface BusinessTrip {
   id: string;
   business_trip_number: string;
+  assignment_letter_number?: string;
   start_date: string;
   end_date: string;
   activity_purpose: string;
@@ -80,6 +93,8 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
     current_page: 1,
     total_page: 1,
   });
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Debounce search term and reset page when filters change
   useEffect(() => {
@@ -251,6 +266,32 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
         {config.label}
       </span>
     );
+
+  };
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+
+    try {
+      setIsDeleting(true);
+      await apiClient.deleteBusinessTrip(deleteId);
+      toast({
+        title: "Berhasil",
+        description: "Business trip berhasil dihapus",
+      });
+      // Refresh list
+      fetchBusinessTrips();
+    } catch (error) {
+      console.error("Error deleting business trip:", error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Gagal menghapus business trip",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleting(false);
+      setDeleteId(null);
+    }
   };
 
   return (
@@ -312,6 +353,19 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
                   </span>
                 </Button>
               </TableHead>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  onClick={() => handleSort("assignment_letter_number")}
+                >
+                  No. Surat Tugas
+                  <span className="ml-2">
+                    {getSortIcon("assignment_letter_number")}
+                  </span>
+                </Button>
+              </TableHead>
                 <TableHead>
                 <Button
                   variant="ghost"
@@ -350,6 +404,7 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
                   <span className="ml-2">{getSortIcon("created_at")}</span>
                 </Button>
               </TableHead>
+              <TableHead className="w-[50px]">Aksi</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -387,6 +442,11 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
                         {trip.business_trip_number}
                       </span>
                     </button>
+                  </TableCell>
+                  <TableCell>
+                    <span className="font-mono text-sm">
+                      {trip.assignment_letter_number || "-"}
+                    </span>
                   </TableCell>
                     <TableCell>
                     <div className="flex items-center space-x-2">
@@ -437,7 +497,18 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
                           {formatDateTime(trip.created_at)}
                         </span>
                       </div>
+
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => setDeleteId(trip.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -460,6 +531,31 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
           )}
         </div>
       )}
+
+
+      <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Apakah anda yakin?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tindakan ini tidak dapat dibatalkan. Data business trip akan dihapus secara permanen.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={(e) => {
+                e.preventDefault();
+                handleDelete();
+              }}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Menghapus..." : "Hapus"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

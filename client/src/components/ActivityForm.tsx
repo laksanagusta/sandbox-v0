@@ -5,6 +5,7 @@ import { formatDateToString, parseDateFromString } from "@/lib/utils";
 
 interface ActivityFormPropsData {
   businessTripNumber?: string;
+  assignmentLetterNumber?: string;
   startDate: string;
   endDate: string;
   activityPurpose: string;
@@ -57,6 +58,22 @@ export default function ActivityForm({
             data-testid="input-business-trip-number"
           />
           <p className="text-xs text-gray-500">Nomor business trip digenerate otomatis oleh sistem</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="assignmentLetterNumber" className="text-sm font-medium">
+            No. Surat Tugas
+          </Label>
+          <Input
+            id="assignmentLetterNumber"
+            type="text"
+            value={activity.assignmentLetterNumber || ""}
+            onChange={(e) => handleChange("assignmentLetterNumber", e.target.value)}
+            disabled={disabled}
+            className="w-full bg-white text-gray-700 font-mono"
+            placeholder="ST-0000"
+            data-testid="input-assignment-letter-number"
+          />
         </div>
       </div>
 
@@ -274,7 +291,7 @@ export default function ActivityForm({
                 rel="noopener noreferrer"
                 className="underline"
               >
-                Preview Document
+                Lihat Dokumen
               </a>
             </span>
           </div>

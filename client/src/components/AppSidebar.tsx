@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/collapsible";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { canAccessBusinessTripVerifications } from "@/utils/permissions";
+import { canAccessBusinessTripVerifications, hasAnyAccess, hasAccess } from "@/utils/permissions";
 
 export function AppSidebar() {
   const { user, logout } = useAuth();
@@ -156,6 +156,7 @@ export function AppSidebar() {
                 </Collapsible>
               </SidebarMenuItem>
 
+              {hasAnyAccess(user, ["work-paper:read", "work-paper:write", "work-paper:update", "work-paper:delete"]) && (
               <SidebarMenuItem>
                 <Collapsible
                   open={isWorkPaperOpen}
@@ -244,6 +245,7 @@ export function AppSidebar() {
                   </CollapsibleContent>
                 </Collapsible>
               </SidebarMenuItem>
+              )}
 
               {/* <SidebarMenuItem>
                 <SidebarMenuButton
@@ -265,6 +267,7 @@ export function AppSidebar() {
                 </SidebarMenuButton>
               </SidebarMenuItem> */}
 
+              {hasAccess(user, "setting:read") && (
               <SidebarMenuItem>
                 <Collapsible
                   open={isSettingsOpen}
@@ -372,6 +375,7 @@ export function AppSidebar() {
                   </CollapsibleContent>
                 </Collapsible>
               </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, LogIn, Hexagon } from "lucide-react";
 import { useAuth } from "@/contexts/auth-context";
 
 const loginSchema = z.object({
@@ -65,13 +65,20 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">
-            Selamat Datang
-          </CardTitle>
-          <CardDescription className="text-center">
-            Masuk ke akun Anda untuk melanjutkan
-          </CardDescription>
+        <CardHeader className="space-y-4">
+          <div className="flex flex-col items-center space-y-2 mb-4">
+            <div className="p-3 bg-primary/10 rounded-full">
+              <Hexagon className="w-10 h-10 text-primary" />
+            </div>
+          </div>
+          <div className="space-y-1">
+            <CardTitle className="text-xl font-semibold text-center">
+              Selamat Datang
+            </CardTitle>
+            <CardDescription className="text-center">
+              Masuk ke akun Anda untuk melanjutkan
+            </CardDescription>
+          </div>
         </CardHeader>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -83,11 +90,11 @@ export default function LoginPage() {
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">NIP</Label>
               <Input
                 id="username"
                 type="text"
-                placeholder="Masukkan username"
+                placeholder="Masukkan NIP"
                 {...register("username")}
                 className={errors.username ? "border-red-500" : ""}
               />
@@ -145,9 +152,14 @@ export default function LoginPage() {
 
             <div className="text-center text-sm text-gray-600 dark:text-gray-400">
               Belum punya akun?{" "}
-              <Button variant="ghost" className="p-0 h-auto font-normal text-blue-600 hover:text-blue-800">
-                Daftar disini
-              </Button>
+              <a
+                href="https://orion.marvcore.com/register"
+                className="font-normal text-blue-600 hover:text-blue-800 hover:underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Daftar di sini
+              </a>
             </div>
           </CardFooter>
         </form>

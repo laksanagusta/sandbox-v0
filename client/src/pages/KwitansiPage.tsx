@@ -118,6 +118,7 @@ export default function KwitansiPage() {
 
   const [kwitansiData, setKwitansiData] = useState<KwitansiData>({
     businessTripNumber: "",
+    assignmentLetterNumber: "",
     startDate: "",
     endDate: "",
     activityPurpose: "",
@@ -517,6 +518,7 @@ export default function KwitansiPage() {
       // Transform API response to KwitansiData format
       const transformedData: KwitansiData = {
         businessTripNumber: data.business_trip_number || "",
+        assignmentLetterNumber: data.assignment_letter_number || "",
         startDate: normalizeDateForInput(data.start_date),
         endDate: normalizeDateForInput(data.end_date),
         activityPurpose: data.activity_purpose || "",
@@ -586,6 +588,7 @@ export default function KwitansiPage() {
     // Extract activity fields directly from the response (snake_case to camelCase mapping)
     const extractedActivity = {
       businessTripNumber: responseData.business_trip_number || "",
+      assignmentLetterNumber: responseData.assignment_letter_number || "",
       startDate: normalizeDateForInput(responseData.start_date),
       endDate: normalizeDateForInput(responseData.end_date),
       activityPurpose: responseData.activity_purpose || "",
@@ -613,7 +616,9 @@ export default function KwitansiPage() {
             type: transactionItem.type || "",
             subtype: transactionItem.subtype || "",
             amount: transactionItem.amount || 0,
-            subtotal: transactionItem.subtotal || 0,
+            subtotal: transactionItem.total_night > 0 
+              ? (transactionItem.amount || 0) * transactionItem.total_night 
+              : (transactionItem.subtotal || transactionItem.amount || 0),
             payment_type: (transactionItem.payment_type ||
               "uang muka") as PaymentType,
             description: transactionItem.description || "",
@@ -820,6 +825,7 @@ export default function KwitansiPage() {
 
     // Prepare payload for API
     const payload: any = {
+      assignment_letter_number: activityFormInput.assignmentLetterNumber || null,
       start_date: activityFormInput.startDate,
       end_date: activityFormInput.endDate,
       activity_purpose: activityFormInput.activityPurpose,
@@ -1100,6 +1106,7 @@ export default function KwitansiPage() {
 
     const payload = {
       business_trip_number: kwitansiData.businessTripNumber,
+      assignment_letter_number: kwitansiData.assignmentLetterNumber || "",
       start_date: formatDateForExport(activityFormInput.startDate),
       end_date: formatDateForExport(activityFormInput.endDate),
       activity_purpose: activityFormInput.activityPurpose,
