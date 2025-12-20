@@ -14,39 +14,18 @@ export default function PermissionPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="w-full mx-auto px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Shield className="w-8 h-8 text-gray-600" />
-              <h1 className="text-2xl font-semibold">Permissions</h1>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button onClick={() => setIsCreateOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Tambah Permission
-              </Button>
-            </div>
-          </div>
+    <div className="bg-background min-h-screen flex flex-col">
+      <PermissionTable 
+        key={refreshKey}
+        className="flex-1"
+        onCreate={() => setIsCreateOpen(true)} 
+      />
 
-          {/* Permissions Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Daftar Permissions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <PermissionTable key={refreshKey} />
-            </CardContent>
-          </Card>
-
-          <PermissionModal
-            open={isCreateOpen}
-            onOpenChange={setIsCreateOpen}
-            onSuccess={handleCreateSuccess}
-          />
-        </div>
-      </div>
+      <PermissionModal
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   );
 }

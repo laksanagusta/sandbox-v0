@@ -15,6 +15,7 @@ import {
   Filter,
   X,
   Check,
+  List,
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -93,6 +94,7 @@ export function BusinessTripVerificationTable({
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<string>("created_at");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [limit, setLimit] = useState(20);
   const [pagination, setPagination] = useState({
     count: 0,
     total_count: 0,
@@ -121,7 +123,7 @@ export function BusinessTripVerificationTable({
       setLoading(true);
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: "10",
+        limit: limit.toString(),
         sort: `${sortField} ${sortOrder}`,
       });
 
@@ -164,7 +166,7 @@ export function BusinessTripVerificationTable({
     } finally {
       setLoading(false);
     }
-  }, [currentPage, debouncedSearchTerm, statusFilter, sortField, sortOrder, toast]);
+  }, [currentPage, limit, debouncedSearchTerm, statusFilter, sortField, sortOrder, toast]);
 
   useEffect(() => {
     fetchVerifications();
@@ -287,50 +289,55 @@ export function BusinessTripVerificationTable({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      {/* Search and Filter Box */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search by name or employee number..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+    <div className={`bg-white flex flex-col h-full ${className}`}>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px]">
+        <div className="flex items-center space-x-4">
+          <span className="text-sm font-semibold text-gray-900">Business Trip Verifications</span>
+          <div className="h-4 w-px bg-gray-200" />
+           <div className="relative w-64">
+           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3.5 w-3.5" />
+            <Input
+              placeholder="Search by name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8 h-8 text-xs bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+            />
+          </div>
+          <div className="w-px h-4 bg-gray-200 mx-2" />
+          <div className="flex items-center space-x-2">
+            <Filter className="h-3.5 w-3.5 text-gray-500" />
+            <Select
+                value={statusFilter}
+                onValueChange={(value: VerificationStatus | "all") => setStatusFilter(value)}
+            >
+                <SelectTrigger className="w-[140px] h-8 text-xs">
+                <SelectValue placeholder="Filter Status" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+                </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-500" />
-          <Select
-            value={statusFilter}
-            onValueChange={(value: VerificationStatus | "all") => setStatusFilter(value)}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
+
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
+          <Button variant="outline" size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-xs font-medium" onClick={fetchVerifications} disabled={loading}>
+            <List className="h-3.5 w-3.5 mr-2" />
+            Refresh
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          onClick={fetchVerifications}
-          disabled={loading}
-        >
-          Refresh
-        </Button>
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="w-full flex-1">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Trip Number</TableHead>
+            <TableRow className="hover:bg-transparent border-b">
+              <TableHead className="pl-6">Trip Number</TableHead>
               <TableHead>
                 <Button
                   variant="ghost"
@@ -397,8 +404,8 @@ export function BusinessTripVerificationTable({
                 </TableCell>
               </TableRow>
             ) : verifications?.map((verification) => (
-              <TableRow key={verification.id}>
-                <TableCell>
+              <TableRow key={verification.id} className="group hover:bg-gray-50/80 cursor-pointer transition-colors border-b">
+                <TableCell className="pl-6">
                   <button
                     onClick={() => setLocation(`/kwitansi/${verification.business_trip_id}?action=verify`)}
                     className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
@@ -448,17 +455,42 @@ export function BusinessTripVerificationTable({
 
       {/* Pagination */}
       {!loading && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Menampilkan {pagination.count} dari {pagination.total_count} data
-          </p>
-          {pagination.total_page > 1 && (
-            <Pagination
-              currentPage={pagination.current_page}
-              totalPages={pagination.total_page}
-              onPageChange={handlePageChange}
-            />
-          )}
+        <div className="sticky bottom-0 bg-white z-10 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t gap-4 mt-auto">
+          <div className="text-xs text-muted-foreground order-2 sm:order-1">
+            Showing <strong>{verifications.length}</strong> of <strong>{pagination.total_count}</strong> veriications
+          </div>
+          
+           <div className="flex items-center space-x-6 order-1 sm:order-2">
+               <div className="flex items-center space-x-2">
+                <span className="text-xs text-muted-foreground">Rows per page</span>
+                <Select
+                  value={limit.toString()}
+                  onValueChange={(value) => {
+                    setLimit(Number(value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-[70px]">
+                    <SelectValue placeholder={limit.toString()} />
+                  </SelectTrigger>
+                  <SelectContent side="top">
+                    {[20, 50, 100].map((pageSize) => (
+                      <SelectItem key={pageSize} value={pageSize.toString()}>
+                        {pageSize}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+            {pagination.total_page > 1 && (
+              <Pagination
+                currentPage={pagination.current_page}
+                totalPages={pagination.total_page}
+                onPageChange={handlePageChange}
+              />
+            )}
+          </div>
         </div>
       )}
 

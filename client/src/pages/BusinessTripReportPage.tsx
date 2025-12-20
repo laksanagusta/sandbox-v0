@@ -169,7 +169,7 @@ export default function BusinessTripReportPage() {
         ...(status && { status }),
       };
 
-      return await apiClient.getBusinessTripDashboard(params);
+      return (await apiClient.getBusinessTripDashboard(params)) as DashboardResponse;
     },
   });
 

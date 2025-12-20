@@ -8,9 +8,10 @@ import {
   ArrowUp,
   ArrowDown,
   FileText,
-  ExternalLink,
   Filter,
   Building,
+  List,
+  Plus
 } from "lucide-react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
@@ -53,9 +54,10 @@ interface WorkPaperResponse {
 
 interface WorkPaperTableProps {
   className?: string;
+  onCreate?: () => void;
 }
 
-export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
+export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -67,6 +69,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortField, setSortField] = useState<string>("created_at");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [limit, setLimit] = useState(20);
   const [pagination, setPagination] = useState({
     count: 0,
     total_count: 0,
@@ -96,7 +99,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
 
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: "10",
+        limit: limit.toString(),
         sort: `${sortField} ${sortOrder}`,
       });
 
@@ -167,7 +170,7 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
     } finally {
       setLoading(false);
     }
-  }, [currentPage, debouncedSearchTerm, statusFilter, sortField, sortOrder, toast]);
+  }, [currentPage, limit, debouncedSearchTerm, statusFilter, sortField, sortOrder, toast, user]);
 
   useEffect(() => {
     fetchWorkPapers();
@@ -240,51 +243,65 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      {/* Search and Filter Controls */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search work paper..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
+    <div className={`bg-white flex flex-col h-full ${className}`}>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px]">
+        <div className="flex items-center space-x-4">
+          <span className="text-sm font-semibold text-gray-900">Work Paper Management</span>
+          <div className="h-4 w-px bg-gray-200" />
+           <div className="relative w-64">
+           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3.5 w-3.5" />
+            <Input
+              placeholder="Search work paper..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8 h-8 text-xs bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+            />
+          </div>
+          <div className="w-px h-4 bg-gray-200 mx-2" />
+          <div className="flex items-center space-x-2">
+            <Filter className="h-3.5 w-3.5 text-gray-500" />
+            <Select
+                value={statusFilter}
+                onValueChange={(value: WorkPaperStatus | "all") => setStatusFilter(value)}
+            >
+                <SelectTrigger className="w-[140px] h-8 text-xs">
+                <SelectValue placeholder="Filter Status" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="ongoing">Ongoing</SelectItem>
+                <SelectItem value="ready_to_sign">Ready to Sign</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                </SelectContent>
+            </Select>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-500" />
-          <Select
-            value={statusFilter}
-            onValueChange={(value: WorkPaperStatus | "all") => setStatusFilter(value)}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="ongoing">Ongoing</SelectItem>
-              <SelectItem value="ready_to_sign">Ready to Sign</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-            </SelectContent>
-          </Select>
+
+        <div className="flex items-center space-x-2 w-full sm:w-auto">
+          <Button variant="outline" size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-xs font-medium" onClick={fetchWorkPapers} disabled={loading}>
+            <List className="h-3.5 w-3.5 mr-2" />
+            Refresh
+          </Button>
+           {onCreate && (
+            <Button onClick={onCreate} size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm text-xs font-medium">
+              <Plus className="h-3.5 w-3.5 mr-2" />
+              Create Work Paper
+            </Button>
+          )}
+           {!onCreate && (
+             <div/>
+          )}
         </div>
-        <Button
-          variant="outline"
-          onClick={fetchWorkPapers}
-          disabled={loading}
-        >
-          Refresh
-        </Button>
       </div>
 
       {/* Table */}
-      <div className="rounded-md border">
+      <div className="w-full flex-1">
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>
+            <TableRow className="hover:bg-transparent border-b">
+              <TableHead className="pl-6">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -366,8 +383,8 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
                 </TableCell>
               </TableRow>
             ) : workPapers?.map((workPaper) => (
-              <TableRow key={workPaper.id}>
-                <TableCell className="font-medium">
+              <TableRow key={workPaper.id} className="group hover:bg-gray-50/80 cursor-pointer transition-colors border-b">
+                <TableCell className="pl-6 font-medium">
                   <button
                     onClick={() => handleViewDetail(workPaper.id)}
                     className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
@@ -408,19 +425,42 @@ export function WorkPaperTable({ className = "" }: WorkPaperTableProps) {
 
       {/* Pagination */}
       {!loading && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Menampilkan {pagination.count} dari {pagination.total_count} data
-          </p>
-          {pagination.total_page > 1 && (
-            <div>
+        <div className="sticky bottom-0 bg-white z-10 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t gap-4 mt-auto">
+          <div className="text-xs text-muted-foreground order-2 sm:order-1">
+            Showing <strong>{workPapers.length}</strong> of <strong>{pagination.total_count}</strong> work papers
+          </div>
+          
+           <div className="flex items-center space-x-6 order-1 sm:order-2">
+               <div className="flex items-center space-x-2">
+                <span className="text-xs text-muted-foreground">Rows per page</span>
+                <Select
+                  value={limit.toString()}
+                  onValueChange={(value) => {
+                    setLimit(Number(value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-[70px]">
+                    <SelectValue placeholder={limit.toString()} />
+                  </SelectTrigger>
+                  <SelectContent side="top">
+                    {[20, 50, 100].map((pageSize) => (
+                      <SelectItem key={pageSize} value={pageSize.toString()}>
+                        {pageSize}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+            {pagination.total_page > 1 && (
               <Pagination
                 currentPage={pagination.current_page}
                 totalPages={pagination.total_page}
                 onPageChange={handlePageChange}
               />
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
     </div>

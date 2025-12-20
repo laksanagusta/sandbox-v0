@@ -2,6 +2,7 @@ import { getApiBaseUrl, getApiIdentityUrl } from "./env";
 
 interface ApiRequestOptions extends RequestInit {
   skipAuth?: boolean;
+  responseType?: 'json' | 'text';
 }
 
 class ApiClient {
@@ -37,7 +38,7 @@ class ApiClient {
     options: ApiRequestOptions = {},
     useIdentityApi: boolean = false
   ): Promise<T> {
-    const { skipAuth = false, ...fetchOptions } = options;
+    const { skipAuth = false, responseType = 'json', ...fetchOptions } = options;
 
     // Default headers
     const headers: Record<string, string> = {
@@ -123,6 +124,9 @@ class ApiClient {
         return {} as T;
       }
 
+      if (responseType === 'text') {
+        return (await response.text()) as unknown as T;
+      }
       return await response.json();
     } catch (error) {
       if (
@@ -173,6 +177,18 @@ class ApiClient {
     return this.request(endpoint, {}, true);
   }
 
+  async approveUser(id: string) {
+    return this.request(`api/v1/users/${id}/approve`, {
+      method: "POST",
+    }, true);
+  }
+
+  async rejectUser(id: string) {
+    return this.request(`api/v1/users/${id}/reject`, {
+      method: "POST",
+    }, true);
+  }
+
   async getOrganizations(params?: {
     page?: number;
     limit?: number;
@@ -221,8 +237,9 @@ class ApiClient {
     parent_id?: string;
   }) {
     return this.request(`api/v1/organizations/${id}`, {
-      method: "PUT",
+      method: "PATCH",
       body: JSON.stringify(data),
+      responseType: "text",
     }, true);
   }
 

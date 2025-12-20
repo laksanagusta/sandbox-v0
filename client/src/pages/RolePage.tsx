@@ -14,39 +14,18 @@ export default function RolePage() {
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="w-full mx-auto px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Shield className="w-8 h-8 text-gray-600" />
-              <h1 className="text-2xl font-semibold">Roles</h1>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button onClick={() => setIsCreateOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Tambah Role
-              </Button>
-            </div>
-          </div>
+    <div className="bg-background min-h-screen flex flex-col">
+      <RoleTable 
+        key={refreshKey} 
+        className="flex-1" 
+        onCreate={() => setIsCreateOpen(true)}
+      />
 
-          {/* Roles Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Daftar Roles</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <RoleTable key={refreshKey} />
-            </CardContent>
-          </Card>
-
-          <RoleModal
-            open={isCreateOpen}
-            onOpenChange={setIsCreateOpen}
-            onSuccess={handleCreateSuccess}
-          />
-        </div>
-      </div>
+      <RoleModal
+        open={isCreateOpen}
+        onOpenChange={setIsCreateOpen}
+        onSuccess={handleCreateSuccess}
+      />
     </div>
   );
 }

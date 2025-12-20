@@ -971,49 +971,55 @@ export default function WorkPaperDetailPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="mx-auto px-8 py-8">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setLocation("/work-papers")}
-                className="flex items-center space-x-2 hover:bg-gray-100 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Kembali</span>
-              </Button>
-              <div className="flex items-center space-x-3">
-                <FileText className="w-8 h-8 text-gray-600" />
-                <div>
-                  <h1 className="text-2xl font-semibold">Detail Work Paper</h1>
-                  <p className="text-sm text-gray-500">{workPaper.np_waper}</p>
-                </div>
-              </div>
-            </div>
+    <div className="bg-white flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation("/work-papers")}
+            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-sm font-medium">Back</span>
+          </Button>
 
-            {/* Status Update Section */}
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                {getStatusBadge(workPaper.status)}
-                {workPaper.status === "completed" && (
-                  <Button
-                    variant="outline"
-                    onClick={handleExportDocx}
-                    className="flex items-center space-x-2"
-                  >
-                    <Download className="w-4 h-4" />
-                    <span>Export CHR</span>
-                  </Button>
-                )}
-              </div>
-            </div>
+          <div className="h-4 w-px bg-gray-200" />
+
+          <div className="flex items-center space-x-2">
+            <FileText className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-semibold text-gray-900">
+              Detail Work Paper
+            </span>
           </div>
 
-          <div className="grid grid-cols-1 gap-6">
+          <div className="h-4 w-px bg-gray-200" />
+
+          <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+            {workPaper.np_waper}
+          </span>
+        </div>
+
+        {/* Status Update & Actions */}
+        <div className="flex items-center space-x-3">
+          {getStatusBadge(workPaper.status)}
+          {workPaper.status === "completed" && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportDocx}
+              className="h-8 text-xs bg-white hover:bg-gray-50 text-gray-700 border-gray-200"
+            >
+              <Download className="w-3.5 h-3.5 mr-2" />
+              Export CHR
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+        <div className="max-w-6xl mx-auto space-y-6">
             {/* Main Content */}
             <div className="space-y-6">
               {/* Informasi Umum */}
@@ -1586,6 +1592,5 @@ export default function WorkPaperDetailPage() {
           </div>
         </div>
       </div>
-    </div>
   );
 }

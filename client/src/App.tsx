@@ -23,12 +23,14 @@ import UserPage from "@/pages/UserPage";
 import UserDetailPage from "@/pages/UserDetailPage";
 import ProfilePage from "@/pages/ProfilePage";
 import RolePage from "@/pages/RolePage";
+import PendingUsersPage from "@/pages/PendingUsersPage";
 import VaccinesPage from "@/pages/VaccinesPage";
 import WorkPaperCreatePage from "@/pages/WorkPaperCreatePage";
 import BusinessTripReportPage from "@/pages/BusinessTripReportPage";
 import BusinessTripVerificationsPage from "@/pages/BusinessTripVerificationsPage";
 import BusinessTripVerificatorPage from "@/pages/BusinessTripVerificatorPage";
 import LoginPage from "@/pages/LoginPage";
+import GRCDashboardPage from "@/pages/GRCDashboardPage";
 import NotFound from "@/pages/not-found";
 
 function RedirectToReport() {
@@ -79,6 +81,8 @@ function AuthenticatedLayout() {
                 <Route path="/users" component={UserPage} />
                 <Route path="/profile" component={ProfilePage} />
                 <Route path="/roles" component={RolePage} />
+                <Route path="/pending-users" component={PendingUsersPage} />
+                <Route path="/grc" component={GRCDashboardPage} />
                 <Route component={NotFound} />
               </Switch>
             </div>
@@ -193,6 +197,16 @@ export default function App() {
               </ProtectedRoute>
             </Route>
             <Route path="/business-trip-verifications">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/grc">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/pending-users">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>

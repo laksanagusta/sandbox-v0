@@ -12,6 +12,16 @@ import {
   ExternalLink,
   Filter,
   Trash2,
+  Plus,
+  LayoutGrid,
+  List,
+  MoreHorizontal,
+  Car,
+  FileEdit,
+  PlayCircle,
+  FileCheck,
+  CheckCircle2,
+  XCircle
 } from "lucide-react";
 import {
   AlertDialog,
@@ -28,7 +38,14 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -37,10 +54,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Pagination } from "./Pagination";
 import { useToast } from "@/hooks/use-toast";
 import { formatDate, formatDateTime } from "@/utils/dateFormat";
 import { getApiBaseUrl } from "@/lib/env";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cn } from "@/lib/utils";
 
 export type BusinessTripStatus = 'draft' | 'ongoing' | 'ready_to_verify' | 'completed' | 'canceled';
 
@@ -69,13 +100,16 @@ interface BusinessTripResponse {
   limit: number;
   total_items: number;
   total_pages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
 }
 
 interface BusinessTripTableProps {
   className?: string;
+  onCreate?: () => void;
 }
 
-export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
+export function BusinessTripTable({ className = "", onCreate }: BusinessTripTableProps) {
   const { toast } = useToast();
   const { user } = useAuth();
   const [, setLocation] = useLocation();
@@ -84,7 +118,9 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<BusinessTripStatus | "all">("all");
+  const [activeTab, setActiveTab] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(20);
   const [sortField, setSortField] = useState<string>("created_at");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
   const [pagination, setPagination] = useState({
@@ -96,21 +132,30 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Debounce search term and reset page when filters change
+  // Sync tab with filter
+  useEffect(() => {
+    if (activeTab === "all") {
+      setStatusFilter("all");
+    } else {
+      setStatusFilter(activeTab as BusinessTripStatus);
+    }
+    setCurrentPage(1);
+  }, [activeTab]);
+
+  // Debounce search term
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
-      setCurrentPage(1); // Reset to first page when searching or filtering
-    }, 500); // 500ms debounce
+      setCurrentPage(1);
+    }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, statusFilter, sortField, sortOrder]);
+  }, [searchTerm]);
 
   const fetchBusinessTrips = useCallback(async () => {
     try {
       setLoading(true);
 
-      // Get token from localStorage
       const token = localStorage.getItem("auth_token");
       if (!token) {
         throw new Error("Token tidak ditemukan. Silakan login kembali.");
@@ -118,12 +163,11 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
 
       const params = new URLSearchParams({
         page: currentPage.toString(),
-        limit: "10",
+        limit: limit.toString(),
         sort: `${sortField} ${sortOrder}`,
       });
 
       if (debouncedSearchTerm.trim()) {
-        // For activity purpose search, use the API pattern provided
         params.append("activity_purpose", `eq ${debouncedSearchTerm.trim()}`);
       }
 
@@ -131,7 +175,6 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
         params.append("status", `eq ${statusFilter}`);
       }
 
-      // Add organization_id filter
       if (user?.organization?.id) {
         params.append("organization_id", `eq ${user.organization.id}`);
       }
@@ -149,7 +192,6 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
 
       if (!response.ok) {
         if (response.status === 401) {
-          // Token expired atau invalid
           localStorage.removeItem("auth_token");
           localStorage.removeItem("user_data");
           window.location.href = "/login";
@@ -159,9 +201,8 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
       }
 
       const result: any = await response.json();
-      setBusinessTrips(result.data);
+      setBusinessTrips(result.data || []);
 
-      // Map API response to expected format
       setPagination({
         count: result.data?.length || 0,
         total_count: result.total_items || 0,
@@ -179,16 +220,10 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
         variant: "destructive",
       });
       setBusinessTrips([]);
-      setPagination({
-        count: 0,
-        total_count: 0,
-        current_page: 1,
-        total_page: 1,
-      });
     } finally {
       setLoading(false);
     }
-  }, [currentPage, debouncedSearchTerm, statusFilter, sortField, sortOrder, toast]);
+  }, [currentPage, limit, debouncedSearchTerm, statusFilter, sortField, sortOrder, toast, user?.organization?.id]);
 
   useEffect(() => {
     fetchBusinessTrips();
@@ -200,13 +235,20 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
 
   const handleSort = (field: string) => {
     if (sortField === field) {
-      // Toggle sort order if same field
       setSortOrder(sortOrder === "asc" ? "desc" : "asc");
     } else {
-      // Set new field and default to asc
       setSortField(field);
       setSortOrder("asc");
     }
+  };
+
+  const formatCurrency = (amount?: number) => {
+    if (!amount) return "-";
+    return new Intl.NumberFormat("id-ID", {
+      style: "currency",
+      currency: "IDR",
+      minimumFractionDigits: 0,
+    }).format(amount);
   };
 
   const getSortIcon = (field: string) => {
@@ -218,16 +260,6 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
     ) : (
       <ArrowDown className="w-4 h-4 text-blue-600" />
     );
-  };
-
-  
-  const formatCurrency = (amount?: number) => {
-    if (!amount) return "-";
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(amount);
   };
 
   const getStatusBadge = (status: BusinessTripStatus) => {
@@ -266,7 +298,6 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
         {config.label}
       </span>
     );
-
   };
 
   const handleDelete = async () => {
@@ -279,7 +310,6 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
         title: "Berhasil",
         description: "Business trip berhasil dihapus",
       });
-      // Refresh list
       fetchBusinessTrips();
     } catch (error) {
       console.error("Error deleting business trip:", error);
@@ -295,263 +325,299 @@ export function BusinessTripTable({ className = "" }: BusinessTripTableProps) {
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
-      {/* Search and Filter Box */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Search by activity purpose..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-500" />
-          <Select
-            value={statusFilter}
-            onValueChange={(value: BusinessTripStatus | "all") => setStatusFilter(value)}
-          >
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="ongoing">Ongoing</SelectItem>
-              <SelectItem value="ready_to_verify">Ready to Verify</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="canceled">Canceled</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button
-          variant="outline"
-          onClick={fetchBusinessTrips}
-          disabled={loading}
-        >
-          Refresh
-        </Button>
-      </div>
+    <div className={cn("bg-white flex flex-col flex-1 h-full", className)}>
+      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full flex flex-col flex-1">
+        <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px]">
+          <div className="flex items-center space-x-4">
+            <span className="text-sm font-semibold text-gray-900">Business Trips</span>
+            <div className="h-4 w-px bg-gray-200" />
+            <TabsList className="bg-transparent p-0 h-auto space-x-1">
+              <TabsTrigger 
+                value="draft"
+                className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-600 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 border border-transparent hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
+                <FileEdit className="w-3.5 h-3.5" />
+                Draft
+              </TabsTrigger>
+              <TabsTrigger 
+                value="ongoing"
+                className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-600 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 border border-transparent hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
+                <PlayCircle className="w-3.5 h-3.5" />
+                Ongoing
+              </TabsTrigger>
+              <TabsTrigger 
+                value="ready_to_verify"
+                className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-600 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 border border-transparent hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
+                <FileCheck className="w-3.5 h-3.5" />
+                Ready to Verify
+              </TabsTrigger>
+              <TabsTrigger 
+                value="completed"
+                className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-600 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 border border-transparent hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Completed
+              </TabsTrigger>
+              <TabsTrigger 
+                value="canceled"
+                className="rounded-md px-3 py-1.5 text-xs font-medium text-gray-600 data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 border border-transparent hover:bg-gray-50 transition-colors flex items-center gap-2"
+              >
+                <XCircle className="w-3.5 h-3.5" />
+                Canceled
+              </TabsTrigger>
+            </TabsList>
+          </div>
 
-      {/* Table */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("business_trip_number")}
-                >
-                  No. Business Trip
-                  <span className="ml-2">
-                    {getSortIcon("business_trip_number")}
-                  </span>
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("assignment_letter_number")}
-                >
-                  No. Surat Tugas
-                  <span className="ml-2">
-                    {getSortIcon("assignment_letter_number")}
-                  </span>
-                </Button>
-              </TableHead>
+          <div className="flex items-center space-x-2 w-full sm:w-auto">
+            {onCreate && (
+              <Button onClick={onCreate} size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm text-xs font-medium">
+                <Plus className="h-3.5 w-3.5" />
+                New Business Trip
+              </Button>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full flex-1">
+          <Table>
+            <TableHeader className="bg-gray-50/50">
+              <TableRow className="hover:bg-transparent border-b">
+                <TableHead className="pl-6">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("business_trip_number")}
+                  >
+                    No. Business Trip
+                    <span className="ml-2">
+                      {getSortIcon("business_trip_number")}
+                    </span>
+                  </Button>
+                </TableHead>
                 <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("destination_city")}
-                >
-                  Tujuan
-                  <span className="ml-2">
-                    {getSortIcon("destination_city")}
-                  </span>
-                </Button>
-              </TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("start_date")}
-                >
-                  Tanggal
-                  <span className="ml-2">{getSortIcon("start_date")}</span>
-                </Button>
-              </TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Document</TableHead>
-              <TableHead>Total Biaya</TableHead>
-              <TableHead>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("created_at")}
-                >
-                  Dibuat
-                  <span className="ml-2">{getSortIcon("created_at")}</span>
-                </Button>
-              </TableHead>
-              <TableHead className="w-[50px]">Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={7} className="text-center py-8">
-                  <div className="flex items-center justify-center space-x-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
-                    <span>Loading...</span>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ) : !businessTrips || businessTrips.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={7}
-                  className="text-center py-8 text-gray-500"
-                >
-                  <FileText className="mx-auto h-12 w-12 text-gray-300 mb-2" />
-                  <p>Tidak ada data business trip</p>
-                  {debouncedSearchTerm && (
-                    <p className="text-sm">Coba kata kunci pencarian lain</p>
-                  )}
-                </TableCell>
-              </TableRow>
-            ) : businessTrips?.map((trip) => (
-                <TableRow key={trip.id}>
-                  <TableCell className="font-medium">
-                    <button
-                      onClick={() => setLocation(`/kwitansi/${trip.id}`)}
-                      className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
-                    >
-                      <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0" />
-                      <span className="font-mono text-sm">
-                        {trip.business_trip_number}
-                      </span>
-                    </button>
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-mono text-sm">
-                      {trip.assignment_letter_number || "-"}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("assignment_letter_number")}
+                  >
+                    No. Surat Tugas
+                    <span className="ml-2">
+                      {getSortIcon("assignment_letter_number")}
                     </span>
-                  </TableCell>
-                    <TableCell>
-                    <div className="flex items-center space-x-2">
-                      <MapPin className="h-4 w-4 text-gray-500" />
-                      <span>{trip.destination_city}</span>
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("destination_city")}
+                  >
+                    Tujuan
+                    <span className="ml-2">
+                      {getSortIcon("destination_city")}
+                    </span>
+                  </Button>
+                </TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("start_date")}
+                  >
+                    Tanggal
+                    <span className="ml-2">{getSortIcon("start_date")}</span>
+                  </Button>
+                </TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Document</TableHead>
+                <TableHead>Total Biaya</TableHead>
+                <TableHead>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-auto p-0 font-semibold hover:bg-transparent"
+                    onClick={() => handleSort("created_at")}
+                  >
+                    Dibuat
+                    <span className="ml-2">{getSortIcon("created_at")}</span>
+                  </Button>
+                </TableHead>
+                <TableHead className="w-[50px] pr-6">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                <TableRow>
+                  <TableCell colSpan={9} className="h-24 text-center">
+                    <div className="flex items-center justify-center space-x-2">
+                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                       <span>Loading...</span>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
-                      <div className="text-sm">
-                        <Calendar className="inline h-3 w-3 mr-1" />
-                        {formatDate(trip.start_date)} -{" "}
-                        {formatDate(trip.end_date)}
-                      </div>
-                      <div className="text-xs text-gray-500">
-                        SPD: {formatDate(trip.spd_date)}
-                      </div>
-                    </div>
+                </TableRow>
+              ) : !businessTrips || businessTrips.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={9} className="h-24 text-center text-gray-500">
+                    No business trips found.
                   </TableCell>
-                  <TableCell>
-                    {getStatusBadge(trip.status)}
-                  </TableCell>
-                  <TableCell>
-                    {trip.document_link ? (
-                      <a
-                        href={trip.document_link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 hover:underline"
+                </TableRow>
+              ) : (
+                businessTrips.map((trip) => (
+                  <TableRow 
+                    key={trip.id} 
+                    className="group hover:bg-gray-50/80 cursor-pointer transition-colors border-b"
+                  >
+                    <TableCell className="pl-6 font-medium">
+                      <button
+                        onClick={() => setLocation(`/kwitansi/${trip.id}`)}
+                        className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                       >
-                        <ExternalLink className="h-4 w-4" />
-                        <span className="text-sm">View Document</span>
-                      </a>
-                    ) : (
-                      <span className="text-gray-400 text-sm">No document</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-medium text-green-600">
-                      {formatCurrency(trip.total_cost)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1">
+                        <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0" />
+                        <span className="font-mono text-sm">
+                          {trip.business_trip_number}
+                        </span>
+                      </button>
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-mono text-sm">
+                        {trip.assignment_letter_number || "-"}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-4 w-4 text-gray-500" />
+                        <span>{trip.destination_city}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1">
+                        <div className="text-sm">
+                          <Calendar className="inline h-3 w-3 mr-1" />
+                          {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          SPD: {formatDate(trip.spd_date)}
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {getStatusBadge(trip.status)}
+                    </TableCell>
+                    <TableCell>
+                      {trip.document_link ? (
+                        <a
+                          href={trip.document_link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center space-x-2 text-blue-600 hover:text-blue-800 hover:underline"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <ExternalLink className="h-4 w-4" />
+                          <span className="text-sm">View</span>
+                        </a>
+                      ) : (
+                        <span className="text-gray-400 text-sm">No doc</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <span className="font-medium text-green-600">
+                        {formatCurrency(trip.total_cost)}
+                      </span>
+                    </TableCell>
+                    <TableCell>
                       <div className="flex items-center space-x-2">
                         <User className="h-3 w-3 text-gray-500" />
                         <span className="text-xs text-gray-500">
                           {formatDateTime(trip.created_at)}
                         </span>
                       </div>
-
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      onClick={() => setDeleteId(trip.id)}
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      {/* Pagination */}
-      {!loading && (
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-600">
-            Menampilkan {pagination.count} dari {pagination.total_count} data
-          </p>
-          {pagination.total_page > 1 && (
-            <Pagination
-              currentPage={pagination.current_page}
-              totalPages={pagination.total_page}
-              onPageChange={handlePageChange}
-            />
-          )}
+                    </TableCell>
+                    <TableCell className="pr-6">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setDeleteId(trip.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
         </div>
-      )}
 
+        {!loading && (
+          <div className="sticky bottom-0 bg-white z-10 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t gap-4 mt-auto">
+            <div className="text-xs text-muted-foreground order-2 sm:order-1">
+              Showing <strong>{businessTrips?.length || 0}</strong> of <strong>{pagination.total_count}</strong> trips
+            </div>
+            
+            <div className="flex items-center space-x-6 order-1 sm:order-2">
+              <div className="flex items-center space-x-2">
+                <span className="text-xs text-muted-foreground">Rows per page</span>
+                <Select
+                  value={limit.toString()}
+                  onValueChange={(value) => {
+                    setLimit(Number(value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="h-8 w-[70px]">
+                    <SelectValue placeholder={limit.toString()} />
+                  </SelectTrigger>
+                  <SelectContent side="top">
+                    {[20, 50, 100].map((pageSize) => (
+                      <SelectItem key={pageSize} value={pageSize.toString()}>
+                        {pageSize}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {pagination.total_page > 1 && (
+                <Pagination
+                  currentPage={pagination.current_page}
+                  totalPages={pagination.total_page}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </div>
+          </div>
+        )}
+      </Tabs>
 
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Apakah anda yakin?</AlertDialogTitle>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              Tindakan ini tidak dapat dibatalkan. Data business trip akan dihapus secara permanen.
+              This action cannot be undone. This will permanently delete the business trip.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Batal</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={(e) => {
                 e.preventDefault();
                 handleDelete();
               }}
-              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+              className="bg-red-600 hover:bg-red-700"
               disabled={isDeleting}
             >
-              {isDeleting ? "Menghapus..." : "Hapus"}
+              {isDeleting ? "Deleting..." : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

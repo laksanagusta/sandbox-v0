@@ -88,3 +88,116 @@ export interface VaccineRecommendationResponse {
   message: string;
   success: boolean;
 }
+
+// GRC Related Types
+
+export interface GRCStatistics {
+  total_units: number;
+  average_score: number;
+  median: number;
+  std_deviation: number;
+}
+
+export interface GRCPerformanceDistribution {
+  level: string;
+  count: number;
+  min_score: number;
+  max_score: number;
+}
+
+export interface GRCWeakestComponent {
+  code: string;
+  name: string;
+  average: number;
+  units_below_80: number;
+}
+
+export interface GRCOverviewData {
+  statistics: GRCStatistics;
+  performance_distribution: GRCPerformanceDistribution[];
+  weakest_components: GRCWeakestComponent[];
+}
+
+export interface GRCOverviewResponse {
+  success: boolean;
+  data: GRCOverviewData;
+}
+
+export interface GRCUnit {
+  id: number;
+  name: string;
+  category: string;
+  average: number;
+  rank: number;
+  percentile: number;
+  scores?: Record<string, number>;
+}
+
+export interface GRCUnitsResponse {
+  success: boolean;
+  data: {
+    units: GRCUnit[];
+    total_count: number;
+  };
+}
+
+export interface GRCRadarData {
+  labels: string[];
+  values: number[];
+  average_values: number[];
+}
+
+export interface GRCComponentStrength {
+  component: string;
+  value: number;
+  gap_from_average: number;
+}
+
+export interface GRCGapAnalysis {
+  component: string;
+  value: number;
+  average: number;
+  gap: number;
+}
+
+export interface GRCCategoryComparison {
+  category_name: string;
+  gap_to_category: number;
+}
+
+export interface GRCUnitDetailData {
+  unit: GRCUnit;
+  radar_data: GRCRadarData;
+  strength: GRCComponentStrength;
+  weakness: GRCComponentStrength;
+  gap_analysis: GRCGapAnalysis[];
+  category_comparison: GRCCategoryComparison;
+}
+
+export interface GRCUnitDetailResponse {
+  success: boolean;
+  data: GRCUnitDetailData;
+}
+
+export interface GRCCategoryBreakdown {
+  name: string;
+  count: number;
+  average: number;
+  min: number;
+  max: number;
+  top_unit: {
+    name: string;
+    average: number;
+  };
+  bottom_unit: {
+    name: string;
+    average: number;
+  };
+}
+
+export interface GRCCategoriesResponse {
+  success: boolean;
+  data: {
+    categories: GRCCategoryBreakdown[];
+  };
+}

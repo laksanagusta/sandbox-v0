@@ -11,27 +11,11 @@ export default function WorkPaperListPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="mx-auto px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <FileText className="w-8 h-8 text-gray-600" />
-              <h1 className="text-2xl font-semibold">
-                Work Paper Management
-              </h1>
-            </div>
-            <Button onClick={handleCreateWorkPaper}>
-              <Plus className="w-4 h-4" />
-              Buat Work Paper
-            </Button>
-          </div>
-
-          <div className="bg-card rounded-lg border p-6">
-            <WorkPaperTable />
-          </div>
-        </div>
-      </div>
+    <div className="bg-background min-h-screen flex flex-col">
+       <WorkPaperTable 
+        className="flex-1"
+        onCreate={handleCreateWorkPaper}
+       />
     </div>
   );
 }
