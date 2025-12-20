@@ -116,6 +116,7 @@ export interface GRCOverviewData {
   statistics: GRCStatistics;
   performance_distribution: GRCPerformanceDistribution[];
   weakest_components: GRCWeakestComponent[];
+  average_score_history: { period: string; score: number }[];
 }
 
 export interface GRCOverviewResponse {

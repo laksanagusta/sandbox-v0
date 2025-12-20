@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "wouter";
-import { Save, Plus, Edit, User, X } from "lucide-react";
+import { useParams, useLocation } from "wouter";
+import { Save, Plus, Edit, User, X, ArrowLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,6 @@ import UploadForm from "@/components/UploadForm";
 import ActivityForm from "@/components/ActivityForm";
 import EditableTable, { ValidationError } from "@/components/EditableTable";
 import LLMDisclaimer from "@/components/LLMDisclaimer";
-import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { Assignee, KwitansiData, Transaction } from "@shared/types";
@@ -113,6 +112,7 @@ export default function KwitansiPage() {
   const { toast } = useToast();
   const { user } = useAuth();
   const params = useParams();
+  const [, setLocation] = useLocation();
   const businessTripId = params.id;
   const isEditMode = !!businessTripId;
 
@@ -1212,39 +1212,71 @@ export default function KwitansiPage() {
     savedStatus === "canceled";
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="mx-auto px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <h1 className="text-2xl font-semibold" data-testid="text-title">
-              {isEditMode ? "Edit Kwitansi" : "Buat Kwitansi"}
-            </h1>
-            <div className="flex flex-wrap items-center gap-2">
-              {isEditMode && businessTripId && (
-                <BusinessTripHistory businessTripId={businessTripId} />
-              )}
-              {getStatusBadge(kwitansiData.status)}
-              <Button
-                onClick={handleSave}
-                disabled={!hasChanges || isSaving}
-                className="modern-btn-primary"
-                data-testid="button-save"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? "Menyimpan..." : "Simpan"}
-              </Button>
-              <Button
-                onClick={handleSaveExport}
-                className="modern-btn-success"
-                data-testid="button-save-export"
-                variant="outline"
-              >
-                <Save className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-            </div>
+    <div className="bg-white flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation("/business-trips")}
+            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-sm font-medium">Back</span>
+          </Button>
+
+          <div className="h-4 w-px bg-gray-200" />
+
+          <div className="flex items-center space-x-2">
+            <FileText className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-semibold text-gray-900">
+              {isEditMode ? "Edit Business Trip" : "New Business Trip"}
+            </span>
           </div>
 
+          {isEditMode && kwitansiData.businessTripNumber && (
+            <>
+              <div className="h-4 w-px bg-gray-200" />
+              <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                {kwitansiData.businessTripNumber}
+              </span>
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-3">
+           {isEditMode && businessTripId && (
+              <BusinessTripHistory businessTripId={businessTripId} />
+           )}
+           {getStatusBadge(kwitansiData.status)}
+           
+           <Button
+             onClick={handleSaveExport}
+             variant="outline"
+             size="sm"
+             className="h-8 text-xs"
+             data-testid="button-save-export"
+           >
+             <Save className="w-3.5 h-3.5 mr-2" />
+             Export
+           </Button>
+
+           <Button
+             onClick={handleSave}
+             disabled={!hasChanges || isSaving}
+             size="sm"
+             className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+             data-testid="button-save"
+           >
+             <Save className="w-3.5 h-3.5 mr-2" />
+             {isSaving ? "Saving..." : "Save"}
+           </Button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+        <div className="w-full space-y-6">
           {!isEditMode && <LLMDisclaimer className="mb-6" />}
 
           <div id="upload">
@@ -1431,9 +1463,8 @@ export default function KwitansiPage() {
               </div>
             )
           )}
+          
         </div>
-
-        <Footer />
       </div>
 
       <AlertDialog open={isStatusDialogOpen} onOpenChange={setIsStatusDialogOpen}>

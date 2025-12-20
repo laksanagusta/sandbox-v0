@@ -420,27 +420,52 @@ export default function UserDetailPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="w-full mx-auto px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <User className="w-8 h-8 text-gray-600" />
-              <h1 className="text-2xl font-semibold">Detail User</h1>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                type="submit"
-                form="user-form"
-                variant="default"
-                disabled={isSaving || !user}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? "Menyimpan..." : "Simpan"}
-              </Button>
-            </div>
+    <div className="bg-white flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation("/users")}
+            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-sm font-medium">Back</span>
+          </Button>
+
+          <div className="h-4 w-px bg-gray-200" />
+
+          <div className="flex items-center space-x-2">
+            <User className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-semibold text-gray-900">
+              Detail User
+            </span>
           </div>
 
+          <div className="h-4 w-px bg-gray-200" />
+          <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+            {user.username}
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            type="submit"
+            form="user-form"
+            variant="default"
+            disabled={isSaving || !user}
+            size="sm"
+            className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Save className="w-3.5 h-3.5 mr-2" />
+            {isSaving ? "Menyimpan..." : "Simpan"}
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+        <div className="w-full space-y-6">
           {/* User Form */}
           <form
             id="user-form"
@@ -679,10 +704,6 @@ export default function UserDetailPage() {
               </CardContent>
             </Card>
           </form>
-
-
-
-
         </div>
       </div>
     </div>

@@ -48,6 +48,7 @@ export function AppSidebar() {
   const [location] = useLocation();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isBusinessTripOpen, setIsBusinessTripOpen] = useState(true);
+  const [isGRCOpen, setIsGRCOpen] = useState(true);
   const [isWorkPaperOpen, setIsWorkPaperOpen] = useState(false);
 
   const isActiveRoute = (path: string) => {
@@ -59,17 +60,17 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="border-r border-gray-200">
-      {/* Header - ClickUp Style */}
-      <SidebarHeader className="bg-white px-4 h-16 border-b border-gray-100 flex items-center shrink-0">
-        <div className="flex items-center justify-between w-full">
-          <div className="flex items-center space-x-3">
-            <div>
-              <h1 className="text-base font-semibold text-gray-900">The Core</h1>
-            </div>
+    <Sidebar className="border-r border-sidebar-border">
+      {/* Header - Linear Style Workspace Switcher */}
+      <SidebarHeader className="bg-white px-3 h-12 flex items-center shrink-0">
+        <Button
+          variant="ghost"
+          className="w-full justify-between px-2 h-9 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group"
+        >
+          <div className="flex items-center space-x-2">
+            <span className="text-lg font-bold tracking-tight text-sidebar-foreground">Core</span>
           </div>
-
-        </div>
+        </Button>
       </SidebarHeader>
 
       <SidebarContent className="bg-white">
@@ -77,25 +78,68 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               {/* GRC Dashboard */}
+              {/* GRC Section */}
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
-                    isActiveRoute('/grc')
-                      ? 'bg-blue-50 text-blue-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                  data-testid="nav-grc"
+                <Collapsible
+                  open={isGRCOpen}
+                  onOpenChange={setIsGRCOpen}
                 >
-                  <Link href="/grc" className="flex items-center space-x-3 flex-1">
-                    <BarChart3 className={`w-4 h-4 ${
-                      isActiveRoute('/grc')
-                        ? 'text-blue-600'
-                        : 'text-gray-400 group-hover:text-gray-600'
-                    }`} />
-                    <span className="text-sm font-medium">GRC Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
+                        isInSection(['/grc'])
+                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                      }`}
+                      data-testid="nav-grc"
+                    >
+                      <div className="flex items-center space-x-3 flex-1">
+                        <Shield className={`w-4 h-4 ${
+                          isInSection(['/grc'])
+                            ? 'text-sidebar-primary'
+                            : 'text-muted-foreground group-hover:text-sidebar-foreground'
+                        }`} />
+                        <span className="text-sm font-medium">
+                          GRC
+                        </span>
+                      </div>
+                      {isGRCOpen ? (
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub className="ml-4 mt-1 border-l-0 pl-4">
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
+                            isActiveRoute('/grc')
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                          }`}
+                          data-testid="nav-grc-dashboard"
+                        >
+                          <Link
+                            href="/grc"
+                            className="flex items-center space-x-3"
+                          >
+                            <BarChart3 className={`w-4 h-4 ${
+                              isActiveRoute('/grc')
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
+                            }`} />
+                            <span className="text-sm">
+                              Dashboard
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </Collapsible>
               </SidebarMenuItem>
 
               {/* Business Trip Section */}
@@ -109,16 +153,16 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/business-trips', '/kwitansi', '/business-trip-verifications'])
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-business-trip"
                     >
                       <div className="flex items-center space-x-3 flex-1">
                         <Briefcase className={`w-4 h-4 ${
                           isInSection(['/business-trips', '/kwitansi', '/business-trip-verifications'])
-                            ? 'text-blue-600'
-                            : 'text-gray-400 group-hover:text-gray-600'
+                            ? 'text-sidebar-primary'
+                            : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
                           Business Trip
@@ -138,8 +182,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/business-trips') && !location.includes('/report')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-business-trip-list"
                         >
@@ -149,8 +193,8 @@ export function AppSidebar() {
                           >
                             <Plane className={`w-4 h-4 ${
                               isActiveRoute('/business-trips') && !location.includes('/report')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Business Trip
@@ -163,8 +207,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/business-trips/report')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-business-trip-report"
                         >
@@ -174,8 +218,8 @@ export function AppSidebar() {
                           >
                             <BarChart3 className={`w-4 h-4 ${
                               isActiveRoute('/business-trips/report')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Report
@@ -188,8 +232,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/business-trip-verifications')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-business-trip-verifications"
                         >
@@ -199,8 +243,8 @@ export function AppSidebar() {
                           >
                             <ClipboardCheck className={`w-4 h-4 ${
                               isActiveRoute('/business-trip-verifications')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Verify
@@ -224,16 +268,16 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures'])
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-work-paper"
                     >
                       <div className="flex items-center space-x-3 flex-1">
                         <FileText className={`w-4 h-4 ${
                           isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures'])
-                            ? 'text-blue-600'
-                            : 'text-gray-400 group-hover:text-gray-600'
+                            ? 'text-sidebar-primary'
+                            : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
                           Work Paper
@@ -253,8 +297,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-papers') && !location.includes('/create')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-work-paper-list"
                         >
@@ -264,8 +308,8 @@ export function AppSidebar() {
                           >
                             <FileText className={`w-4 h-4 ${
                               isActiveRoute('/work-papers') && !location.includes('/create')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Work Paper
@@ -278,8 +322,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-paper-items')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-work-paper-items"
                         >
@@ -289,8 +333,8 @@ export function AppSidebar() {
                           >
                             <FileText className={`w-4 h-4 ${
                               isActiveRoute('/work-paper-items')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Items
@@ -303,8 +347,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-paper-signatures')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-work-paper-signatures"
                         >
@@ -314,8 +358,8 @@ export function AppSidebar() {
                           >
                             <CheckSquare className={`w-4 h-4 ${
                               isActiveRoute('/work-paper-signatures')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Sign
@@ -340,16 +384,16 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/organization', '/permission', '/users', '/roles', '/pending-users'])
-                          ? 'bg-blue-50 text-blue-700'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-settings"
                     >
                       <div className="flex items-center space-x-3 flex-1">
                         <Settings className={`w-4 h-4 ${
                           isInSection(['/organization', '/permission', '/users', '/roles'])
-                            ? 'text-blue-600'
-                            : 'text-gray-400 group-hover:text-gray-600'
+                            ? 'text-sidebar-primary'
+                            : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
                           Settings
@@ -369,8 +413,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/organization')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-organization"
                         >
@@ -380,8 +424,8 @@ export function AppSidebar() {
                           >
                             <Building className={`w-4 h-4 ${
                               isActiveRoute('/organization')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Organization
@@ -394,8 +438,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/permission')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-permissions"
                         >
@@ -405,8 +449,8 @@ export function AppSidebar() {
                           >
                             <Shield className={`w-4 h-4 ${
                               isActiveRoute('/permission')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Permissions
@@ -419,8 +463,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/users')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-users"
                         >
@@ -430,8 +474,8 @@ export function AppSidebar() {
                           >
                             <Users className={`w-4 h-4 ${
                               isActiveRoute('/users')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Users
@@ -444,8 +488,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/pending-users')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-pending-users"
                         >
@@ -455,8 +499,8 @@ export function AppSidebar() {
                           >
                             <UserCheck className={`w-4 h-4 ${
                               isActiveRoute('/pending-users')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Pending Users
@@ -469,8 +513,8 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/roles')
-                              ? 'bg-blue-50 text-blue-700'
-                              : 'text-gray-500 hover:bg-gray-50 hover:text-gray-700'
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-roles"
                         >
@@ -480,8 +524,8 @@ export function AppSidebar() {
                           >
                             <Shield className={`w-4 h-4 ${
                               isActiveRoute('/roles')
-                                ? 'text-blue-600'
-                                : 'text-gray-400'
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
                               Roles
@@ -499,22 +543,25 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-white border-t border-gray-100 p-3">
+      <SidebarFooter className="bg-white border-t border-sidebar-border p-3">
         <div className="space-y-2">
           <Link
             href="/profile"
-            className="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer group"
+            className="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-sidebar-accent transition-colors cursor-pointer group"
           >
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-sky-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-xs font-medium">
-                {user?.first_name?.charAt(0)?.toUpperCase() || "U"}
-              </span>
-            </div>
+            <div 
+              className="w-8 h-8 rounded-full"
+              style={{
+                background: user?.avatar_gradient_start && user?.avatar_gradient_end
+                  ? `linear-gradient(135deg, ${user.avatar_gradient_start} 0%, ${user.avatar_gradient_end} 100%)`
+                  : 'hsl(var(--primary))'
+              }}
+            />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-gray-700 truncate group-hover:text-gray-900">
+              <p className="text-sm font-medium text-sidebar-foreground truncate group-hover:text-foreground">
                 {user?.first_name || "User"}
               </p>
-              <p className="text-xs text-gray-500 truncate">
+              <p className="text-xs text-muted-foreground truncate">
                 {user?.username || "username"}
               </p>
             </div>
@@ -523,7 +570,7 @@ export function AppSidebar() {
             variant="ghost"
             size="sm"
             onClick={logout}
-            className="w-full justify-start text-gray-500 hover:text-gray-700 hover:bg-gray-50 px-2"
+            className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-sidebar-accent px-2"
           >
             <LogOut className="w-4 h-4 mr-2" />
             <span className="text-sm">Keluar</span>

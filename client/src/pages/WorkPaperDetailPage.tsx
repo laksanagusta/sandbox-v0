@@ -1019,7 +1019,7 @@ export default function WorkPaperDetailPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div className="w-full space-y-6">
             {/* Main Content */}
             <div className="space-y-6">
               {/* Informasi Umum */}

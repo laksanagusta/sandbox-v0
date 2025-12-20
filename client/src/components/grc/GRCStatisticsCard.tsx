@@ -20,27 +20,25 @@ export function GRCStatisticsCard({
   indicatorColor,
 }: GRCStatisticsCardProps) {
   return (
-    <Card className={cn("overflow-hidden relative", className)}>
-       {indicatorColor && (
-          <div className={cn("absolute left-0 top-0 bottom-0 w-1", indicatorColor)} />
-       )}
+    <Card className={cn("overflow-hidden relative bg-white hover:border-gray-300 transition-colors", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
+        <CardTitle className="text-sm font-medium text-gray-500">{title}</CardTitle>
+        {Icon && <Icon className="h-4 w-4 text-gray-400" />}
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-2">
-            {indicatorColor && !Icon && (
-                <div className={cn("h-8 w-1 rounded-full", indicatorColor)} />
-            )}
-            <div className="text-3xl font-bold tracking-tight">{value}</div>
+            <div className="text-2xl font-semibold tracking-tight text-gray-900">{value}</div>
         </div>
         
         {description && (
-          <p className="text-xs text-green-500 font-medium mt-1 flex items-center gap-1">
-             {/* Simulating 'up' trend or just description */}
-             {description}
-          </p>
+          <div className="flex items-center gap-2 mt-1">
+             {indicatorColor && (
+                <div className={cn("h-1.5 w-1.5 rounded-full", indicatorColor)} />
+             )}
+             <p className="text-xs text-gray-500 font-medium">
+                {description}
+             </p>
+          </div>
         )}
       </CardContent>
     </Card>

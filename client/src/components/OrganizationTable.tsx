@@ -27,6 +27,8 @@ interface Organization {
   name: string;
   address: string | null;
   type: string;
+  latitude: number | null;
+  longitude: number | null;
   created_at: string;
   created_by: string;
 }
@@ -250,7 +252,7 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
           <Table className="min-w-[800px]">
             <TableHeader>
               <TableRow className="hover:bg-transparent border-b">
-                <TableHead className="pl-6 w-[300px] min-w-[250px]">
+                <TableHead className="pl-6 w-[300px]">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -261,7 +263,7 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
                     <span className="ml-2">{getSortIcon("name")}</span>
                   </Button>
                 </TableHead>
-                <TableHead className="w-[120px]">
+                <TableHead className="w-[150px]">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -272,8 +274,8 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
                     <span className="ml-2">{getSortIcon("type")}</span>
                   </Button>
                 </TableHead>
-                <TableHead className="min-w-[300px] max-w-[400px]">Alamat</TableHead>
-                <TableHead className="w-[160px]">
+                <TableHead className="w-[250px]">Coordinate</TableHead>
+                <TableHead className="w-[200px]">
                   <Button
                     variant="ghost"
                     size="sm"
@@ -319,10 +321,12 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
                   </TableCell>
                   <TableCell>{getTypeBadge(org.type)}</TableCell>
                   <TableCell>
-                    {org.address ? (
-                      <div className="flex items-start space-x-2">
-                        <MapPin className="h-4 w-4 text-gray-500 flex-shrink-0 mt-0.5" />
-                        <span className="break-words leading-tight">{org.address}</span>
+                    {org.latitude !== null && org.longitude !== null ? (
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="h-4 w-4 text-xs text-gray-500 flex-shrink-0" />
+                        <span className="text-gray-600 font-mono text-xs">
+                          {Number(org.latitude).toFixed(6)}, {Number(org.longitude).toFixed(6)}
+                        </span>
                       </div>
                     ) : (
                       <span className="text-gray-400">-</span>

@@ -13,6 +13,14 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useQuery } from "@tanstack/react-query";
 import { apiClient } from "@/lib/api-client";
 
@@ -197,7 +205,7 @@ export default function BusinessTripReportPage() {
 
   if (error) {
     return (
-      <div className="bg-background min-h-screen">
+      <div className="bg-gray-50/50 min-h-screen">
         <div className="mx-auto px-8 py-8">
           <div className="text-center">
             <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -214,82 +222,89 @@ export default function BusinessTripReportPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="mx-auto px-8 py-8">
-        <div className="space-y-8">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <BarChart3 className="w-8 h-8 text-gray-600" />
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">
-                  Business Trip Report
-                </h1>
-                <p className="text-gray-600">
-                  Dashboard analisis perjalanan dinas
-                </p>
-              </div>
-            </div>
-
-            {/* Filter Controls */}
-            <div className="flex items-center space-x-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tanggal Mulai
-                </label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Tanggal Selesai
-                </label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Destinasi
-                </label>
-                <input
-                  type="text"
-                  value={destination}
-                  onChange={(e) => setDestination(e.target.value)}
-                  placeholder="Cari destinasi..."
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status
-                </label>
-                <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                >
-                  <option value="">Semua Status</option>
-                  <option value="draft">Draft</option>
-                  <option value="ongoing">Berlangsung</option>
-                  <option value="completed">Selesai</option>
-                  <option value="canceled">Dibatalkan</option>
-                </select>
-              </div>
-            </div>
+    <div className="bg-white flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <BarChart3 className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-semibold text-gray-900">
+              Business Trip Report
+            </span>
           </div>
+        </div>
+        <div className="flex items-center space-x-2">
+          {/* Action buttons if needed */}
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+        <div className="w-full space-y-6">
+          {/* Filter Card */}
+          <Card className="border-border/60 shadow-sm bg-white">
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                <div className="md:col-span-5 space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground ml-1">Rentang Tanggal</label>
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="pl-9 h-9 bg-background"
+                      />
+                    </div>
+                    <span className="text-muted-foreground text-xs">-</span>
+                    <div className="relative flex-1">
+                      <Calendar className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="pl-9 h-9 bg-background"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="md:col-span-4 space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground ml-1">Destinasi</label>
+                  <div className="relative">
+                    <MapPin className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      className="pl-9 h-9 bg-background"
+                      placeholder="Filter destinasi..."
+                      value={destination}
+                      onChange={(e) => setDestination(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="md:col-span-3 space-y-1.5">
+                  <label className="text-xs font-medium text-muted-foreground ml-1">Status</label>
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger className="h-9 bg-background">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Semua Status</SelectItem>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="ongoing">Berlangsung</SelectItem>
+                      <SelectItem value="completed">Selesai</SelectItem>
+                      <SelectItem value="canceled">Dibatalkan</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Overview Cards */}
           {overview && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <Briefcase className="w-5 h-5 mr-2 text-blue-500" />
@@ -306,7 +321,7 @@ export default function BusinessTripReportPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <Clock className="w-5 h-5 mr-2 text-blue-500" />
@@ -321,7 +336,7 @@ export default function BusinessTripReportPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <Users className="w-5 h-5 mr-2 text-green-500" />
@@ -338,7 +353,7 @@ export default function BusinessTripReportPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <DollarSign className="w-5 h-5 mr-2 text-green-500" />
@@ -355,7 +370,7 @@ export default function BusinessTripReportPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
@@ -372,7 +387,7 @@ export default function BusinessTripReportPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <AlertCircle className="w-5 h-5 mr-2 text-yellow-500" />
@@ -389,7 +404,7 @@ export default function BusinessTripReportPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <XCircle className="w-5 h-5 mr-2 text-red-500" />
@@ -406,7 +421,7 @@ export default function BusinessTripReportPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-gray-200 shadow-sm">
+              <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
                     <TrendingUp className="w-5 h-5 mr-2 text-purple-500" />
@@ -425,7 +440,7 @@ export default function BusinessTripReportPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Monthly Statistics */}
-            <Card className="bg-white border-gray-200 shadow-sm">
+            <Card className="bg-card border-border shadow-xs">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
                   <Calendar className="w-5 h-5 mr-2 text-blue-500" />
@@ -487,7 +502,7 @@ export default function BusinessTripReportPage() {
             </Card>
 
             {/* Destination Statistics */}
-            <Card className="bg-white border-gray-200 shadow-sm">
+            <Card className="bg-card border-border shadow-xs">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
                   <MapPin className="w-5 h-5 mr-2 text-green-500" />
@@ -547,7 +562,7 @@ export default function BusinessTripReportPage() {
           </div>
 
           {/* Recent Business Trips */}
-          <Card className="bg-white border-gray-200 shadow-sm">
+          <Card className="bg-card border-border shadow-xs">
             <CardHeader>
               <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
                 <Briefcase className="w-5 h-5 mr-2 text-purple-500" />

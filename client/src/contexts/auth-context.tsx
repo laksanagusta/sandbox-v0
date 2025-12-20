@@ -24,6 +24,8 @@ interface User {
   first_name: string;
   last_name: string;
   phone_number: string;
+  avatar_gradient_start?: string;
+  avatar_gradient_end?: string;
   roles: Role[];
   permissions: any;
   organization: Organization;
@@ -58,7 +60,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // TODO: Validate token with API
       // For now, we'll simulate a logged in user
       const userData = localStorage.getItem("user_data");
-      console.log("User data from localStorage:", userData);
 
       if (userData && userData !== "undefined" && userData.trim() !== "") {
         try {
@@ -66,7 +67,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
           console.log("Parsed user from localStorage:", parsedUser);
           setUser(parsedUser);
         } catch (error) {
-          console.error("Failed to parse user data from localStorage:", error);
           // Remove corrupted data
           localStorage.removeItem("user_data");
           localStorage.removeItem("auth_token");
@@ -148,7 +148,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Get user data dari /whoami
       try {
-        console.log("Fetching user data from /whoami...");
         const userResponse = await fetch(
           `${getApiIdentityUrl()}/api/v1/users/whoami`,
           {
@@ -167,7 +166,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         const userData = await userResponse.json();
-        console.log("User data from whoami:", userData);
 
         // Expected format: { data: { user data } }
         let finalUserData;

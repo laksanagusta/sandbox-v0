@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { SearchableSelect } from "@/components/SearchableSelect";
 import { GRCUnitDetailData } from "../../../../shared/types";
@@ -22,6 +22,13 @@ export function GRCRadarAnalysisSection() {
     queryKey: ["grc-units-all"],
     queryFn: () => grcApi.getUnits({ limit: 100 }),
   });
+
+  // Set default unit when data is loaded
+  useEffect(() => {
+    if (unitsData?.data.units && unitsData.data.units.length > 0 && !selectedUnitId) {
+      setSelectedUnitId(unitsData.data.units[0].id.toString());
+    }
+  }, [unitsData, selectedUnitId]);
 
   // Fetch details for the selected unit
   const { data: unitDetail, isLoading: isLoadingDetail } = useQuery({
@@ -61,17 +68,17 @@ export function GRCRadarAnalysisSection() {
   }, [unitDetail]);
 
   return (
-    <Card className="col-span-1 border-blue-200 dark:border-blue-900 bg-blue-50/10">
+    <Card className="col-span-1 shadow-none border border-gray-200 h-[520px] flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
             <div>
-                <CardTitle>Deep Dive Analysis</CardTitle>
-                <CardDescription>Analyze component performance regarding national average</CardDescription>
+                <CardTitle className="text-base font-medium">Deep Dive Analysis</CardTitle>
+                <CardDescription className="text-gray-500">Analyze component performance vs national average</CardDescription>
             </div>
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger>
-                         <HelpCircle className="h-4 w-4 text-muted-foreground" />
+                         <HelpCircle className="h-4 w-4 text-gray-400" />
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>Select a unit to view its detailed component scores</p>
@@ -92,42 +99,42 @@ export function GRCRadarAnalysisSection() {
           />
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex-1">
         {isLoadingDetail ? (
           <div className="flex h-[300px] items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
         ) : selectedUnitId && unitDetail?.data ? (
-          <div className="space-y-4">
-            <div className="relative -mt-4 h-[250px] flex items-center justify-center">
+          <div className="space-y-2">
+            <div className="relative h-[300px] flex items-center justify-center">
                 <GRCRadarChart data={radarChartData} keys={chartKeys} className="w-full h-full" />
             </div>
             
             <div className="grid grid-cols-2 gap-3 text-sm">
-                 <div className="p-3 bg-card rounded border">
-                     <span className="text-muted-foreground text-xs block">Strongest Component</span>
-                     <div className="font-semibold text-green-600 flex items-center gap-1">
-                        <ArrowUp className="h-3 w-3" />
-                        {unitDetail.data.strength.component}
+                 <div className="p-3 bg-white rounded border border-gray-100 shadow-sm">
+                     <span className="text-gray-500 text-xs block mb-1">Strongest Component</span>
+                     <div className="font-semibold text-gray-900 flex items-center gap-1">
+                        <ArrowUp className="h-3 w-3 text-emerald-500" />
+                        <span className="truncate">{unitDetail.data.strength.component}</span>
                      </div>
-                     <span className="text-xs text-muted-foreground">
+                     <span className="text-xs text-emerald-600 font-medium">
                         {unitDetail.data.strength.value} (+{unitDetail.data.strength.gap_from_average.toFixed(1)})
                      </span>
                  </div>
-                 <div className="p-3 bg-card rounded border">
-                     <span className="text-muted-foreground text-xs block">Weakest Component</span>
-                     <div className="font-semibold text-red-500 flex items-center gap-1">
-                        <ArrowDown className="h-3 w-3" />
-                        {unitDetail.data.weakness.component}
+                 <div className="p-3 bg-white rounded border border-gray-100 shadow-sm">
+                     <span className="text-gray-500 text-xs block mb-1">Weakest Component</span>
+                     <div className="font-semibold text-gray-900 flex items-center gap-1">
+                        <ArrowDown className="h-3 w-3 text-red-500" />
+                        <span className="truncate">{unitDetail.data.weakness.component}</span>
                      </div>
-                     <span className="text-xs text-muted-foreground">
+                     <span className="text-xs text-red-600 font-medium">
                         {unitDetail.data.weakness.value} ({unitDetail.data.weakness.gap_from_average.toFixed(1)})
                      </span>
                  </div>
             </div>
           </div>
         ) : (
-          <div className="flex h-[340px] flex-col items-center justify-center text-muted-foreground">
+          <div className="flex h-full flex-col items-center justify-center text-gray-400 bg-gray-50 rounded-md border border-dashed border-gray-200">
             <p className="text-center text-sm">Select a unit above to view the analysis</p>
           </div>
         )}

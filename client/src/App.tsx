@@ -6,7 +6,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { queryClient } from "./lib/queryClient";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import KwitansiPage from "@/pages/KwitansiPage";
 import BusinessTripListPage from "@/pages/BusinessTripListPage";
@@ -49,12 +49,10 @@ function AuthenticatedLayout() {
 
   return (
     <SidebarProvider style={style as React.CSSProperties}>
-      <div className="flex h-screen w-full bg-muted/20">
+      <div className="flex h-screen w-full bg-gray-50/50">
         <AppSidebar />
         <div className="flex flex-col flex-1 min-w-0">
-          <header className="flex items-center h-14 px-6 bg-white border-b sticky top-0 z-40 transition-all duration-200">
-            <SidebarTrigger data-testid="button-sidebar-toggle" className="text-muted-foreground hover:text-foreground transition-colors" />
-          </header>
+
           <main className="flex-1 overflow-auto">
             <div className="w-full space-y-6 animate-in fade-in duration-500 slide-in-from-bottom-4">
               <Switch>

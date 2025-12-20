@@ -225,9 +225,6 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
                       <div className="flex items-center space-x-2">
                         <div>
                           <p>{verificator.user_name}</p>
-                          <p className="text-xs text-gray-500">
-                            {verificator.position}
-                          </p>
                         </div>
                         {isCurrentUser(verificator.user_id) && (
                           <Badge className="bg-blue-600 text-white">

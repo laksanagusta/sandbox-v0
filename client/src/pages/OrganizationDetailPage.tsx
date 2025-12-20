@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "wouter";
-import { Building, ArrowLeft, Save, Check, Loader2 } from "lucide-react";
+import { Building, ArrowLeft, Save, Check, Loader2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -301,29 +301,47 @@ export default function OrganizationDetailPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="w-full mx-auto px-8 py-8">
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Building className="w-8 h-8 text-gray-600" />
-              <h1 className="text-2xl font-semibold">
-                {isNew ? "Tambah Organization" : "Detail Organization"}
-              </h1>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                type="submit"
-                form="organization-form"
-                variant="default"
-                disabled={isSaving}
-              >
-                <Save className="w-4 h-4 mr-2" />
-                {isSaving ? "Menyimpan..." : (isNew ? "Buat" : "Simpan")}
-              </Button>
-            </div>
-          </div>
+    <div className="bg-white flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation("/organization")}
+            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-sm font-medium">Back</span>
+          </Button>
 
+          <div className="h-4 w-px bg-gray-200" />
+
+          <div className="flex items-center space-x-2">
+            <Building className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-semibold text-gray-900">
+              {isNew ? "Tambah Organization" : "Detail Organization"}
+            </span>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Button
+            type="submit"
+            form="organization-form"
+            variant="default"
+            disabled={isSaving}
+            size="sm"
+            className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Save className="w-3.5 h-3.5 mr-2" />
+            {isSaving ? "Menyimpan..." : (isNew ? "Buat" : "Simpan")}
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+        <div className="w-full space-y-6">
           {/* Organization Form */}
           <form
             id="organization-form"

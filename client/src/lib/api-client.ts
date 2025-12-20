@@ -179,13 +179,13 @@ class ApiClient {
 
   async approveUser(id: string) {
     return this.request(`api/v1/users/${id}/approve`, {
-      method: "POST",
+      method: "PATCH",
     }, true);
   }
 
   async rejectUser(id: string) {
     return this.request(`api/v1/users/${id}/reject`, {
-      method: "POST",
+      method: "PATCH",
     }, true);
   }
 

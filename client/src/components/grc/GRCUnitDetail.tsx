@@ -43,8 +43,8 @@ export function GRCUnitDetail({ data, open, onOpenChange }: GRCUnitDetailProps) 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-        <SheetHeader>
-          <div className="flex items-center justify-between">
+        <SheetHeader className="pr-8">
+          <div className="flex items-center gap-2 flex-wrap">
             <Badge variant="outline">{data.unit.category}</Badge>
             <span className="text-sm font-medium text-muted-foreground">
               Rank #{data.unit.rank}

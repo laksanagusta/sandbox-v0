@@ -69,52 +69,34 @@ export default function EditableTable({
               // For boolean fields
               const boolValue: boolean = typeof value === "boolean" ? value : false;
 
-              // For daily allowance, calculate subtotal automatically
-              const isDailyAllowance =
-                transaction.type.toLowerCase() === "daily allowance" ||
-                transaction.type.toLowerCase() === "daily" ||
-                transaction.subtype.toLowerCase() === "daily allowance" ||
-                transaction.subtype.toLowerCase() === "daily";
-
-              if (isDailyAllowance) {
-                // Calculate days from description or use a default
-                const days =
-                  typeof transaction.total_night === "number"
-                    ? transaction.total_night
-                    : 1;
-
-                if (field === "amount") {
-                  // Update amount and recalculate subtotal
+              // Generic logic for subtotal calculation:
+              // If there are total_nights defined (> 0), subtotal is amount * total_night.
+              // Otherwise, subtotal logic might just be manual or default.
+              // But the user requested: "jika dia ada total_nightsnya maka sub totalnya adalah hasil kali ammount dengan total nightsnya"
+              
+              if (field === "amount") {
+                 const currentNights = transaction.total_night || 0;
+                 const multiplier = currentNights > 0 ? currentNights : 1;
+                 
                   return {
                     ...transaction,
                     amount: numValue,
-                    subtotal: numValue * days,
+                    subtotal: numValue * multiplier,
                   };
-                } else if (field === "total_night") {
-                  // Update days and recalculate subtotal
-                  return {
-                    ...transaction,
-                    total_night: numValue,
-                    subtotal: transaction.amount * numValue,
-                  };
-                } else {
-                  // Update other fields (use appropriate value type)
-                  const isStringField = field === "payment_type" ||
-                    field === "transport_detail" ||
-                    field === "type" ||
-                    field === "subtype" ||
-                    field === "description" ||
-                    field === "spd_number";
-                  const isBooleanField = field === "is_valid";
-
-                  return {
-                    ...transaction,
-                    [field]: isBooleanField ? boolValue : (isStringField ? stringValue : numValue),
-                  };
-                }
               }
 
-              // For other transaction types, update normally (use appropriate value type)
+              if (field === "total_night") {
+                 const currentAmount = transaction.amount || 0;
+                 const multiplier = numValue > 0 ? numValue : 1;
+                 
+                 return {
+                    ...transaction,
+                    total_night: numValue,
+                    subtotal: currentAmount * multiplier,
+                 };
+              }
+
+              // Update other fields
               const isStringField = field === "payment_type" ||
                 field === "transport_detail" ||
                 field === "type" ||
@@ -447,6 +429,10 @@ export default function EditableTable({
                   const isHotel = transaction.subtype.toLowerCase() === "hotel";
                   const isDailyAllowance =
                     transaction.subtype.toLowerCase() === "daily allowance";
+                  const showTotalNight =
+                    (transaction.total_night && transaction.total_night > 0) ||
+                    isHotel ||
+                    isDailyAllowance;
                   return (
                     <tr
                       key={transactionIndex}
@@ -622,7 +608,7 @@ export default function EditableTable({
                         )}
                       </td>
                       <td className="whitespace-nowrap">
-                        {isHotel || isDailyAllowance ? (
+                        {showTotalNight ? (
                           <Input
                             value={transaction.total_night || ""}
                             onChange={(e) =>
@@ -647,6 +633,7 @@ export default function EditableTable({
                             </span>
                           </div>
                         )}
+
                       </td>
                       <td className="text-center whitespace-nowrap">
                         <div className="flex justify-center">

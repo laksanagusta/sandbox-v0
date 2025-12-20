@@ -46,56 +46,57 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
   );
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return "bg-green-500 hover:bg-green-600";
-    if (score >= 80) return "bg-yellow-500 hover:bg-yellow-600";
-    return "bg-red-500 hover:bg-red-600";
+    // Single color (blue), intensity varies by score
+    if (score >= 90) return "bg-blue-600 text-white hover:bg-blue-700";
+    if (score >= 75) return "bg-blue-500 text-white hover:bg-blue-600";
+    if (score >= 60) return "bg-blue-100 text-blue-700 hover:bg-blue-200";
+    return "bg-gray-100 text-gray-700 hover:bg-gray-200";
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Unit Performance List</CardTitle>
-        <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+    <div className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-4 justify-between">
+          <div className="relative w-full sm:max-w-xs">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Search units..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8"
+              className="pl-8 bg-white"
             />
           </div>
-          <Select value={category} onValueChange={setCategory}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              <SelectItem value="Balai Besar">Balai Besar</SelectItem>
-              <SelectItem value="Kelas I">Kelas I</SelectItem>
-              <SelectItem value="Kelas II">Kelas II</SelectItem>
-              <SelectItem value="Loka">Loka</SelectItem>
-              <SelectItem value="Direktorat">Direktorat</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Sort By" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="average">Score</SelectItem>
-              <SelectItem value="name">Name</SelectItem>
-              <SelectItem value="rank">Rank</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex gap-2">
+            <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger className="w-[160px] bg-white">
+                <SelectValue placeholder="Category" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                <SelectItem value="Balai Besar">Balai Besar</SelectItem>
+                <SelectItem value="Kelas I">Kelas I</SelectItem>
+                <SelectItem value="Kelas II">Kelas II</SelectItem>
+                <SelectItem value="Loka">Loka</SelectItem>
+                <SelectItem value="Direktorat">Direktorat</SelectItem>
+                </SelectContent>
+            </Select>
+            <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-[140px] bg-white">
+                <SelectValue placeholder="Sort By" />
+                </SelectTrigger>
+                <SelectContent>
+                <SelectItem value="average">Score</SelectItem>
+                <SelectItem value="name">Name</SelectItem>
+                <SelectItem value="rank">Rank</SelectItem>
+                </SelectContent>
+            </Select>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent>
-        <div className="rounded-md border">
+
+        <div className="rounded-md border bg-white">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Rank</TableHead>
+              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+                <TableHead className="w-[80px]">Rank</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead className="text-right">Average Score</TableHead>
@@ -105,13 +106,13 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center h-24">
+                  <TableCell colSpan={5} className="text-center h-24 text-gray-500">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : filteredUnits?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center h-24">
+                  <TableCell colSpan={5} className="text-center h-24 text-gray-500">
                     No results found.
                   </TableCell>
                 </TableRow>
@@ -119,20 +120,20 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
                 filteredUnits?.map((unit) => (
                   <TableRow
                     key={unit.id}
-                    className="cursor-pointer hover:bg-muted/50"
+                    className="cursor-pointer hover:bg-gray-50 transition-colors"
                     onClick={() => onUnitClick(unit.id)}
                   >
-                    <TableCell className="font-medium">#{unit.rank}</TableCell>
-                    <TableCell>{unit.name}</TableCell>
+                    <TableCell className="font-medium text-gray-500">#{unit.rank}</TableCell>
+                    <TableCell className="font-medium text-gray-900">{unit.name}</TableCell>
                     <TableCell>
-                      <Badge variant="outline">{unit.category}</Badge>
+                      <Badge variant="outline" className="font-normal text-gray-500 border-gray-200">{unit.category}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Badge className={getScoreColor(unit.average)}>
+                      <Badge className={`${getScoreColor(unit.average)} shadow-none border-0`}>
                         {unit.average.toFixed(2)}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right text-gray-500">
                       {unit.percentile.toFixed(1)}%
                     </TableCell>
                   </TableRow>
@@ -141,7 +142,6 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
             </TableBody>
           </Table>
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }
