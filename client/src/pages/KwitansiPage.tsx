@@ -551,7 +551,7 @@ export default function KwitansiPage() {
               total_night: transaction.total_night
                 ? Number(transaction.total_night)
                 : undefined,
-              name: transaction.name || "",
+              name: transaction.name || assignee.name || "", // Fallback to assignee name
               is_valid: transaction.is_valid,
             })
           ),
@@ -612,7 +612,7 @@ export default function KwitansiPage() {
         rank: assigneeItem.rank || "",
         transactions: (assigneeItem.transactions || []).map(
           (transactionItem: any) => ({
-            name: transactionItem.name || "",
+            name: transactionItem.name || assigneeItem.name || "", // Fallback to assignee name
             type: transactionItem.type || "",
             subtype: transactionItem.subtype || "",
             amount: transactionItem.amount || 0,
@@ -794,6 +794,8 @@ export default function KwitansiPage() {
       }
 
       for (const transaction of assignee.transactions) {
+        console.log(transaction);
+
         if (
           !transaction.name ||
           !transaction.type ||

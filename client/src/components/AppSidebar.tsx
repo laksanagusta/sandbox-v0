@@ -14,9 +14,10 @@ import {
   BarChart3,
   ClipboardCheck,
   Home,
-
+  MessageSquare,
   Bell,
   UserCheck,
+  Database,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
@@ -50,6 +51,10 @@ export function AppSidebar() {
   const [isBusinessTripOpen, setIsBusinessTripOpen] = useState(true);
   const [isGRCOpen, setIsGRCOpen] = useState(true);
   const [isWorkPaperOpen, setIsWorkPaperOpen] = useState(false);
+  const [isAIAssistantOpen, setIsAIAssistantOpen] = useState(true);
+
+  // Check if user is Super Admin
+  const isSuperAdmin = user?.roles?.some(role => role.name === "Super Admin") ?? false;
 
   const isActiveRoute = (path: string) => {
     return location === path || location.startsWith(path + "/");
@@ -68,7 +73,7 @@ export function AppSidebar() {
           className="w-full justify-between px-2 h-9 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group"
         >
           <div className="flex items-center space-x-2">
-            <span className="text-lg font-bold tracking-tight text-sidebar-foreground">Core</span>
+            <span className="text-lg font-bold tracking-tight text-black">Orion</span>
           </div>
         </Button>
       </SidebarHeader>
@@ -137,6 +142,97 @@ export function AppSidebar() {
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
+                    </SidebarMenuSub>
+                  </CollapsibleContent>
+                </Collapsible>
+              </SidebarMenuItem>
+
+              {/* AI Assistant Section */}
+              <SidebarMenuItem>
+                <Collapsible
+                  open={isAIAssistantOpen}
+                  onOpenChange={setIsAIAssistantOpen}
+                >
+                  <CollapsibleTrigger asChild>
+                    <SidebarMenuButton
+                      className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
+                        isInSection(['/chatbot'])
+                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                      }`}
+                      data-testid="nav-ai-assistant"
+                    >
+                      <div className="flex items-center space-x-3 flex-1">
+                        <MessageSquare className={`w-4 h-4 ${
+                          isInSection(['/chatbot'])
+                            ? 'text-sidebar-primary'
+                            : 'text-muted-foreground group-hover:text-sidebar-foreground'
+                        }`} />
+                        <span className="text-sm font-medium">
+                          AI Assistant
+                        </span>
+                      </div>
+                      {isAIAssistantOpen ? (
+                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                      )}
+                    </SidebarMenuButton>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent>
+                    <SidebarMenuSub className="ml-4 mt-1 border-l-0 pl-4">
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
+                            isActiveRoute('/chatbot') && !location.includes('/knowledge-bases')
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                          }`}
+                          data-testid="nav-chatbot-chat"
+                        >
+                          <Link
+                            href="/chatbot"
+                            className="flex items-center space-x-3"
+                          >
+                            <MessageSquare className={`w-4 h-4 ${
+                              isActiveRoute('/chatbot') && !location.includes('/knowledge-bases')
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
+                            }`} />
+                            <span className="text-sm">
+                              Chat
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      {isSuperAdmin && (
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            asChild
+                            className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
+                              isActiveRoute('/chatbot/knowledge-bases')
+                                ? 'bg-sidebar-accent text-sidebar-primary'
+                                : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                            }`}
+                            data-testid="nav-knowledge-bases"
+                          >
+                            <Link
+                              href="/chatbot/knowledge-bases"
+                              className="flex items-center space-x-3"
+                            >
+                              <Database className={`w-4 h-4 ${
+                                isActiveRoute('/chatbot/knowledge-bases')
+                                  ? 'text-sidebar-primary'
+                                  : 'text-muted-foreground'
+                              }`} />
+                              <span className="text-sm">
+                                Knowledge
+                              </span>
+                            </Link>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      )}
                     </SidebarMenuSub>
                   </CollapsibleContent>
                 </Collapsible>

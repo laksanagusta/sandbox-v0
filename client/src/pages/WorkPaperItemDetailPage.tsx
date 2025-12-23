@@ -28,9 +28,8 @@ interface WorkPaperItemDetail {
   id: string;
   type: string;
   number: string;
-  statement: string;
-  explanation: string;
-  filling_guide: string;
+  classification?: string;
+  desk_instruction: string;
   level: number;
   sort_order: number;
   is_active: boolean;
@@ -52,9 +51,8 @@ export default function WorkPaperItemDetailPage() {
   const [formData, setFormData] = useState({
     number: "",
     type: "",
-    statement: "",
-    explanation: "",
-    filling_guide: "",
+    classification: "",
+    desk_instruction: "",
     level: 1,
     sort_order: 1,
     is_active: true,
@@ -135,9 +133,8 @@ export default function WorkPaperItemDetailPage() {
       setFormData({
         number: result.number,
         type: result.type,
-        statement: result.statement,
-        explanation: result.explanation,
-        filling_guide: result.filling_guide,
+        classification: result.classification || "",
+        desk_instruction: result.desk_instruction,
         level: result.level,
         sort_order: result.sort_order,
         is_active: result.is_active,
@@ -187,9 +184,8 @@ export default function WorkPaperItemDetailPage() {
         body: JSON.stringify({
           type: formData.type,
           number: formData.number,
-          statement: formData.statement,
-          explanation: formData.explanation,
-          filling_guide: formData.filling_guide,
+          classification: formData.classification,
+          desk_instruction: formData.desk_instruction,
           level: formData.level,
           sort_order: formData.sort_order,
           is_active: formData.is_active,
@@ -232,13 +228,11 @@ export default function WorkPaperItemDetailPage() {
 
   if (loading) {
     return (
-      <div className="bg-background min-h-screen">
-        <div className="mx-auto px-8 py-8">
-          <div className="flex items-center justify-center py-12">
-            <div className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
-              <span>Loading...</span>
-            </div>
+      <div className="bg-white flex flex-col h-screen overflow-hidden">
+        <div className="flex items-center justify-center flex-1">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Memuat data...</p>
           </div>
         </div>
       </div>
@@ -247,10 +241,11 @@ export default function WorkPaperItemDetailPage() {
 
   if (!workPaperItem && !isNew) {
     return (
-      <div className="bg-background min-h-screen">
-        <div className="mx-auto px-8 py-8">
-          <div className="text-center py-12">
-            <p>Work Paper Item tidak ditemukan</p>
+      <div className="bg-white flex flex-col h-screen overflow-hidden">
+        <div className="flex items-center justify-center flex-1">
+          <div className="text-center">
+            <FileText className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+            <p className="text-gray-500">Work Paper Item tidak ditemukan</p>
           </div>
         </div>
       </div>
@@ -258,66 +253,79 @@ export default function WorkPaperItemDetailPage() {
   }
 
   return (
-    <div className="bg-background min-h-screen">
-      <div className="mx-auto px-8 py-8">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button
-                variant="outline"
-                onClick={() => setLocation("/work-paper-items")}
-                className="flex items-center space-x-2 hover:bg-gray-100 transition-colors"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>Kembali</span>
-              </Button>
-              <div className="flex items-center space-x-3">
-                <FileText className="w-8 h-8 text-gray-600" />
-                <div>
-                  <h1 className="text-2xl font-semibold">
-                    {isNew ? "Buat Work Paper Item Baru" : "Detail Work Paper Item"}
-                  </h1>
-                </div>
-              </div>
-            </div>
+    <div className="bg-white flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setLocation("/work-paper-items")}
+            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            <span className="text-sm font-medium">Back</span>
+          </Button>
 
-            {/* Action Button */}
-            <div className="flex items-center space-x-3">
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Save className="w-4 h-4" />
-                <span>{saving ? "Menyimpan..." : (isNew ? "Buat" : "Simpan")}</span>
-              </Button>
-            </div>
+          <div className="h-4 w-px bg-gray-200" />
+
+          <div className="flex items-center space-x-2">
+            <FileText className="w-4 h-4 text-gray-500" />
+            <span className="text-sm font-semibold text-gray-900">
+              {isNew ? "New Work Paper Item" : "Edit Work Paper Item"}
+            </span>
           </div>
 
-          {/* Detail Kegiatan */}
+          {!isNew && workPaperItem && (
+            <>
+              <div className="h-4 w-px bg-gray-200" />
+              <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+                {workPaperItem.number}
+              </span>
+              {getTypeBadge(workPaperItem.type)}
+            </>
+          )}
+        </div>
+
+        <div className="flex items-center space-x-3">
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            size="sm"
+            className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Save className="w-3.5 h-3.5 mr-2" />
+            {saving ? "Saving..." : "Save"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+        <div className="w-full space-y-6">
+          {/* Basic Info Card */}
           <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <FileText className="w-5 h-5" />
-                <span>Detail Work Paper Item</span>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base font-semibold flex items-center space-x-2">
+                <FileText className="w-4 h-4" />
+                <span>Basic Information</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {!isNew && (
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                       ID
                     </Label>
-                    <p className="text-sm mt-1 font-mono bg-gray-50 px-2 py-1 rounded">
+                    <p className="text-sm mt-1 font-mono bg-gray-100 px-3 py-2 rounded-md">
                       {workPaperItem?.id}
                     </p>
                   </div>
                 )}
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
-                    Nomor
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nomor <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     value={formData.number}
@@ -329,7 +337,44 @@ export default function WorkPaperItemDetailPage() {
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Tipe <span className="text-red-500">*</span>
+                  </Label>
+                  <select
+                    value={formData.type}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        type: e.target.value,
+                      })
+                    }
+                    className="w-full mt-1 px-3 py-2 border border-gray-200 rounded-md text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">Pilih Tipe</option>
+                    <option value="A">Type A</option>
+                    <option value="B">Type B</option>
+                    <option value="C">Type C</option>
+                    <option value="Q">Type Q</option>
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Classification
+                  </Label>
+                  <Input
+                    value={formData.classification}
+                    onChange={(e) =>
+                      setFormData({ ...formData, classification: e.target.value })
+                    }
+                    placeholder="Kategori/group (opsional)"
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Level
                   </Label>
                   <Input
@@ -346,7 +391,7 @@ export default function WorkPaperItemDetailPage() {
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Sort Order
                   </Label>
                   <Input
@@ -362,34 +407,11 @@ export default function WorkPaperItemDetailPage() {
                     min="1"
                   />
                 </div>
-              </div>
-
-              <div className="grid grid-cols-4 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
-                    Tipe
-                  </Label>
-                  <select
-                    value={formData.type}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        type: e.target.value,
-                      })
-                    }
-                    className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
-                  >
-                    <option value="A">Type A</option>
-                    <option value="B">Type B</option>
-                    <option value="C">Type C</option>
-                    <option value="Q">Type Q</option>
-                  </select>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </Label>
-                  <div className="mt-2 flex items-center space-x-2">
+                  <div className="mt-2 flex items-center space-x-2 h-9">
                     <input
                       type="checkbox"
                       id="is_active"
@@ -404,7 +426,7 @@ export default function WorkPaperItemDetailPage() {
                     />
                     <Label
                       htmlFor="is_active"
-                      className="text-sm text-gray-700"
+                      className="text-sm text-gray-700 cursor-pointer"
                     >
                       Active
                     </Label>
@@ -414,62 +436,41 @@ export default function WorkPaperItemDetailPage() {
 
               {!isNew && workPaperItem?.parent_id && (
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Parent ID
                   </Label>
                   <div className="flex items-center space-x-1 mt-1">
                     <ChevronRight className="w-3 h-3 text-gray-400" />
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-gray-600 font-mono">
                       {workPaperItem.parent_id}
                     </span>
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
 
-              <div>
-                <Label className="text-sm font-medium text-gray-700">
-                  Statement
-                </Label>
-                <Textarea
-                  value={formData.statement}
-                  onChange={(e) =>
-                    setFormData({ ...formData, statement: e.target.value })
-                  }
-                  placeholder="Masukkan statement"
-                  rows={4}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700">
-                  Explanation
-                </Label>
-                <Textarea
-                  value={formData.explanation}
-                  onChange={(e) =>
-                    setFormData({ ...formData, explanation: e.target.value })
-                  }
-                  placeholder="Masukkan explanation"
-                  rows={4}
-                  className="mt-1"
-                />
-              </div>
-
-              <div>
-                <Label className="text-sm font-medium text-gray-700">
-                  Filling Guide
-                </Label>
-                <Textarea
-                  value={formData.filling_guide}
-                  onChange={(e) =>
-                    setFormData({ ...formData, filling_guide: e.target.value })
-                  }
-                  placeholder="Masukkan filling guide (opsional)"
-                  rows={3}
-                  className="mt-1"
-                />
-              </div>
+          {/* Desk Instruction Card */}
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-base font-semibold flex items-center space-x-2">
+                <FileText className="w-4 h-4" />
+                <span>Desk Instruction</span>
+              </CardTitle>
+              <p className="text-xs text-gray-500 mt-1">
+                Instruksi yang akan dikirim sebagai prompt ke LLM untuk proses desk.
+              </p>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={formData.desk_instruction}
+                onChange={(e) =>
+                  setFormData({ ...formData, desk_instruction: e.target.value })
+                }
+                placeholder="Masukkan desk instruction..."
+                rows={8}
+                className="font-mono text-sm"
+              />
             </CardContent>
           </Card>
         </div>

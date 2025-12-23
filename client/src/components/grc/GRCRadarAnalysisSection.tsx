@@ -56,6 +56,7 @@ export function GRCRadarAnalysisSection() {
       subject: label,
       value: radar_data.values[index],
       average: radar_data.average_values[index],
+      fullMark: 100,
     }));
   }, [unitDetail]);
 
@@ -68,7 +69,7 @@ export function GRCRadarAnalysisSection() {
   }, [unitDetail]);
 
   return (
-    <Card className="col-span-1 shadow-none border border-gray-200 h-[520px] flex flex-col">
+    <Card className="col-span-1 shadow-none border border-gray-200 h-[570px] flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
             <div>
@@ -105,7 +106,7 @@ export function GRCRadarAnalysisSection() {
             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
         ) : selectedUnitId && unitDetail?.data ? (
-          <div className="space-y-2">
+          <div className="space-y-6">
             <div className="relative h-[300px] flex items-center justify-center">
                 <GRCRadarChart data={radarChartData} keys={chartKeys} className="w-full h-full" />
             </div>

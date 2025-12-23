@@ -33,9 +33,8 @@ interface WorkPaperItem {
   id: string;
   type: string;
   number: string;
-  statement: string;
-  explanation: string;
-  filling_guide: string;
+  classification?: string;
+  desk_instruction: string;
   level: number;
   sort_order: number;
   is_active: boolean;
@@ -309,10 +308,10 @@ export function WorkPaperItemsTable({ className = "", onCreate }: WorkPaperItems
                   variant="ghost"
                   size="sm"
                   className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("statement")}
+                  onClick={() => handleSort("classification")}
                 >
-                  Statement
-                  <span className="ml-2">{getSortIcon("statement")}</span>
+                  Classification
+                  <span className="ml-2">{getSortIcon("classification")}</span>
                 </Button>
               </TableHead>
               <TableHead>
@@ -385,12 +384,9 @@ export function WorkPaperItemsTable({ className = "", onCreate }: WorkPaperItems
                   {getTypeBadge(item.type)}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-start space-x-2">
-                    <FileText className="h-4 w-4 text-gray-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm break-words max-w-xs">
-                      {item.statement}
-                    </span>
-                  </div>
+                  <span className="text-sm">
+                    {item.classification || "-"}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">Level {item.level}</span>

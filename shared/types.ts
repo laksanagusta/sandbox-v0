@@ -202,3 +202,98 @@ export interface GRCCategoriesResponse {
     categories: GRCCategoryBreakdown[];
   };
 }
+
+// Chatbot RAG Related Types
+
+export type DocumentStatus = 'processing' | 'active' | 'failed';
+
+export interface KnowledgeBase {
+  id: string;
+  user_id?: string;
+  name: string;
+  file_search_store_id: string;
+  is_global: boolean;
+  total_files: number;
+  total_bytes: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface KnowledgeBaseDocument {
+  id: string;
+  knowledge_base_id: string;
+  document_id: string;
+  file_name: string;
+  file_size: number;
+  mime_type: string;
+  status: DocumentStatus;
+  created_at: string;
+}
+
+export interface ChatSession {
+  id: string;
+  user_id: string;
+  knowledge_base_id: string;
+  title: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Citation {
+  document_name: string;
+  content: string;
+  start_index?: number;
+  end_index?: number;
+}
+
+export interface ChatMessage {
+  id: string;
+  chat_session_id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  citations?: Citation[];
+  created_at: string;
+}
+
+// Chatbot API Response Types
+
+export interface KnowledgeBaseResponse {
+  data: KnowledgeBase;
+}
+
+export interface KnowledgeBasesResponse {
+  data: KnowledgeBase[];
+}
+
+export interface KnowledgeBaseDetailResponse {
+  data: {
+    knowledge_base: KnowledgeBase;
+    documents: KnowledgeBaseDocument[];
+  };
+}
+
+export interface UploadFilesResponse {
+  data: {
+    documents: KnowledgeBaseDocument[];
+    errors: string[];
+  };
+}
+
+export interface ChatSessionResponse {
+  data: ChatSession;
+}
+
+export interface ChatSessionsResponse {
+  data: ChatSession[];
+}
+
+export interface ChatMessagesResponse {
+  data: ChatMessage[];
+}
+
+export interface SendMessageResponse {
+  data: {
+    user_message: ChatMessage;
+    assistant_message: ChatMessage;
+  };
+}

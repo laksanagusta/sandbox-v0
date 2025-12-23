@@ -31,28 +31,38 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { getApiIdentityUrl } from "@/lib/env";
 
-interface Role {
+interface Permission {
   id: string;
   name: string;
   description: string;
 }
 
+interface Role {
+  uuid: string;
+  name: string;
+  description?: string;
+  permissions?: Permission[];
+}
+
 interface Organization {
-  id: string;
+  uuid: string;
   name: string;
 }
 
 interface UserProfile {
   id: string;
+  employee_id?: string;
   username: string;
   first_name: string;
   last_name: string;
   phone_number: string;
   email?: string;
-  roles: Role[];
-  organizations: Organization;
+  avatar_gradient_start?: string;
+  avatar_gradient_end?: string;
+  role: Role[];  // API returns 'role' not 'roles'
+  organization: Organization;  // API returns 'organization' not 'organizations'
   created_at: string;
-  updated_at: string;
+  updated_at?: string;
 }
 
 export default function ProfilePage() {
@@ -652,16 +662,40 @@ export default function ProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {profile.roles && profile.roles.length > 0 ? (
-                  <div className="space-y-3">
-                    {profile.roles.map((role) => (
-                      <div key={role.id} className="space-y-2">
-                        <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
-                          {role.name}
-                        </Badge>
-                        <p className="text-sm text-gray-600">
-                          {role.description}
-                        </p>
+                {profile.role && profile.role.length > 0 ? (
+                  <div className="space-y-4">
+                    {profile.role.map((role: Role) => (
+                      <div key={role.uuid} className="space-y-3 border rounded-lg p-4">
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
+                              {role.name}
+                            </Badge>
+                          </div>
+                          {role.description && (
+                            <p className="text-sm text-gray-600">
+                              {role.description}
+                            </p>
+                          )}
+                        </div>
+                        
+                        {role.permissions && role.permissions.length > 0 && (
+                          <div className="border-t pt-3">
+                            <p className="text-xs font-medium text-gray-500 mb-2">Permissions:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {role.permissions.map((permission: Permission) => (
+                                <Badge 
+                                  key={permission.id} 
+                                  variant="outline" 
+                                  className="text-xs"
+                                  title={permission.description}
+                                >
+                                  {permission.name}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -684,16 +718,11 @@ export default function ProfilePage() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {profile.organizations ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center space-x-2">
-                      <Building className="w-4 h-4 text-gray-500" />
-                      <p className="font-medium">
-                        {profile.organizations.name}
-                      </p>
-                    </div>
-                    <p className="text-sm text-gray-500">
-                      ID: {profile.organizations.id}
+                {profile.organization ? (
+                  <div className="flex items-center space-x-2">
+                    <Building className="w-4 h-4 text-gray-500" />
+                    <p className="font-medium">
+                      {profile.organization.name}
                     </p>
                   </div>
                 ) : (

@@ -17,7 +17,7 @@ interface GRCRadarChartProps {
 // Custom tick component to position labels further from the chart
 const CustomTick = ({ payload, x, y, cx, cy, ...rest }: any) => {
   // Calculate angle and add offset to push labels further out
-  const offsetMultiplier = 1.10; // Push labels 25% further from center
+  const offsetMultiplier = 1.15; // Push labels slightly further from center
   const newX = cx + (x - cx) * offsetMultiplier;
   const newY = cy + (y - cy) * offsetMultiplier;
   
@@ -55,7 +55,7 @@ export function GRCRadarChart({ data, keys, className }: GRCRadarChartProps) {
           data={data} 
           cx="50%" 
           cy="50%" 
-          outerRadius="75%"
+          outerRadius="80%"
         >
           <ChartTooltip
             cursor={false}
@@ -68,6 +68,13 @@ export function GRCRadarChart({ data, keys, className }: GRCRadarChartProps) {
             tickLine={false}
           />
           <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+          <Radar
+            dataKey="fullMark"
+            stroke="#000000"
+            fill="none"
+            strokeWidth={1.5}
+            isAnimationActive={false}
+          />
           {[...keys].reverse().map((k, i) => (
             <Radar
               key={k.key}

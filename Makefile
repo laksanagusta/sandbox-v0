@@ -52,6 +52,7 @@ push-tag: ## Push specific tag only (use TAG=version)
 # Build and push in one command
 .PHONY: build-push
 build-push: build push ## Build and push Docker image
+@echo "🎉 Release complete!"
 
 # Build and push with specific tag
 .PHONY: build-push-tag

@@ -67,7 +67,8 @@ export default function GRCDashboardPage() {
     formatted = formatted.replace(/Balai Kekarantinaan Kesehatan/g, "BKK");
     formatted = formatted.replace(/Loka Kekarantinaan Kesehatan/g, "LOKA");
     formatted = formatted.replace(/Direktorat/g, "Dit");
-    formatted = formatted.replace(/Sekretariat Jenderal Penanggulangan Penyakit/g, "Setditjen");
+    formatted = formatted.replace(/Sekretariat Ditjen Penanggulangan Penyakit/g, "Setditjen");
+    formatted = formatted.replace(/Surveilans dan Karantina Kesehatan/g, "SKK");
     
     // Remove Kelas I & Kelas II
     formatted = formatted.replace(/ Kelas I/g, "");
@@ -160,7 +161,7 @@ export default function GRCDashboardPage() {
                           data={[...allUnitsQuery.data.data.units]
                             .map(u => ({ ...u, formattedName: formatUnitName(u.name) }))
                             .sort((a, b) => b.average - a.average)} 
-                          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
                           <XAxis
@@ -173,7 +174,7 @@ export default function GRCDashboardPage() {
                             interval={0}
                             angle={-45}
                             textAnchor="end"
-                            height={150}
+                            height={120}
                           />
                           <YAxis
                             stroke="#9ca3af"
@@ -218,7 +219,7 @@ export default function GRCDashboardPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 {/* Performance Distribution Chart */}
-                <Card className="shadow-none border border-gray-200 h-[520px] flex flex-col">
+                <Card className="shadow-none border border-gray-200 h-[570px] flex flex-col">
                   <CardHeader>
                     <CardTitle className="text-base font-medium">Performance Distribution</CardTitle>
                   </CardHeader>

@@ -31,6 +31,8 @@ import BusinessTripVerificationsPage from "@/pages/BusinessTripVerificationsPage
 import BusinessTripVerificatorPage from "@/pages/BusinessTripVerificatorPage";
 import LoginPage from "@/pages/LoginPage";
 import GRCDashboardPage from "@/pages/GRCDashboardPage";
+import ChatPage from "@/pages/ChatPage";
+import KnowledgeBaseManagementPage from "@/pages/KnowledgeBaseManagementPage";
 import NotFound from "@/pages/not-found";
 
 function RedirectToReport() {
@@ -81,6 +83,8 @@ function AuthenticatedLayout() {
                 <Route path="/roles" component={RolePage} />
                 <Route path="/pending-users" component={PendingUsersPage} />
                 <Route path="/grc" component={GRCDashboardPage} />
+                <Route path="/chatbot" component={ChatPage} />
+                <Route path="/chatbot/knowledge-bases" component={KnowledgeBaseManagementPage} />
                 <Route component={NotFound} />
               </Switch>
             </div>
@@ -205,6 +209,16 @@ export default function App() {
               </ProtectedRoute>
             </Route>
             <Route path="/pending-users">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/chatbot">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/chatbot/knowledge-bases">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>

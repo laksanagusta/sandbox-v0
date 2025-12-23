@@ -13,7 +13,7 @@ import {
   Edit,
   Save,
   X,
-  Bot,
+  Sparkles,
   MessageSquare,
   ChevronDown,
   MoreHorizontal,
@@ -94,9 +94,8 @@ interface WorkPaperDetail {
 interface WorkPaperNote {
   id: string;
   work_paper_id: string;
-  statement: string;
-  explanation: string;
-  filling_guide?: string;
+  classification?: string;
+  desk_instruction: string;
   status: string;
   gdrive_link: string;
   is_valid: boolean;
@@ -239,12 +238,10 @@ export default function WorkPaperDetailPage() {
           note.id === noteId
             ? {
                 ...note,
-                statement: result.statement || note.statement,
-                explanation:
-                  result.explanation ||
-                  result.generated_text ||
-                  note.explanation,
-                filling_guide: result.filling_guide || note.filling_guide,
+                classification: result.classification || note.classification,
+                desk_instruction:
+                  result.desk_instruction ||
+                  note.desk_instruction,
                 status: result.status || note.status,
                 gdrive_link: result.gdrive_link || note.gdrive_link,
                 is_valid:
@@ -455,7 +452,7 @@ export default function WorkPaperDetailPage() {
 
   const handleEditNote = async (
     noteId: string,
-    field: "statement" | "explanation" | "notes",
+    field: "classification" | "desk_instruction" | "notes",
     value: string
   ) => {
     try {
@@ -1211,9 +1208,8 @@ export default function WorkPaperDetailPage() {
                       <Table className="w-full min-w-[1900px]">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Statement</TableHead>
-                            <TableHead>Explanation</TableHead>
-                            <TableHead>Filling Guide</TableHead>
+                            <TableHead>Classification</TableHead>
+                            <TableHead>Desk Instruction</TableHead>
                             <TableHead>GDrive Link</TableHead>
                             <TableHead>Valid</TableHead>
                             <TableHead>Notes</TableHead>
@@ -1224,19 +1220,14 @@ export default function WorkPaperDetailPage() {
                         <TableBody>
                           {workPaperNotes.map((note) => (
                             <TableRow key={note.id}>
-                              <TableCell className="min-w-[200px] max-w-md">
+                              <TableCell className="min-w-[150px] max-w-md">
                                 <div className="break-words whitespace-pre-wrap min-h-[80px] flex items-center">
-                                  {note.statement || "-"}
+                                  {note.classification || "-"}
                                 </div>
                               </TableCell>
-                              <TableCell className="min-w-[200px] max-w-md">
+                              <TableCell className="min-w-[300px] max-w-md">
                                 <div className="break-words whitespace-pre-wrap min-h-[80px] flex items-center">
-                                  {note.explanation || "-"}
-                                </div>
-                              </TableCell>
-                              <TableCell className="min-w-[180px] max-w-md">
-                                <div className="break-words whitespace-pre-wrap">
-                                  {note.filling_guide || "-"}
+                                  {note.desk_instruction || "-"}
                                 </div>
                               </TableCell>
                               <TableCell className="min-w-[300px] max-w-md">
@@ -1347,14 +1338,14 @@ export default function WorkPaperDetailPage() {
                                       disabled={isGeneratingAnswer}
                                       size="sm"
                                       variant="outline"
-                                      className="flex items-center space-x-1"
+                                      className="flex items-center space-x-1 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200"
                                       title="Generate AI Answer (hanya bisa di Ongoing)"
                                     >
-                                      <Bot className="w-3 h-3" />
-                                      <span>
+                                      <Sparkles className="w-3 h-3 text-blue-600" />
+                                      <span className="text-blue-700">
                                         {isGeneratingAnswer
-                                          ? "..."
-                                          : "Generate"}
+                                          ? "Generating..."
+                                          : "AI Generate"}
                                       </span>
                                     </Button>
                                   )}

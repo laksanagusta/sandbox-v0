@@ -127,6 +127,17 @@ export default function EditableTable({
   ) => {
     const updatedAssignees = assignees.map((assignee, aIdx) => {
       if (aIdx === assigneeIndex) {
+        // If updating the name field, also update transaction names
+        if (field === "name") {
+          return {
+            ...assignee,
+            [field]: value,
+            transactions: assignee.transactions.map((transaction) => ({
+              ...transaction,
+              name: value,
+            })),
+          };
+        }
         return {
           ...assignee,
           [field]: value,
@@ -145,6 +156,7 @@ export default function EditableTable({
           transactions: [
             ...assignee.transactions,
             {
+              name: assignee.name, // Auto-populate with assignee name
               type: "",
               subtype: "",
               amount: 0,
