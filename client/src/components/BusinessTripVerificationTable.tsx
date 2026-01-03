@@ -325,10 +325,7 @@ export function BusinessTripVerificationTable({
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Button variant="outline" size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-xs font-medium" onClick={fetchVerifications} disabled={loading}>
-            <List className="h-3.5 w-3.5 mr-2" />
-            Refresh
-          </Button>
+
         </div>
       </div>
 
@@ -435,7 +432,7 @@ export function BusinessTripVerificationTable({
                 <TableCell>
                   <div className="space-y-1">
                     <div className="text-sm">
-                      <Calendar className="inline h-3 w-3 mr-1" />
+                      <Calendar className="inline h-3 w-3" />
                       {formatDate(verification.business_trip.start_date)} -{" "}
                       {formatDate(verification.business_trip.end_date)}
                     </div>
@@ -542,12 +539,12 @@ export function BusinessTripVerificationTable({
             >
               {actionType === "approve" ? (
                 <>
-                  <Check className="h-4 w-4 mr-2" />
+                  <Check className="h-4 w-4" />
                   Approve
                 </>
               ) : (
                 <>
-                  <X className="h-4 w-4 mr-2" />
+                  <X className="h-4 w-4" />
                   Reject
                 </>
               )}

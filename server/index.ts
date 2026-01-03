@@ -133,6 +133,30 @@ app.get("/api/business-trips/dashboard", (req: Request, res: Response) => {
   }
 });
 
+// --- MCP Routes ---
+import { mcpRunner } from "./lib/mcp-runner";
+
+app.get("/api/mcp/tools", async (req, res) => {
+  try {
+    const result = await mcpRunner.listTools();
+    res.json(result);
+  } catch (error: any) {
+    console.error("MCP List Tools Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/mcp/execute", async (req, res) => {
+  try {
+    const { name, arguments: args } = req.body;
+    const result = await mcpRunner.callTool(name, args);
+    res.json(result);
+  } catch (error: any) {
+    console.error(`MCP Execute Tool ${req.body.name} Error:`, error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
@@ -172,7 +196,7 @@ app.use((req, res, next) => {
     serveStatic(app);
   }
 
-  const port = parseInt(process.env.PORT || "8000", 10);
+  const port = parseInt(process.env.PORT || "3000", 10);
   server.listen(port, "0.0.0.0", () => {
     log(`serving on port ${port}`);
   });

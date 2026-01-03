@@ -182,7 +182,7 @@ export function SearchableSelect({
                 {/* Load More Indicator */}
                 {isLoading && (
                   <div className="flex items-center justify-center py-3">
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                    <Loader2 className="h-4 w-4 animate-spin" />
                     <span className="text-sm text-muted-foreground">Loading...</span>
                   </div>
                 )}

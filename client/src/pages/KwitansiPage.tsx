@@ -1224,7 +1224,7 @@ export default function KwitansiPage() {
             onClick={() => setLocation("/business-trips")}
             className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
@@ -1260,7 +1260,7 @@ export default function KwitansiPage() {
              className="h-8 text-xs"
              data-testid="button-save-export"
            >
-             <Save className="w-3.5 h-3.5 mr-2" />
+             <Save className="w-3.5 h-3.5" />
              Export
            </Button>
 
@@ -1271,7 +1271,7 @@ export default function KwitansiPage() {
              className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
              data-testid="button-save"
            >
-             <Save className="w-3.5 h-3.5 mr-2" />
+             <Save className="w-3.5 h-3.5" />
              {isSaving ? "Saving..." : "Save"}
            </Button>
         </div>

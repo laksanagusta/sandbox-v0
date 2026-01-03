@@ -370,7 +370,7 @@ export default function ProfilePage() {
                   onClick={() => setIsEditing(true)}
                   variant="default"
                 >
-                  <Save className="w-4 h-4 mr-2" />
+                  <Save className="w-4 h-4" />
                   Edit Profile
                 </Button>
               ) : (
@@ -392,7 +392,7 @@ export default function ProfilePage() {
                     variant="default"
                     disabled={isSaving}
                   >
-                    <Save className="w-4 h-4 mr-2" />
+                    <Save className="w-4 h-4" />
                     {isSaving ? "Menyimpan..." : "Simpan"}
                   </Button>
                 </div>
@@ -513,7 +513,7 @@ export default function ProfilePage() {
                     <Dialog open={showChangePassword} onOpenChange={setShowChangePassword}>
                       <DialogTrigger asChild>
                         <Button variant="outline" type="button">
-                          <Key className="w-4 h-4 mr-2" />
+                          <Key className="w-4 h-4" />
                           Ganti Password
                         </Button>
                       </DialogTrigger>
@@ -640,7 +640,7 @@ export default function ProfilePage() {
                               isChangingPassword
                             }
                           >
-                            <Key className="w-4 h-4 mr-2" />
+                            <Key className="w-4 h-4" />
                             {isChangingPassword ? "Mengubah..." : "Ubah Password"}
                           </Button>
                         </DialogFooter>

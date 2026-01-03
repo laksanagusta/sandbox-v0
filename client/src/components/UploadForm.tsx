@@ -204,12 +204,12 @@ export default function UploadForm({ onUploaded, disabled = false }: UploadFormP
         >
           {uploading ? (
             <>
-              <span className="inline-block w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin mr-2" />
+              <span className="inline-block w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
               Mengupload...
             </>
           ) : (
             <>
-              <Upload className="w-4 h-4 mr-2" />
+              <Upload className="w-4 h-4" />
               Upload
             </>
           )}

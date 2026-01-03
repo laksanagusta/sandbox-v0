@@ -443,7 +443,7 @@ export default function BusinessTripVerificationsPage() {
                           <TableCell>
                             <div className="text-sm">
                               <div>
-                                <Calendar className="w-3 h-3 inline mr-1" />
+                                <Calendar className="w-3 h-3 inline" />
                                 {formatDate(verification.business_trip.start_date)}
                               </div>
                               <div className="text-gray-500">
@@ -461,7 +461,7 @@ export default function BusinessTripVerificationsPage() {
                                     size="sm"
                                     className="bg-green-600 hover:bg-green-700"
                                   >
-                                    <CheckSquare className="w-3 h-3 mr-1" />
+                                    <CheckSquare className="w-3 h-3" />
                                     Approve
                                   </Button>
                                   <Button
@@ -474,20 +474,20 @@ export default function BusinessTripVerificationsPage() {
                                     size="sm"
                                     variant="destructive"
                                   >
-                                    <AlertCircle className="w-3 h-3 mr-1" />
+                                    <AlertCircle className="w-3 h-3" />
                                     Reject
                                   </Button>
                                 </>
                               )}
                               {verification.status === "approved" && (
                                 <Badge className="bg-green-100 text-green-800">
-                                  <CheckSquare className="w-3 h-3 mr-1" />
+                                  <CheckSquare className="w-3 h-3" />
                                   Disetujui
                                 </Badge>
                               )}
                               {verification.status === "rejected" && (
                                 <Badge className="bg-red-100 text-red-800">
-                                  <AlertCircle className="w-3 h-3 mr-1" />
+                                  <AlertCircle className="w-3 h-3" />
                                   Ditolak
                                 </Badge>
                               )}

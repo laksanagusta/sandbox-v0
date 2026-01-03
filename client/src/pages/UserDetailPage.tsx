@@ -410,7 +410,7 @@ export default function UserDetailPage() {
             <h2 className="text-lg font-medium text-gray-900 mb-2">User tidak ditemukan</h2>
             <p className="text-gray-500 mb-4">User yang Anda cari tidak ditemukan atau telah dihapus</p>
             <Button onClick={() => setLocation("/users")}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Kembali ke Daftar
             </Button>
           </div>
@@ -430,7 +430,7 @@ export default function UserDetailPage() {
             onClick={() => setLocation("/users")}
             className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
@@ -458,7 +458,7 @@ export default function UserDetailPage() {
             size="sm"
             className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
           >
-            <Save className="w-3.5 h-3.5 mr-2" />
+            <Save className="w-3.5 h-3.5" />
             {isSaving ? "Menyimpan..." : "Simpan"}
           </Button>
         </div>

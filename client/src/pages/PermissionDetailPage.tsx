@@ -168,7 +168,7 @@ export default function PermissionDetailPage() {
             <h2 className="text-lg font-medium text-gray-900 mb-2">Permission tidak ditemukan</h2>
             <p className="text-gray-500 mb-4">Permission yang Anda cari tidak ditemukan atau telah dihapus</p>
             <Button onClick={() => setLocation("/permission")}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Kembali ke Daftar
             </Button>
           </div>
@@ -209,7 +209,7 @@ export default function PermissionDetailPage() {
                 variant="default"
                 disabled={isSaving || !permission}
               >
-                <Save className="w-4 h-4 mr-2" />
+                <Save className="w-4 h-4" />
                 {isSaving ? "Menyimpan..." : "Simpan"}
               </Button>
             </div>

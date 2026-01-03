@@ -135,12 +135,12 @@ const getStatusBadge = (status: string) => {
 
   return (
     <span
-      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
         colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800"
       }`}
     >
       {getStatusIcon(status)}
-      <span className="ml-1">{getStatusText(status)}</span>
+      <span>{getStatusText(status)}</span>
     </span>
   );
 };
@@ -225,15 +225,15 @@ export default function BusinessTripReportPage() {
     <div className="bg-white flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-semibold text-gray-900">
               Business Trip Report
             </span>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           {/* Action buttons if needed */}
         </div>
       </div>
@@ -306,8 +306,8 @@ export default function BusinessTripReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <Briefcase className="w-5 h-5 mr-2 text-blue-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <Briefcase className="w-5 h-5 text-blue-500" />
                     Total Perjalanan Dinas
                   </CardTitle>
                 </CardHeader>
@@ -323,8 +323,8 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <Clock className="w-5 h-5 mr-2 text-blue-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <Clock className="w-5 h-5 text-blue-500" />
                     Sedang Berlangsung
                   </CardTitle>
                 </CardHeader>
@@ -338,8 +338,8 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <Users className="w-5 h-5 mr-2 text-green-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-green-500" />
                     Total Peserta
                   </CardTitle>
                 </CardHeader>
@@ -355,8 +355,8 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <DollarSign className="w-5 h-5 mr-2 text-green-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <DollarSign className="w-5 h-5 text-green-500" />
                     Total Biaya
                   </CardTitle>
                 </CardHeader>
@@ -372,8 +372,8 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <CheckCircle className="w-5 h-5 mr-2 text-green-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-green-500" />
                     Selesai
                   </CardTitle>
                 </CardHeader>
@@ -389,8 +389,8 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <AlertCircle className="w-5 h-5 mr-2 text-yellow-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <AlertCircle className="w-5 h-5 text-yellow-500" />
                     Draft
                   </CardTitle>
                 </CardHeader>
@@ -406,8 +406,8 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <XCircle className="w-5 h-5 mr-2 text-red-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <XCircle className="w-5 h-5 text-red-500" />
                     Dibatalkan
                   </CardTitle>
                 </CardHeader>
@@ -423,8 +423,8 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center">
-                    <TrendingUp className="w-5 h-5 mr-2 text-purple-500" />
+                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                    <TrendingUp className="w-5 h-5 text-purple-500" />
                     Rencana Perjalanan
                   </CardTitle>
                 </CardHeader>
@@ -442,8 +442,8 @@ export default function BusinessTripReportPage() {
             {/* Monthly Statistics */}
             <Card className="bg-card border-border shadow-xs">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-                  <Calendar className="w-5 h-5 mr-2 text-blue-500" />
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-blue-500" />
                   Statistik Bulanan
                 </CardTitle>
               </CardHeader>
@@ -475,9 +475,9 @@ export default function BusinessTripReportPage() {
                           </div>
                         </div>
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="flex items-center">
-                              <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-green-500" />
                               <span className="text-sm text-gray-600">
                                 {stat.completed_trips} selesai
                               </span>
@@ -504,8 +504,8 @@ export default function BusinessTripReportPage() {
             {/* Destination Statistics */}
             <Card className="bg-card border-border shadow-xs">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-                  <MapPin className="w-5 h-5 mr-2 text-green-500" />
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-green-500" />
                   Statistik Destinasi
                 </CardTitle>
               </CardHeader>
@@ -538,8 +538,8 @@ export default function BusinessTripReportPage() {
                             </div>
                           </div>
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                              <CheckCircle className="w-4 h-4 text-green-500 mr-1" />
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-green-500" />
                               <span className="text-sm text-gray-600">
                                 {stat.completed_trips} selesai
                               </span>
@@ -564,8 +564,8 @@ export default function BusinessTripReportPage() {
           {/* Recent Business Trips */}
           <Card className="bg-card border-border shadow-xs">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900 flex items-center">
-                <Briefcase className="w-5 h-5 mr-2 text-purple-500" />
+              <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-purple-500" />
                 Perjalanan Dinas Terkini
               </CardTitle>
             </CardHeader>

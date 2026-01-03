@@ -19,6 +19,8 @@ import {
   MoreHorizontal,
   PenTool,
   Download,
+  ExternalLink,
+  FolderOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +28,9 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SourceFolderConfig, SyncFolderResult } from "@/components/SourceFolderConfig";
+import { SyncResultModal } from "@/components/SyncResultModal";
+import { FileStatusBadge, FileStatus } from "@/components/FileStatusBadge";
 import {
   Table,
   TableBody,
@@ -76,6 +81,8 @@ interface WorkPaperDetail {
   year: number;
   semester: number;
   status: WorkPaperStatus;
+  source_folder_link?: string;
+  last_folder_sync_at?: string;
   created_at: string;
   updated_at: string;
   work_paper_notes?: WorkPaperNote[];
@@ -91,15 +98,27 @@ interface WorkPaperDetail {
   }>;
 }
 
+interface MasterItem {
+  id: string;
+  type: string;
+  number: string;
+  desk_instruction: string;
+  expected_folder_name?: string;
+}
+
 interface WorkPaperNote {
   id: string;
   work_paper_id: string;
+  master_item_id: string;
   classification?: string;
   desk_instruction: string;
   status: string;
   gdrive_link: string;
   is_valid: boolean;
   notes: string;
+  file_status: FileStatus;
+  files_in_folder?: number;
+  master_item?: MasterItem;
   created_at: string;
   updated_at: string;
 }
@@ -173,6 +192,9 @@ export default function WorkPaperDetailPage() {
   );
   const [validationErrors, setValidationErrors] = useState<Set<string>>(new Set());
   const signaturesRef = useRef<HTMLDivElement>(null);
+  const [pendingStatusChange, setPendingStatusChange] = useState<WorkPaperStatus | null>(null);
+  const [syncResult, setSyncResult] = useState<SyncFolderResult | null>(null);
+  const [showSyncResultModal, setShowSyncResultModal] = useState(false);
 
   useEffect(() => {
     // Check for action=sign in query params
@@ -652,10 +674,10 @@ export default function WorkPaperDetailPage() {
           <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
-              className={`px-4 py-2 font-medium ${config.bg} ${config.text} border-0`}
+              className={`px-4 py-2 font-medium ${config.bg} ${config.text} border-0 flex items-center gap-2`}
             >
               {config.label}
-              <MoreHorizontal className="ml-2 h-4 w-4" />
+              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
@@ -688,7 +710,7 @@ export default function WorkPaperDetailPage() {
                 return (
                   <DropdownMenuItem
                     key={nextStatus}
-                    onClick={() => handleUpdateStatus(nextStatus)}
+                    onClick={() => setPendingStatusChange(nextStatus)}
                     disabled={isCompletedDisabled}
                     className={`cursor-pointer ${isCompletedDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
                   >
@@ -725,6 +747,16 @@ export default function WorkPaperDetailPage() {
         </Button>
       );
     }
+  };
+
+  const getStatusLabel = (status: WorkPaperStatus) => {
+    const labels: Record<WorkPaperStatus, string> = {
+      draft: "Draft",
+      ongoing: "Ongoing",
+      ready_to_sign: "Ready to Sign",
+      completed: "Completed",
+    };
+    return labels[status];
   };
 
   const fetchWorkPaperDetail = async () => {
@@ -968,7 +1000,8 @@ export default function WorkPaperDetailPage() {
   }
 
   return (
-    <div className="bg-white flex flex-col h-screen overflow-hidden">
+    <>
+      <div className="bg-white flex flex-col h-screen overflow-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
         <div className="flex items-center space-x-4">
@@ -976,15 +1009,15 @@ export default function WorkPaperDetailPage() {
             variant="ghost"
             size="sm"
             onClick={() => setLocation("/work-papers")}
-            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
+            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900 flex items-center gap-2"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
           <div className="h-4 w-px bg-gray-200" />
 
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <FileText className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-semibold text-gray-900">
               Detail Work Paper
@@ -1006,9 +1039,9 @@ export default function WorkPaperDetailPage() {
               variant="outline"
               size="sm"
               onClick={handleExportDocx}
-              className="h-8 text-xs bg-white hover:bg-gray-50 text-gray-700 border-gray-200"
+              className="h-8 text-xs bg-white hover:bg-gray-50 text-gray-700 border-gray-200 flex items-center gap-2"
             >
-              <Download className="w-3.5 h-3.5 mr-2" />
+              <Download className="w-3.5 h-3.5" />
               Export CHR
             </Button>
           )}
@@ -1037,19 +1070,8 @@ export default function WorkPaperDetailPage() {
                     </div>
                   </div>
 
+
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label className="text-sm font-medium text-gray-700">
-                        NP Waper
-                      </Label>
-                      <Input
-                        value={formData.np_waper}
-                        onChange={(e) =>
-                          setFormData({ ...formData, np_waper: e.target.value })
-                        }
-                        className="mt-1"
-                      />
-                    </div>
                     <div>
                       <Label className="text-sm font-medium text-gray-700">
                         Tahun
@@ -1068,25 +1090,24 @@ export default function WorkPaperDetailPage() {
                         className="mt-1"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <Label className="text-sm font-medium text-gray-700">
-                      Semester
-                    </Label>
-                    <select
-                      value={formData.semester}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          semester: parseInt(e.target.value) || 1,
-                        })
-                      }
-                      className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
-                    >
-                      <option value={1}>Semester 1</option>
-                      <option value={2}>Semester 2</option>
-                    </select>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700">
+                        Semester
+                      </Label>
+                      <select
+                        value={formData.semester}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            semester: parseInt(e.target.value) || 1,
+                          })
+                        }
+                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                      >
+                        <option value={1}>Semester 1</option>
+                        <option value={2}>Semester 2</option>
+                      </select>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
@@ -1109,6 +1130,55 @@ export default function WorkPaperDetailPage() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Google Drive Source Folder Configuration */}
+              {(workPaper.status === "draft" || workPaper.status === "ongoing") && (
+                <SourceFolderConfig
+                  workPaperId={workPaper.id}
+                  workPaperData={{
+                    id: workPaper.id,
+                    organization_id: workPaper.organization_id,
+                    np_waper: workPaper.np_waper,
+                    year: workPaper.year,
+                    semester: workPaper.semester,
+                    status: workPaper.status,
+                    source_folder_link: workPaper.source_folder_link,
+                  }}
+                  sourceFolderLink={workPaper.source_folder_link}
+                  lastFolderSyncAt={workPaper.last_folder_sync_at}
+                  disabled={false}
+                  onSourceFolderUpdate={(newLink) => {
+                    setWorkPaper((prev) => 
+                      prev ? { ...prev, source_folder_link: newLink } : null
+                    );
+                  }}
+                  onSyncComplete={(result) => {
+                    setSyncResult(result);
+                    setShowSyncResultModal(true);
+                    // Update notes with new file_status
+                    if (result.notes_sync_status) {
+                      setWorkPaperNotes((prevNotes) =>
+                        prevNotes.map((note) => {
+                          const syncStatus = result.notes_sync_status.find(
+                            (s) => s.note_id === note.id
+                          );
+                          if (syncStatus) {
+                            return {
+                              ...note,
+                              file_status: syncStatus.file_status,
+                              files_in_folder: syncStatus.files_in_folder,
+                              gdrive_link: syncStatus.gdrive_link || note.gdrive_link,
+                            };
+                          }
+                          return note;
+                        })
+                      );
+                    }
+                    // Refresh work paper to get updated last_folder_sync_at
+                    fetchWorkPaperDetail();
+                  }}
+                />
+              )}
 
               {/* Komentar Reviewer */}
               {(workPaper.komentar_reviewer || isEditing) && (
@@ -1205,30 +1275,35 @@ export default function WorkPaperDetailPage() {
                     </div>
                   ) : (
                     <div className="overflow-x-auto">
-                      <Table className="w-full min-w-[1900px]">
+                      <Table className="w-full min-w-[2100px]">
                         <TableHeader>
                           <TableRow>
-                            <TableHead>Classification</TableHead>
+                            <TableHead className="w-[80px]">No</TableHead>
                             <TableHead>Desk Instruction</TableHead>
+                            <TableHead className="w-[140px]">File Status</TableHead>
                             <TableHead>GDrive Link</TableHead>
-                            <TableHead>Valid</TableHead>
+                            <TableHead className="w-[80px]">Valid</TableHead>
                             <TableHead>Notes</TableHead>
-                            <TableHead>Created</TableHead>
-                            <TableHead>Action</TableHead>
+                            <TableHead className="w-[100px]">Created</TableHead>
+                            <TableHead className="w-[120px]">Action</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
-                          {workPaperNotes.map((note) => (
+                          {workPaperNotes.map((note, index) => (
                             <TableRow key={note.id}>
-                              <TableCell className="min-w-[150px] max-w-md">
-                                <div className="break-words whitespace-pre-wrap min-h-[80px] flex items-center">
-                                  {note.classification || "-"}
-                                </div>
+                              <TableCell className="font-medium text-gray-600">
+                                {note.master_item?.number || index + 1}
                               </TableCell>
                               <TableCell className="min-w-[300px] max-w-md">
-                                <div className="break-words whitespace-pre-wrap min-h-[80px] flex items-center">
+                                <div className="break-words whitespace-pre-wrap min-h-[60px] flex items-center">
                                   {note.desk_instruction || "-"}
                                 </div>
+                              </TableCell>
+                              <TableCell>
+                                <FileStatusBadge 
+                                  status={note.file_status || "pending"} 
+                                  filesCount={note.files_in_folder}
+                                />
                               </TableCell>
                               <TableCell className="min-w-[300px] max-w-md">
                                 <div className="space-y-2">
@@ -1323,7 +1398,7 @@ export default function WorkPaperDetailPage() {
                                         size="sm"
                                         variant="default"
                                         title="Save GDrive Link"
-                                        className="flex items-center space-x-1"
+                                        className="flex items-center gap-2"
                                       >
                                         <Save className="w-3 h-3" />
                                         <span>Save</span>
@@ -1338,7 +1413,7 @@ export default function WorkPaperDetailPage() {
                                       disabled={isGeneratingAnswer}
                                       size="sm"
                                       variant="outline"
-                                      className="flex items-center space-x-1 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200"
+                                      className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200"
                                       title="Generate AI Answer (hanya bisa di Ongoing)"
                                     >
                                       <Sparkles className="w-3 h-3 text-blue-600" />
@@ -1487,7 +1562,7 @@ export default function WorkPaperDetailPage() {
                                                 signature.id
                                               }
                                               size="sm"
-                                              className="flex items-center space-x-1"
+                                              className="flex items-center gap-2"
                                             >
                                               <PenTool className="w-3 h-3" />
                                               <span>
@@ -1583,5 +1658,43 @@ export default function WorkPaperDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Status Change Confirmation Dialog */}
+      <AlertDialog open={pendingStatusChange !== null} onOpenChange={(open) => !open && setPendingStatusChange(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Konfirmasi Perubahan Status</AlertDialogTitle>
+            <AlertDialogDescription>
+              Apakah Anda yakin ingin mengubah status work paper dari{" "}
+              <span className="font-semibold">{workPaper && getStatusLabel(workPaper.status)}</span> menjadi{" "}
+              <span className="font-semibold">{pendingStatusChange && getStatusLabel(pendingStatusChange)}</span>?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingStatusChange(null)}>
+              Batal
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingStatusChange) {
+                  handleUpdateStatus(pendingStatusChange);
+                  setPendingStatusChange(null);
+                }
+              }}
+              disabled={updatingStatus}
+            >
+              {updatingStatus ? "Memproses..." : "Konfirmasi"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Sync Result Modal */}
+      <SyncResultModal
+        isOpen={showSyncResultModal}
+        onClose={() => setShowSyncResultModal(false)}
+        syncResult={syncResult}
+      />
+    </>
   );
 }

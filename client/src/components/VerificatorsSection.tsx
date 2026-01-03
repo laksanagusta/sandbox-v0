@@ -262,7 +262,7 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
                             size="sm"
                             className="bg-green-600 hover:bg-green-700"
                           >
-                            <CheckSquare className="w-3 h-3 mr-1" />
+                            <CheckSquare className="w-3 h-3" />
                             Approve
                           </Button>
                           <Button
@@ -270,23 +270,23 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
                             size="sm"
                             variant="destructive"
                           >
-                            <AlertCircle className="w-3 h-3 mr-1" />
+                            <AlertCircle className="w-3 h-3" />
                             Reject
                           </Button>
                         </div>
                       ) : verificator.status === "approved" ? (
                         <Badge className="bg-green-100 text-green-800">
-                          <CheckSquare className="w-3 h-3 mr-1" />
+                          <CheckSquare className="w-3 h-3" />
                           Disetujui
                         </Badge>
                       ) : verificator.status === "rejected" ? (
                         <Badge className="bg-red-100 text-red-800">
-                          <AlertCircle className="w-3 h-3 mr-1" />
+                          <AlertCircle className="w-3 h-3" />
                           Ditolak
                         </Badge>
                       ) : (
                         <Badge className="bg-gray-100 text-gray-800">
-                          <User className="w-3 h-3 mr-1" />
+                          <User className="w-3 h-3" />
                           Menunggu
                         </Badge>
                       )}
@@ -345,12 +345,12 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
             >
               {actionType === "approve" ? (
                 <>
-                  <Check className="h-4 w-4 mr-2" />
+                  <Check className="h-4 w-4" />
                   Approve
                 </>
               ) : (
                 <>
-                  <X className="h-4 w-4 mr-2" />
+                  <X className="h-4 w-4" />
                   Reject
                 </>
               )}

@@ -291,7 +291,7 @@ export default function OrganizationDetailPage() {
             <h2 className="text-lg font-medium text-gray-900 mb-2">Organization tidak ditemukan</h2>
             <p className="text-gray-500 mb-4">Organization yang Anda cari tidak ditemukan atau telah dihapus</p>
             <Button onClick={() => setLocation("/organization")}>
-              <ArrowLeft className="w-4 h-4 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Kembali ke Daftar
             </Button>
           </div>
@@ -311,7 +311,7 @@ export default function OrganizationDetailPage() {
             onClick={() => setLocation("/organization")}
             className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
@@ -334,7 +334,7 @@ export default function OrganizationDetailPage() {
             size="sm"
             className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
           >
-            <Save className="w-3.5 h-3.5 mr-2" />
+            <Save className="w-3.5 h-3.5" />
             {isSaving ? "Menyimpan..." : (isNew ? "Buat" : "Simpan")}
           </Button>
         </div>

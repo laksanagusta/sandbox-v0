@@ -498,7 +498,7 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
                     <TableCell>
                       <div className="space-y-1">
                         <div className="text-sm">
-                          <Calendar className="inline h-3 w-3 mr-1" />
+                          <Calendar className="inline h-3 w-3" />
                           {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
                         </div>
                         <div className="text-xs text-gray-500">

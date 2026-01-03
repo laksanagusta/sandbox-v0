@@ -286,7 +286,7 @@ const KnowledgeBaseCard = ({
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Documents</span>
               <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); onUpload(); }}>
-                <Upload className="w-4 h-4 mr-1" />
+                <Upload className="w-4 h-4" />
                 Upload
               </Button>
             </div>
@@ -331,7 +331,7 @@ const KnowledgeBaseCard = ({
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Trash2 className="w-4 h-4 mr-1" />
+                    <Trash2 className="w-4 h-4" />
                     Delete
                   </Button>
                 </AlertDialogTrigger>
@@ -544,7 +544,7 @@ export default function KnowledgeBaseManagementPage() {
                   }
                 >
                   {createKnowledgeBaseMutation.isPending && (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    <Loader2 className="w-4 h-4 animate-spin" />
                   )}
                   Create
                 </Button>

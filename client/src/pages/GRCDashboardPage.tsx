@@ -84,15 +84,15 @@ export default function GRCDashboardPage() {
     <div className="bg-white flex flex-col h-screen overflow-hidden">
        {/* Header */}
        <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-gray-500" />
             <span className="text-sm font-semibold text-gray-900">
               GRC Dashboard
             </span>
           </div>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
             {/* Action buttons if needed */}
         </div>
       </div>
@@ -332,7 +332,7 @@ export default function GRCDashboardPage() {
 
             <TabsContent value="units" className="space-y-4">
               <div className="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-200 shadow-none">
-                 <div className="flex items-center space-x-3">
+                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-blue-50 rounded-md">
                         <Activity className="h-5 w-5 text-blue-600" />
                     </div>
@@ -344,9 +344,9 @@ export default function GRCDashboardPage() {
                  <Button 
                     variant="outline" 
                     onClick={() => setHeatmapOpen(true)}
-                    className="border-gray-200 hover:bg-gray-50 text-gray-700"
+                    className="border-gray-200 hover:bg-gray-50 text-gray-700 flex items-center gap-2"
                  >
-                    <BarChart3 className="mr-2 h-4 w-4" />
+                    <BarChart3 className="h-4 w-4" />
                     View Heatmap
                  </Button>
               </div>

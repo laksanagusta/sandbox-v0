@@ -290,10 +290,7 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Button variant="outline" size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-xs font-medium" onClick={fetchUsers} disabled={loading}>
-            <List className="h-3.5 w-3.5 mr-2" />
-            Refresh
-          </Button>
+
         </div>
       </div>
 
@@ -402,7 +399,7 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
                         className="bg-green-600 hover:bg-green-700"
                         onClick={() => confirmAction(user, "approve")}
                       >
-                        <Check className="w-4 h-4 mr-1" />
+                        <Check className="w-4 h-4" />
                         Approve
                       </Button>
                       <Button
@@ -410,7 +407,7 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
                         variant="destructive"
                         onClick={() => confirmAction(user, "reject")}
                       >
-                        <X className="w-4 h-4 mr-1" />
+                        <X className="w-4 h-4" />
                         Reject
                       </Button>
                     </div>

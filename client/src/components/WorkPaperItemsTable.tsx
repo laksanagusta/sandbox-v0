@@ -33,10 +33,11 @@ interface WorkPaperItem {
   id: string;
   type: string;
   number: string;
-  classification?: string;
+  topic_id?: string;
+  topic_name?: string;
   desk_instruction: string;
   level: number;
-  sort_order: number;
+  sequence: number;
   is_active: boolean;
   parent_id?: string;
   created_at: string;
@@ -249,13 +250,10 @@ export function WorkPaperItemsTable({ className = "", onCreate }: WorkPaperItems
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Button variant="outline" size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-xs font-medium" onClick={fetchWorkPaperItems} disabled={loading}>
-            <List className="h-3.5 w-3.5 mr-2" />
-            Refresh
-          </Button>
+
            {onCreate && (
             <Button onClick={onCreate} size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm text-xs font-medium">
-              <Plus className="h-3.5 w-3.5 mr-2" />
+              <Plus className="h-3.5 w-3.5" />
               Add Work Paper Item
             </Button>
           )}
@@ -308,10 +306,10 @@ export function WorkPaperItemsTable({ className = "", onCreate }: WorkPaperItems
                   variant="ghost"
                   size="sm"
                   className="h-auto p-0 font-semibold hover:bg-transparent"
-                  onClick={() => handleSort("classification")}
+                  onClick={() => handleSort("topic_id")}
                 >
-                  Classification
-                  <span className="ml-2">{getSortIcon("classification")}</span>
+                  Topic
+                  <span className="ml-2">{getSortIcon("topic_id")}</span>
                 </Button>
               </TableHead>
               <TableHead>
@@ -385,7 +383,7 @@ export function WorkPaperItemsTable({ className = "", onCreate }: WorkPaperItems
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">
-                    {item.classification || "-"}
+                    {item.topic_name || "-"}
                   </span>
                 </TableCell>
                 <TableCell>

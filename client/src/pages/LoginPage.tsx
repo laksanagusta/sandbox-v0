@@ -139,12 +139,12 @@ export default function LoginPage() {
             <Button type="submit" className="w-full" disabled={authLoading}>
               {authLoading ? (
                 <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
                   Masuk...
                 </>
               ) : (
                 <>
-                  <LogIn className="h-4 w-4 mr-2" />
+                  <LogIn className="h-4 w-4" />
                   Masuk
                 </>
               )}

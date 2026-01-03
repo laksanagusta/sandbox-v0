@@ -15,6 +15,8 @@ import WorkPaperItemsListPage from "@/pages/WorkPaperItemsListPage";
 import WorkPaperItemDetailPage from "@/pages/WorkPaperItemDetailPage";
 import WorkPaperDetailPage from "@/pages/WorkPaperDetailPage";
 import WorkPaperSignaturesListPage from "@/pages/WorkPaperSignaturesListPage";
+import WorkPaperTopicsListPage from "@/pages/WorkPaperTopicsListPage";
+import WorkPaperTopicDetailPage from "@/pages/WorkPaperTopicDetailPage";
 import OrganizationPage from "@/pages/OrganizationPage";
 import OrganizationDetailPage from "@/pages/OrganizationDetailPage";
 import PermissionPage from "@/pages/PermissionPage";
@@ -33,6 +35,7 @@ import LoginPage from "@/pages/LoginPage";
 import GRCDashboardPage from "@/pages/GRCDashboardPage";
 import ChatPage from "@/pages/ChatPage";
 import KnowledgeBaseManagementPage from "@/pages/KnowledgeBaseManagementPage";
+import McpClientPage from "@/pages/McpClientPage";
 import NotFound from "@/pages/not-found";
 
 function RedirectToReport() {
@@ -69,6 +72,8 @@ function AuthenticatedLayout() {
                 <Route path="/work-paper-items" component={WorkPaperItemsListPage} />
                 <Route path="/work-paper-items/:id" component={WorkPaperItemDetailPage} />
                 <Route path="/work-paper-signatures" component={WorkPaperSignaturesListPage} />
+                <Route path="/work-paper-topics" component={WorkPaperTopicsListPage} />
+                <Route path="/work-paper-topics/:id" component={WorkPaperTopicDetailPage} />
                 <Route path="/vaccines" component={VaccinesPage} />
                 <Route
                   path="/organization/:id"
@@ -85,6 +90,7 @@ function AuthenticatedLayout() {
                 <Route path="/grc" component={GRCDashboardPage} />
                 <Route path="/chatbot" component={ChatPage} />
                 <Route path="/chatbot/knowledge-bases" component={KnowledgeBaseManagementPage} />
+                <Route path="/mcp-agent" component={McpClientPage} />
                 <Route component={NotFound} />
               </Switch>
             </div>
@@ -193,6 +199,16 @@ export default function App() {
                 <AuthenticatedLayout />
               </ProtectedRoute>
             </Route>
+            <Route path="/work-paper-topics">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/work-paper-topics/:id">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
             <Route path="/vaccines">
               <ProtectedRoute>
                 <AuthenticatedLayout />
@@ -219,6 +235,11 @@ export default function App() {
               </ProtectedRoute>
             </Route>
             <Route path="/chatbot/knowledge-bases">
+              <ProtectedRoute>
+                <AuthenticatedLayout />
+              </ProtectedRoute>
+            </Route>
+            <Route path="/mcp-agent">
               <ProtectedRoute>
                 <AuthenticatedLayout />
               </ProtectedRoute>

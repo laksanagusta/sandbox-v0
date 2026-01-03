@@ -273,7 +273,7 @@ export default function EditableTable({
           className="modern-btn-secondary"
           data-testid="button-add-assignee"
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4" />
           Tambah Data Pegawai
         </Button>
       </div>
@@ -715,7 +715,7 @@ export default function EditableTable({
               className="modern-btn-secondary"
               data-testid={`button-add-transaction-${assigneeIndex}`}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4" />
               Tambah Transaksi
             </Button>
           </div>

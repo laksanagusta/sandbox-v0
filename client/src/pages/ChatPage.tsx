@@ -433,7 +433,7 @@ export default function ChatPage() {
                 onClick={handleNewChat}
                 disabled={isLoadingKBs}
               >
-                <Plus className="w-4 h-4 mr-1" />
+                <Plus className="w-4 h-4" />
                 New Chat
               </Button>
             </div>
@@ -520,7 +520,7 @@ export default function ChatPage() {
                     <div className="mt-4 flex gap-2 justify-center flex-wrap">
                       <span className="text-xs text-muted-foreground w-full mb-1">Active Knowledge Base:</span>
                       <Badge variant="secondary" className="font-normal">
-                         <Database className="w-3 h-3 mr-1" />
+                         <Database className="w-3 h-3" />
                          {knowledgeBases.data[0].name}
                       </Badge>
                     </div>
@@ -616,7 +616,7 @@ export default function ChatPage() {
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {deleteSessionMutation.isPending && (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin" />
               )}
               Delete
             </AlertDialogAction>

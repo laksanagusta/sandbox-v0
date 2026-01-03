@@ -133,14 +133,14 @@ export function GRCUnitDetail({ data, open, onOpenChange }: GRCUnitDetailProps) 
                         <span
                           className={
                             item.gap >= 0
-                              ? "flex items-center justify-end text-green-600"
-                              : "flex items-center justify-end text-red-600"
+                              ? "flex items-center justify-end gap-1 text-green-600"
+                              : "flex items-center justify-end gap-1 text-red-600"
                           }
                         >
                           {item.gap > 0 ? (
-                            <ArrowUpIcon className="mr-1 h-3 w-3" />
+                            <ArrowUpIcon className="h-3 w-3" />
                           ) : (
-                            <ArrowDownIcon className="mr-1 h-3 w-3" />
+                            <ArrowDownIcon className="h-3 w-3" />
                           )}
                           {Math.abs(item.gap).toFixed(2)}
                         </span>

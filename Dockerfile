@@ -21,6 +21,9 @@ FROM node:18-alpine AS production
 
 # Set environment to production
 ENV NODE_ENV=production
+# MCP Server configuration (can be overridden at runtime)
+ENV MCP_TRANSPORT=http
+ENV MCP_SERVER_URL=http://mcp-server:3003
 
 # Install dumb-init for proper signal handling
 RUN apk add --no-cache dumb-init

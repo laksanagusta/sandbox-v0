@@ -11,6 +11,7 @@ import {
   Loader2,
   FileText,
 } from "lucide-react";
+import { TopicSelector } from "@/components/TopicSelector";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,9 +63,11 @@ interface Signer {
 
 interface NewWorkPaper {
   organization_id: string;
+  name?: string;
   year: number;
   semester: number;
   signers: Signer[];
+  topic_ids?: string[];
 }
 
 export default function WorkPaperCreatePage() {
@@ -78,9 +81,13 @@ export default function WorkPaperCreatePage() {
   const [users, setUsers] = useState<User[]>([]);
 
   const [organizationId, setOrganizationId] = useState("");
+  const [workPaperName, setWorkPaperName] = useState("");
   const [year, setYear] = useState(new Date().getFullYear());
   const [semester, setSemester] = useState(1);
   const [signers, setSigners] = useState<Signer[]>([]);
+
+  // Topic states
+  const [selectedTopicId, setSelectedTopicId] = useState<string>("");
 
   // Search states for dropdowns
   const [orgSearch, setOrgSearch] = useState("");
@@ -139,6 +146,8 @@ export default function WorkPaperCreatePage() {
       setIsLoadingOrgs(false);
     }
   };
+
+
 
   const loadUsers = async (searchTerm?: string) => {
     try {
@@ -212,6 +221,17 @@ export default function WorkPaperCreatePage() {
       return;
     }
 
+
+
+    if (!selectedTopicId) {
+      toast({
+        title: "Error",
+        description: "Pilih topik work paper terlebih dahulu",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Validate all signers have required data
     const invalidSigner = signers.find(
       (s) => !s.user_name || !s.user_email || !s.user_role
@@ -231,6 +251,7 @@ export default function WorkPaperCreatePage() {
 
       const workPaperData: NewWorkPaper = {
         organization_id: organizationId,
+        name: workPaperName.trim() || undefined,
         year: year,
         semester: semester,
         signers: signers.map((signer) => ({
@@ -241,6 +262,7 @@ export default function WorkPaperCreatePage() {
           user_role: signer.user_role,
           signature_type: signer.signature_type,
         })),
+        topic_ids: [selectedTopicId],
       };
 
       const response = (await apiClient.createWorkPaper(workPaperData)) as any;
@@ -283,16 +305,16 @@ export default function WorkPaperCreatePage() {
         <div className="space-y-6">
           {/* Header */}
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4">
               <Button
                 variant="outline"
                 onClick={() => setLocation("/work-papers")}
-                className="flex items-center space-x-2 hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 hover:bg-gray-100 transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Kembali</span>
               </Button>
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center gap-3">
                 <FileText className="w-8 h-8 text-gray-600" />
                 <div>
                   <h1 className="text-2xl font-semibold">
@@ -303,11 +325,17 @@ export default function WorkPaperCreatePage() {
             </div>
 
             {/* Action Button */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center gap-3">
               <Button
                 onClick={handleCreateWorkPaper}
-                disabled={isCreating || !organizationId || signers.length === 0}
-                className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white"
+                disabled={
+                  isCreating ||
+                  !organizationId ||
+                  !organizationId ||
+                  signers.length === 0 ||
+                  !selectedTopicId
+                }
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
               >
                 {isCreating ? (
                   <>
@@ -324,16 +352,34 @@ export default function WorkPaperCreatePage() {
             </div>
           </div>
 
-          {/* Basic Information Card */}
+          {/* Card: Lingkup Kerja */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Briefcase className="w-5 h-5" />
-                <span>Informasi Dasar</span>
-              </CardTitle>
+              <CardTitle>Lingkup Kerja</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Tentukan topik dan organisasi untuk work paper ini
+              </p>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Topik
+                  </Label>
+                  <div className="mt-1">
+                    <TopicSelector
+                      value={selectedTopicId}
+                      onValueChange={setSelectedTopicId}
+                      placeholder="Pilih topik work paper..."
+                      className="w-full"
+                    />
+                    <p className="text-sm text-gray-500 mt-1">
+                      Work paper notes akan dibuat otomatis berdasarkan items
+                      dari topik yang dipilih.
+                    </p>
+                  </div>
+                </div>
+
                 <div>
                   <Label className="text-sm font-medium text-gray-700">
                     Organisasi
@@ -354,6 +400,20 @@ export default function WorkPaperCreatePage() {
                     className="mt-1"
                   />
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Card: Periode & Identitas */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Periode & Identitas</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Lengkapi informasi periode audit
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
                   <Label className="text-sm font-medium text-gray-700">
                     Tahun
@@ -364,7 +424,8 @@ export default function WorkPaperCreatePage() {
                     value={year}
                     onChange={(e) =>
                       setYear(
-                        parseInt(e.target.value) || new Date().getFullYear()
+                        parseInt(e.target.value) ||
+                          new Date().getFullYear()
                       )
                     }
                     min="2020"
@@ -378,7 +439,9 @@ export default function WorkPaperCreatePage() {
                   </Label>
                   <Select
                     value={semester.toString()}
-                    onValueChange={(value) => setSemester(parseInt(value))}
+                    onValueChange={(value) =>
+                      setSemester(parseInt(value))
+                    }
                   >
                     <SelectTrigger className="mt-1">
                       <SelectValue placeholder="Pilih semester" />
@@ -389,6 +452,18 @@ export default function WorkPaperCreatePage() {
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <Label className="text-sm font-medium text-gray-700">
+                    Nama (Optional)
+                  </Label>
+                  <Input
+                    id="name"
+                    value={workPaperName}
+                    onChange={(e) => setWorkPaperName(e.target.value)}
+                    placeholder={`Work Paper ${year} S${semester}`}
+                    className="mt-1"
+                  />
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -396,10 +471,10 @@ export default function WorkPaperCreatePage() {
           {/* Signers Management Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <User className="w-5 h-5" />
-                <span>Daftar Signers</span>
-              </CardTitle>
+              <CardTitle>Daftar Signers</CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Atur pihak yang terlibat dalam persetujuan
+              </p>
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Signer Rows */}
@@ -409,9 +484,9 @@ export default function WorkPaperCreatePage() {
                   className="border rounded-lg p-4 space-y-4 bg-gray-50"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <User className="w-5 h-5 text-muted-foreground" />
-                      <span className="font-medium">Signer #{index + 1}</span>
+                      <span className="font-medium">Penandatangan #{index + 1}</span>
                     </div>
                     <Button
                       variant="outline"
@@ -550,7 +625,7 @@ export default function WorkPaperCreatePage() {
                 <Button
                   onClick={addNewSigner}
                   variant="outline"
-                  className="flex items-center space-x-2"
+                  className="flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   <span>Tambah Signer Baru</span>

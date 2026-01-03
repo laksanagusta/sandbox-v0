@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Building,
   Save,
+  FolderOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,15 +24,17 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { apiClient } from "@/lib/api-client";
 import { getApiBaseUrl } from "@/lib/env";
+import { TopicSelector } from "@/components/TopicSelector";
 
 interface WorkPaperItemDetail {
   id: string;
   type: string;
   number: string;
-  classification?: string;
+  topic_id?: string;
+  expected_folder_name?: string;
   desk_instruction: string;
   level: number;
-  sort_order: number;
+  sequence: number;
   is_active: boolean;
   parent_id?: string;
   created_at: string;
@@ -51,13 +54,25 @@ export default function WorkPaperItemDetailPage() {
   const [formData, setFormData] = useState({
     number: "",
     type: "",
-    classification: "",
+    topic_id: "",
+    expected_folder_name: "",
     desk_instruction: "",
     level: 1,
-    sort_order: 1,
+    sequence: 1,
     is_active: true,
   });
   const [saving, setSaving] = useState(false);
+
+  // Read topic_id from URL query params when creating new item
+  useEffect(() => {
+    if (isNew) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const topicIdFromUrl = urlParams.get("topic_id");
+      if (topicIdFromUrl) {
+        setFormData(prev => ({ ...prev, topic_id: topicIdFromUrl }));
+      }
+    }
+  }, [isNew]);
 
   const formatDate = (dateString: string) => {
     try {
@@ -133,10 +148,11 @@ export default function WorkPaperItemDetailPage() {
       setFormData({
         number: result.number,
         type: result.type,
-        classification: result.classification || "",
+        topic_id: result.topic_id || "",
+        expected_folder_name: result.expected_folder_name || "",
         desk_instruction: result.desk_instruction,
         level: result.level,
-        sort_order: result.sort_order,
+        sequence: result.sequence,
         is_active: result.is_active,
       });
     } catch (error) {
@@ -184,10 +200,11 @@ export default function WorkPaperItemDetailPage() {
         body: JSON.stringify({
           type: formData.type,
           number: formData.number,
-          classification: formData.classification,
+          topic_id: formData.topic_id || undefined,
+          expected_folder_name: formData.expected_folder_name || undefined,
           desk_instruction: formData.desk_instruction,
           level: formData.level,
-          sort_order: formData.sort_order,
+          sequence: formData.sequence,
           is_active: formData.is_active,
         }),
       });
@@ -263,7 +280,7 @@ export default function WorkPaperItemDetailPage() {
             onClick={() => setLocation("/work-paper-items")}
             className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
@@ -294,7 +311,7 @@ export default function WorkPaperItemDetailPage() {
             size="sm"
             className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
           >
-            <Save className="w-3.5 h-3.5 mr-2" />
+            <Save className="w-3.5 h-3.5" />
             {saving ? "Saving..." : "Save"}
           </Button>
         </div>
@@ -359,16 +376,41 @@ export default function WorkPaperItemDetailPage() {
                 </div>
                 <div>
                   <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Classification
+                    Topic
                   </Label>
-                  <Input
-                    value={formData.classification}
-                    onChange={(e) =>
-                      setFormData({ ...formData, classification: e.target.value })
+                  <TopicSelector
+                    value={formData.topic_id}
+                    onValueChange={(value) =>
+                      setFormData({ ...formData, topic_id: value })
                     }
-                    placeholder="Kategori/group (opsional)"
                     className="mt-1"
                   />
+                </div>
+              </div>
+
+              {/* Expected Folder Name for Smart Document Linking */}
+              <div className="pt-4 border-t border-gray-100">
+                <div className="flex items-center gap-2 mb-3">
+                  <FolderOpen className="w-4 h-4 text-amber-600" />
+                  <span className="text-xs font-medium text-gray-700">Smart Document Linking</span>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Expected Folder Name
+                    </Label>
+                    <Input
+                      value={formData.expected_folder_name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, expected_folder_name: e.target.value })
+                      }
+                      className="mt-1 font-mono"
+                      placeholder="Eksistensi_LK"
+                    />
+                    <p className="text-xs text-gray-400 mt-1">
+                      Nama folder di Google Drive yang akan di-link otomatis saat sync
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -392,15 +434,15 @@ export default function WorkPaperItemDetailPage() {
                 </div>
                 <div>
                   <Label className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Sort Order
+                    Sequence
                   </Label>
                   <Input
                     type="number"
-                    value={formData.sort_order}
+                    value={formData.sequence}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        sort_order: parseInt(e.target.value) || 1,
+                        sequence: parseInt(e.target.value) || 1,
                       })
                     }
                     className="mt-1"

@@ -106,7 +106,7 @@ export function SearchableSelect({
           <div className="max-h-48 overflow-y-auto">
             {loading ? (
               <div className="flex items-center justify-center py-4">
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                <Loader2 className="h-4 w-4 animate-spin" />
                 <span className="text-sm text-muted-foreground">Loading...</span>
               </div>
             ) : options.length === 0 ? (

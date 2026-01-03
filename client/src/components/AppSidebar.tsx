@@ -18,6 +18,7 @@ import {
   Bell,
   UserCheck,
   Database,
+  Tag,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
@@ -72,7 +73,7 @@ export function AppSidebar() {
           variant="ghost"
           className="w-full justify-between px-2 h-9 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group"
         >
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <span className="text-lg font-bold tracking-tight text-black">Orion</span>
           </div>
         </Button>
@@ -98,7 +99,7 @@ export function AppSidebar() {
                       }`}
                       data-testid="nav-grc"
                     >
-                      <div className="flex items-center space-x-3 flex-1">
+                      <div className="flex items-center gap-3 flex-1">
                         <Shield className={`w-4 h-4 ${
                           isInSection(['/grc'])
                             ? 'text-sidebar-primary'
@@ -129,7 +130,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/grc"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <BarChart3 className={`w-4 h-4 ${
                               isActiveRoute('/grc')
@@ -162,7 +163,7 @@ export function AppSidebar() {
                       }`}
                       data-testid="nav-ai-assistant"
                     >
-                      <div className="flex items-center space-x-3 flex-1">
+                      <div className="flex items-center gap-3 flex-1">
                         <MessageSquare className={`w-4 h-4 ${
                           isInSection(['/chatbot'])
                             ? 'text-sidebar-primary'
@@ -193,7 +194,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/chatbot"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <MessageSquare className={`w-4 h-4 ${
                               isActiveRoute('/chatbot') && !location.includes('/knowledge-bases')
@@ -202,6 +203,49 @@ export function AppSidebar() {
                             }`} />
                             <span className="text-sm">
                               Chat
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
+                            isActiveRoute('/mcp-agent')
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                          }`}
+                          data-testid="nav-mcp-agent"
+                        >
+                          <Link
+                            href="/mcp-agent"
+                            className="flex items-center gap-3"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className={`w-4 h-4 ${
+                                isActiveRoute('/mcp-agent')
+                                  ? 'text-sidebar-primary'
+                                  : 'text-muted-foreground'
+                              }`}
+                            >
+                              <path d="M12 2a10 10 0 1 0 10 10 4 4 0 0 1-5-5 4 4 0 0 1-5-5" />
+                              <path d="M8.5 8.5v.01" />
+                              <path d="M16 15.5v.01" />
+                              <path d="M12 12v.01" />
+                              <path d="M8.5 15.5v.01" />
+                              <path d="M15.5 8.5v.01" />
+                            </svg>
+                            <span className="text-sm">
+                              MCP Agent
                             </span>
                           </Link>
                         </SidebarMenuSubButton>
@@ -219,7 +263,7 @@ export function AppSidebar() {
                           >
                             <Link
                               href="/chatbot/knowledge-bases"
-                              className="flex items-center space-x-3"
+                              className="flex items-center gap-3"
                             >
                               <Database className={`w-4 h-4 ${
                                 isActiveRoute('/chatbot/knowledge-bases')
@@ -254,7 +298,7 @@ export function AppSidebar() {
                       }`}
                       data-testid="nav-business-trip"
                     >
-                      <div className="flex items-center space-x-3 flex-1">
+                      <div className="flex items-center gap-3 flex-1">
                         <Briefcase className={`w-4 h-4 ${
                           isInSection(['/business-trips', '/kwitansi', '/business-trip-verifications'])
                             ? 'text-sidebar-primary'
@@ -285,7 +329,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/business-trips"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <Plane className={`w-4 h-4 ${
                               isActiveRoute('/business-trips') && !location.includes('/report')
@@ -310,7 +354,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/business-trips/report"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <BarChart3 className={`w-4 h-4 ${
                               isActiveRoute('/business-trips/report')
@@ -335,7 +379,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/business-trip-verifications"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <ClipboardCheck className={`w-4 h-4 ${
                               isActiveRoute('/business-trip-verifications')
@@ -363,15 +407,15 @@ export function AppSidebar() {
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
-                        isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures'])
+                        isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures', '/work-paper-topics'])
                           ? 'bg-sidebar-accent text-sidebar-primary'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-work-paper"
                     >
-                      <div className="flex items-center space-x-3 flex-1">
+                      <div className="flex items-center gap-3 flex-1">
                         <FileText className={`w-4 h-4 ${
-                          isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures'])
+                          isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures', '/work-paper-topics'])
                             ? 'text-sidebar-primary'
                             : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
@@ -392,6 +436,31 @@ export function AppSidebar() {
                         <SidebarMenuSubButton
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
+                            isActiveRoute('/work-paper-topics')
+                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+                          }`}
+                          data-testid="nav-work-paper-topics"
+                        >
+                          <Link
+                            href="/work-paper-topics"
+                            className="flex items-center gap-3"
+                          >
+                            <Tag className={`w-4 h-4 ${
+                              isActiveRoute('/work-paper-topics')
+                                ? 'text-sidebar-primary'
+                                : 'text-muted-foreground'
+                            }`} />
+                            <span className="text-sm">
+                              Topics
+                            </span>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                      <SidebarMenuSubItem>
+                        <SidebarMenuSubButton
+                          asChild
+                          className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-papers') && !location.includes('/create')
                               ? 'bg-sidebar-accent text-sidebar-primary'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
@@ -400,7 +469,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/work-papers"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <FileText className={`w-4 h-4 ${
                               isActiveRoute('/work-papers') && !location.includes('/create')
@@ -413,7 +482,7 @@ export function AppSidebar() {
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
-                      <SidebarMenuSubItem>
+                      {/* <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
@@ -425,7 +494,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/work-paper-items"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <FileText className={`w-4 h-4 ${
                               isActiveRoute('/work-paper-items')
@@ -437,7 +506,7 @@ export function AppSidebar() {
                             </span>
                           </Link>
                         </SidebarMenuSubButton>
-                      </SidebarMenuSubItem>
+                      </SidebarMenuSubItem> */}
                       <SidebarMenuSubItem>
                         <SidebarMenuSubButton
                           asChild
@@ -450,7 +519,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/work-paper-signatures"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <CheckSquare className={`w-4 h-4 ${
                               isActiveRoute('/work-paper-signatures')
@@ -485,7 +554,7 @@ export function AppSidebar() {
                       }`}
                       data-testid="nav-settings"
                     >
-                      <div className="flex items-center space-x-3 flex-1">
+                      <div className="flex items-center gap-3 flex-1">
                         <Settings className={`w-4 h-4 ${
                           isInSection(['/organization', '/permission', '/users', '/roles'])
                             ? 'text-sidebar-primary'
@@ -516,7 +585,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/organization"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <Building className={`w-4 h-4 ${
                               isActiveRoute('/organization')
@@ -541,7 +610,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/permission"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <Shield className={`w-4 h-4 ${
                               isActiveRoute('/permission')
@@ -566,7 +635,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/users"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <Users className={`w-4 h-4 ${
                               isActiveRoute('/users')
@@ -591,7 +660,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/pending-users"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <UserCheck className={`w-4 h-4 ${
                               isActiveRoute('/pending-users')
@@ -616,7 +685,7 @@ export function AppSidebar() {
                         >
                           <Link
                             href="/roles"
-                            className="flex items-center space-x-3"
+                            className="flex items-center gap-3"
                           >
                             <Shield className={`w-4 h-4 ${
                               isActiveRoute('/roles')
@@ -643,7 +712,7 @@ export function AppSidebar() {
         <div className="space-y-2">
           <Link
             href="/profile"
-            className="flex items-center space-x-3 px-2 py-2 rounded-md hover:bg-sidebar-accent transition-colors cursor-pointer group"
+            className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-sidebar-accent transition-colors cursor-pointer group"
           >
             <div 
               className="w-8 h-8 rounded-full"
@@ -668,7 +737,7 @@ export function AppSidebar() {
             onClick={logout}
             className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-sidebar-accent px-2"
           >
-            <LogOut className="w-4 h-4 mr-2" />
+            <LogOut className="w-4 h-4" />
             <span className="text-sm">Keluar</span>
           </Button>
         </div>

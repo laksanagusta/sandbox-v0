@@ -282,6 +282,7 @@ class ApiClient {
       user_role: string;
       signature_type: "digital" | "manual" | "approval";
     }>;
+    topic_ids?: string[];
   }) {
     return this.request("api/v1/desk/work-papers", {
       method: "POST",
@@ -328,6 +329,13 @@ class ApiClient {
     return this.request(
       `api/v1/desk/work-papers/${workPaperId}/signature-stats`
     );
+  }
+
+  // Smart Document Linking - Sync folder method
+  async syncFolder(workPaperId: string) {
+    return this.request(`api/v1/desk/work-papers/${workPaperId}/sync-folder`, {
+      method: "POST",
+    });
   }
 
   async getWorkPaperItems(params?: {

@@ -37,6 +37,7 @@ export type WorkPaperStatus = 'ongoing' | 'completed' | 'draft' | 'ready_to_sign
 interface WorkPaper {
   id: string;
   organization_id: string;
+  name?: string;
   year: number;
   semester: number;
   status: WorkPaperStatus;
@@ -113,9 +114,9 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
       }
 
       // Add organization_id filter
-      if (user?.organization?.id) {
-        params.append("organization_id", `eq ${user.organization.id}`);
-      }
+      // if (user?.organization?.id) {
+      //   params.append("organization_id", `eq ${user.organization.id}`);
+      // }
 
       const response = await fetch(
         `${getApiBaseUrl()}/api/v1/desk/work-papers?${params}`,
@@ -246,7 +247,7 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
     <div className={`bg-white flex flex-col h-full ${className}`}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px]">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-4">
           <span className="text-sm font-semibold text-gray-900">Work Paper Management</span>
           <div className="h-4 w-px bg-gray-200" />
            <div className="relative w-64">
@@ -259,7 +260,7 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
             />
           </div>
           <div className="w-px h-4 bg-gray-200 mx-2" />
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center gap-2">
             <Filter className="h-3.5 w-3.5 text-gray-500" />
             <Select
                 value={statusFilter}
@@ -279,14 +280,11 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
           </div>
         </div>
 
-        <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Button variant="outline" size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-xs font-medium" onClick={fetchWorkPapers} disabled={loading}>
-            <List className="h-3.5 w-3.5 mr-2" />
-            Refresh
-          </Button>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+
            {onCreate && (
-            <Button onClick={onCreate} size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm text-xs font-medium">
-              <Plus className="h-3.5 w-3.5 mr-2" />
+            <Button onClick={onCreate} size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border border-gray-200 shadow-sm text-xs font-medium flex items-center gap-2">
+              <Plus className="h-3.5 w-3.5" />
               Create Work Paper
             </Button>
           )}
@@ -305,44 +303,55 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  className="h-auto p-0 font-semibold hover:bg-transparent flex items-center gap-2"
                   onClick={() => handleSort("id")}
                 >
                   Work Paper ID
-                  <span className="ml-2">{getSortIcon("id")}</span>
+                  <span>{getSortIcon("id")}</span>
                 </Button>
               </TableHead>
               <TableHead>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  className="h-auto p-0 font-semibold hover:bg-transparent flex items-center gap-2"
                   onClick={() => handleSort("organization_id")}
                 >
                   Organization
-                  <span className="ml-2">{getSortIcon("organization_id")}</span>
+                  <span>{getSortIcon("organization_id")}</span>
                 </Button>
               </TableHead>
               <TableHead>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  className="h-auto p-0 font-semibold hover:bg-transparent flex items-center gap-2"
+                  onClick={() => handleSort("name")}
+                >
+                  Name
+                  <span>{getSortIcon("name")}</span>
+                </Button>
+              </TableHead>
+              <TableHead>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-auto p-0 font-semibold hover:bg-transparent flex items-center gap-2"
                   onClick={() => handleSort("year")}
                 >
                   Tahun
-                  <span className="ml-2">{getSortIcon("year")}</span>
+                  <span>{getSortIcon("year")}</span>
                 </Button>
               </TableHead>
               <TableHead>
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  className="h-auto p-0 font-semibold hover:bg-transparent flex items-center gap-2"
                   onClick={() => handleSort("semester")}
                 >
                   Semester
-                  <span className="ml-2">{getSortIcon("semester")}</span>
+                  <span>{getSortIcon("semester")}</span>
                 </Button>
               </TableHead>
               <TableHead>Status</TableHead>
@@ -350,11 +359,11 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-auto p-0 font-semibold hover:bg-transparent"
+                  className="h-auto p-0 font-semibold hover:bg-transparent flex items-center gap-2"
                   onClick={() => handleSort("created_at")}
                 >
                   Created
-                  <span className="ml-2">{getSortIcon("created_at")}</span>
+                  <span>{getSortIcon("created_at")}</span>
                 </Button>
               </TableHead>
             </TableRow>
@@ -362,8 +371,8 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
-                  <div className="flex items-center justify-center space-x-2">
+                <TableCell colSpan={7} className="text-center py-8">
+                  <div className="flex items-center justify-center gap-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
                     <span>Loading...</span>
                   </div>
@@ -372,7 +381,7 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
             ) : !workPapers || workPapers.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={7}
                   className="text-center py-8 text-gray-500"
                 >
                   <FileText className="mx-auto h-12 w-12 text-gray-300 mb-2" />
@@ -387,7 +396,7 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
                 <TableCell className="pl-6 font-medium">
                   <button
                     onClick={() => handleViewDetail(workPaper.id)}
-                    className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
+                    className="flex items-center gap-2 hover:text-blue-600 transition-colors group"
                   >
                     <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0" />
                     <span className="font-mono text-sm">
@@ -396,9 +405,14 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
                   </button>
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <OrganizationBadge organizationId={workPaper.organization_id} />
                   </div>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm font-medium">
+                    {workPaper.name || "-"}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <span className="text-sm">{workPaper.year}</span>
@@ -410,7 +424,7 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
                   {getStatusBadge(workPaper.status)}
                 </TableCell>
                 <TableCell>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-gray-500" />
                     <span className="text-xs text-gray-500">
                       {formatDateTime(workPaper.created_at)}
@@ -430,8 +444,8 @@ export function WorkPaperTable({ className = "", onCreate }: WorkPaperTableProps
             Showing <strong>{workPapers.length}</strong> of <strong>{pagination.total_count}</strong> work papers
           </div>
           
-           <div className="flex items-center space-x-6 order-1 sm:order-2">
-               <div className="flex items-center space-x-2">
+           <div className="flex items-center gap-6 order-1 sm:order-2">
+               <div className="flex items-center gap-2">
                 <span className="text-xs text-muted-foreground">Rows per page</span>
                 <Select
                   value={limit.toString()}

@@ -306,10 +306,7 @@ export function WorkPaperSignaturesTable({
         </div>
 
         <div className="flex items-center space-x-2 w-full sm:w-auto">
-          <Button variant="outline" size="sm" className="h-8 bg-white hover:bg-gray-50 text-gray-700 border-gray-200 text-xs font-medium" onClick={fetchSignatures} disabled={loading}>
-            <List className="h-3.5 w-3.5 mr-2" />
-            Refresh
-          </Button>
+
         </div>
       </div>
 
