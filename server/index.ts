@@ -1,7 +1,13 @@
 import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import http from "http";
+import OpenAI from "openai";
 import { setupVite, serveStatic, log } from "./vite";
+
+// Initialize OpenAI with API key from server environment (secure)
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 const app = express();
 app.use(express.json());
@@ -155,6 +161,34 @@ app.post("/api/mcp/execute", async (req, res) => {
   } catch (error: any) {
     console.error(`MCP Execute Tool ${req.body.name} Error:`, error);
     res.status(500).json({ error: error.message });
+  }
+});
+
+// --- OpenAI Chat Proxy Route ---
+// This endpoint proxies chat requests to OpenAI, keeping the API key secure on the server
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { messages, tools } = req.body;
+    
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ 
+        error: "OPENAI_API_KEY is not configured on the server" 
+      });
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages,
+      tools: tools?.length > 0 ? tools : undefined,
+    });
+
+    res.json(completion);
+  } catch (error: any) {
+    console.error("OpenAI Chat Error:", error);
+    res.status(500).json({ 
+      error: error.message,
+      code: error.code || "OPENAI_ERROR"
+    });
   }
 });
 

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { initializeOpenAI, sendMessage, Message, setConfirmationCallback, PendingConfirmation } from "@/lib/mcp/openai-client";
+import { sendMessage, Message, setConfirmationCallback, PendingConfirmation } from "@/lib/mcp/openai-client";
 import { ToolOutput } from "./ToolOutput";
 import { Loader2, Send, Sparkles, Mail, Calendar, FolderOpen, RotateCcw, AlertTriangle, Check, X } from "lucide-react";
 import ReactMarkdown from "react-markdown";
@@ -20,12 +20,8 @@ export function ChatInterface() {
   const [pendingConfirmation, setPendingConfirmation] = useState<PendingConfirmation | null>(null);
   const [confirmationResolver, setConfirmationResolver] = useState<((value: boolean) => void) | null>(null);
   
-  useEffect(() => {
-    const envKey = import.meta.env.VITE_OPENAI_API_KEY;
-    if (envKey) {
-      initializeOpenAI(envKey);
-    }
-  }, []);
+  // Note: OpenAI API key is now handled on the backend for security
+  // No frontend initialization needed
 
   // Set up the confirmation callback
   useEffect(() => {
@@ -81,10 +77,6 @@ export function ChatInterface() {
     setIsLoading(true);
 
     try {
-      if (!import.meta.env.VITE_OPENAI_API_KEY) {
-        throw new Error("VITE_OPENAI_API_KEY is missing in environment variables.");
-      }
-
       const history = [...messages, userMsg];
       const newHistory = await sendMessage(history, (toolName, args) => {
         console.log("Calling", toolName, args);
@@ -233,11 +225,11 @@ export function ChatInterface() {
                       <div
                         className={`rounded-2xl px-4 py-2.5 ${
                           isUser
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-zinc-100 dark:bg-zinc-800 text-foreground"
                             : "bg-muted/50 border border-border/50 text-foreground"
                         }`}
                       >
-                        <div className={`prose prose-sm dark:prose-invert max-w-none [&>p]:m-0 ${isUser ? "text-white [&>*]:text-white" : "text-foreground [&>*]:text-foreground"}`}>
+                        <div className="prose prose-sm dark:prose-invert max-w-none [&>p]:m-0">
                           <ReactMarkdown>
                             {msg.content as string}
                           </ReactMarkdown>

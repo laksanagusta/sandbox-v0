@@ -1,16 +1,8 @@
-import OpenAI from "openai";
+// OpenAI chat is now proxied through the backend for security
+// API key is stored on the server, not in the frontend
 
-// In a real app, this should be an env variable or user input.
-// For this demo, we can ask the user to input it in the UI.
-let openaiInstance: OpenAI | null = null;
+let isInitialized = false;
 let cachedTools: any[] = [];
-
-export const initializeOpenAI = (apiKey: string) => {
-  openaiInstance = new OpenAI({
-    apiKey: apiKey,
-    dangerouslyAllowBrowser: true, // Specific for client-side demo
-  });
-};
 
 export type Message = {
   role: "user" | "assistant" | "system" | "tool";
@@ -133,18 +125,28 @@ function getSystemPrompt(): Message {
 
   return {
     role: "system",
-    content: `You are a helpful AI assistant that can manage Gmail, Google Drive, and Google Calendar.
+    content: `You are a helpful AI assistant that can manage Gmail, Google Drive, Google Calendar, and Zoom meetings.
 
 IMPORTANT - Current Date and Time Context:
 - Current datetime: ${formattedDate}
 - ISO format: ${isoDate}
+- Tomorrow's date: ${tomorrowISO}
 - Timezone: Asia/Jakarta (UTC+7)
 
 When the user mentions relative dates like "today", "tomorrow", "next week", "besok" (Indonesian for tomorrow), etc., you MUST calculate the correct date based on the current date above.
 
-For calendar events, always use ISO 8601 format with timezone offset, e.g.: ${now.getFullYear()}-01-15T10:00:00+07:00
+For calendar events and meetings, always use ISO 8601 format with timezone offset, e.g.: ${now.getFullYear()}-01-15T10:00:00+07:00
 
-Be helpful, concise, and accurate. When calling tools, ensure all date/time parameters are correct based on the current context.`
+CRITICAL - Parameter Clarification Rules:
+Before calling any tool (especially write/create/update/delete operations), you MUST ensure all required information is provided. If the user's request is missing important details, ASK FOR CLARIFICATION FIRST. Do NOT make assumptions or use placeholder values.
+
+General Rules:
+1. If ANY required parameter is unclear or missing, ask the user before proceeding
+2. Do NOT use generic placeholders like "Meeting", "Untitled", "New Event" - ask the user instead
+3. For write operations, always confirm your understanding of the request before executing
+4. Be proactive in asking clarifying questions - it's better to ask than to create something wrong
+
+Be helpful, concise, and accurate. When calling tools, ensure all parameters are explicitly provided by the user or confirmed through clarification.`
   };
 }
 
@@ -152,10 +154,6 @@ export const sendMessage = async (
   messages: Message[],
   onToolCall?: (toolName: string, args: any) => void
 ): Promise<Message[]> => {
-  if (!openaiInstance) {
-    throw new Error("OpenAI API Key not initialized");
-  }
-
   // Ensure tools are loaded
   const tools = await fetchTools();
 
@@ -166,20 +164,32 @@ export const sendMessage = async (
     ? messages.map(m => m.role === "system" ? systemMessage : m) // Update existing system message
     : [systemMessage, ...messages]; // Add new system message
 
-  // 1. Send user message to LLM
-  const completion = await openaiInstance.chat.completions.create({
-    messages: messagesWithSystem as any,
-    model: "gpt-4o-mini",
-    tools: tools.length > 0 ? tools.map((t: any) => ({
-      type: "function",
-      function: {
-        name: t.name,
-        description: t.description,
-        parameters: t.inputSchema,
-      },
-    })) : undefined,
+  // Format tools for OpenAI
+  const formattedTools = tools.length > 0 ? tools.map((t: any) => ({
+    type: "function" as const,
+    function: {
+      name: t.name,
+      description: t.description,
+      parameters: t.inputSchema,
+    },
+  })) : undefined;
+
+  // 1. Send user message to LLM via backend proxy
+  const chatResponse = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      messages: messagesWithSystem,
+      tools: formattedTools,
+    }),
   });
 
+  if (!chatResponse.ok) {
+    const errorData = await chatResponse.json();
+    throw new Error(errorData.error || "Failed to get response from chat API");
+  }
+
+  const completion = await chatResponse.json();
   const responseMessage = completion.choices[0].message;
   
   const assistantMsg: Message = {
@@ -201,17 +211,14 @@ export const sendMessage = async (
 
     // Separate tool calls that need confirmation vs those that don't
     const toolsNeedingConfirmation = parsedToolCalls.filter(
-      tc => TOOLS_REQUIRING_CONFIRMATION.includes(tc.toolName)
-    );
-    const toolsNotNeedingConfirmation = parsedToolCalls.filter(
-      tc => !TOOLS_REQUIRING_CONFIRMATION.includes(tc.toolName)
+      (tc: any) => TOOLS_REQUIRING_CONFIRMATION.includes(tc.toolName)
     );
 
     // If any tools need confirmation, ask once for all of them
     let shouldExecuteConfirmationTools = true;
     
     if (toolsNeedingConfirmation.length > 0 && confirmationCallback) {
-      const pendingCalls: PendingToolCall[] = toolsNeedingConfirmation.map(tc => ({
+      const pendingCalls: PendingToolCall[] = toolsNeedingConfirmation.map((tc: any) => ({
         id: tc.id,
         toolName: tc.toolName,
         toolArgs: tc.toolArgs,
@@ -245,7 +252,12 @@ export const sendMessage = async (
       if (shouldExecute) {
         // Execute the tool (Via Backend Proxy)
         try {
-          toolResult = await executeTool(tc.toolName, tc.toolArgs);
+          // For tools requiring confirmation, auto-inject confirmed=true
+          // since the UI already handled the confirmation
+          const argsWithConfirmation = needsConfirmation 
+            ? { ...tc.toolArgs, confirmed: true }
+            : tc.toolArgs;
+          toolResult = await executeTool(tc.toolName, argsWithConfirmation);
         } catch (error: any) {
           toolResult = { error: error.message };
         }
@@ -266,11 +278,21 @@ export const sendMessage = async (
       });
     }
 
-    // 3. Follow up with LLM after tool execution
-    const followUp = await openaiInstance.chat.completions.create({
-        messages: newHistory as any,
-        model: "gpt-4o-mini",
+    // 3. Follow up with LLM after tool execution via backend proxy
+    const followUpResponse = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: newHistory,
+      }),
     });
+
+    if (!followUpResponse.ok) {
+      const errorData = await followUpResponse.json();
+      throw new Error(errorData.error || "Failed to get follow-up response");
+    }
+
+    const followUp = await followUpResponse.json();
 
     newHistory.push({
         role: "assistant",
