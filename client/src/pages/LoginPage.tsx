@@ -63,107 +63,109 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-4">
-          <div className="flex flex-col items-center space-y-2 mb-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Hexagon className="w-10 h-10 text-primary" />
-            </div>
-          </div>
-          <div className="space-y-1">
-            <CardTitle className="text-xl font-semibold text-center">
-              Selamat Datang
-            </CardTitle>
-            <CardDescription className="text-center">
-              Masuk ke akun Anda untuk melanjutkan
-            </CardDescription>
-          </div>
-        </CardHeader>
-
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <CardContent className="space-y-4">
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="space-y-2">
-              <Label htmlFor="username">NIP</Label>
-              <Input
-                id="username"
-                type="text"
-                placeholder="Masukkan NIP"
-                {...register("username")}
-                className={errors.username ? "border-red-500" : ""}
-              />
-              {errors.username && (
-                <p className="text-sm text-red-500">{errors.username.message}</p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="flex space-x-2">
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Masukkan password"
-                  {...register("password")}
-                  className={errors.password ? "border-red-500" : "flex-1"}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="flex-shrink-0"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4" />
-                  ) : (
-                    <Eye className="h-4 w-4" />
-                  )}
-                </Button>
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
+      <div className="w-full max-w-md">
+        <Card className="border-border/50">
+          <CardHeader className="space-y-4 pb-6">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="p-3 bg-primary rounded-xl">
+                <Hexagon className="w-8 h-8 text-primary-foreground" />
               </div>
-              {errors.password && (
-                <p className="text-sm text-red-500">
-                  {errors.password.message}
-                </p>
-              )}
+              <div className="space-y-1 text-center">
+                <CardTitle className="text-xl font-semibold">
+                  Selamat Datang
+                </CardTitle>
+                <CardDescription>
+                  Masuk ke akun Anda untuk melanjutkan
+                </CardDescription>
+              </div>
             </div>
-          </CardContent>
+          </CardHeader>
 
-          <CardFooter className="flex flex-col space-y-4">
-            <Button type="submit" className="w-full" disabled={authLoading}>
-              {authLoading ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white" />
-                  Masuk...
-                </>
-              ) : (
-                <>
-                  <LogIn className="h-4 w-4" />
-                  Masuk
-                </>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <CardContent className="space-y-4">
+              {error && (
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
+                </Alert>
               )}
-            </Button>
 
-            <div className="text-center text-sm text-gray-600 dark:text-gray-400">
-              Belum punya akun?{" "}
-              <a
-                href="https://orion.marvcore.com/register"
-                className="font-normal text-blue-600 hover:text-blue-800 hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Daftar di sini
-              </a>
-            </div>
-          </CardFooter>
-        </form>
-      </Card>
+              <div className="space-y-2">
+                <Label htmlFor="username">NIP</Label>
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Masukkan NIP"
+                  {...register("username")}
+                  className={errors.username ? "border-destructive focus-visible:ring-destructive" : ""}
+                />
+                {errors.username && (
+                  <p className="text-sm text-destructive">{errors.username.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Masukkan password"
+                    {...register("password")}
+                    className={errors.password ? "border-destructive focus-visible:ring-destructive flex-1" : "flex-1"}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+                {errors.password && (
+                  <p className="text-sm text-destructive">
+                    {errors.password.message}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+
+            <CardFooter className="flex flex-col space-y-4">
+              <Button type="submit" className="w-full" disabled={authLoading}>
+                {authLoading ? (
+                  <>
+                    <div className="animate-spin rounded-lg h-4 w-4 border-2 border-primary-foreground border-t-transparent" />
+                    Masuk...
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="h-4 w-4" />
+                    Masuk
+                  </>
+                )}
+              </Button>
+
+              <div className="text-center text-sm text-muted-foreground">
+                Belum punya akun?{" "}
+                <a
+                  href="https://orion.marvcore.com/register"
+                  className="font-medium text-foreground hover:underline"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Daftar di sini
+                </a>
+              </div>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 }

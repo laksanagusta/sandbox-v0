@@ -301,7 +301,16 @@ export class McpRunner {
 
   constructor() {
     this.useHttp = USE_HTTP_TRANSPORT;
-    console.log(`[MCP Runner] Using ${this.useHttp ? 'HTTP' : 'stdio'} transport`);
+    
+    console.log(`\n========================================`);
+    console.log(`[MCP Runner] Transport Mode: ${this.useHttp ? 'HTTP' : 'STDIO'}`);
+    if (this.useHttp) {
+      console.log(`[MCP Runner] Server URL: ${MCP_SERVER_URL}`);
+    } else {
+      console.log(`[MCP Runner] Server Path: ${MCP_SERVER_PATH}`);
+      console.log(`[MCP Runner] Server CWD: ${MCP_SERVER_CWD}`);
+    }
+    console.log(`========================================\n`);
 
     if (this.useHttp) {
       this.httpClient = new HttpMcpClient(MCP_SERVER_URL);

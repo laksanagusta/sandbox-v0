@@ -45,6 +45,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { canAccessBusinessTripVerifications, hasAnyAccess, hasAccess } from "@/utils/permissions";
 
+
 export function AppSidebar() {
   const { user, logout } = useAuth();
   const [location] = useLocation();
@@ -66,21 +67,17 @@ export function AppSidebar() {
   };
 
   return (
-    <Sidebar className="border-r border-sidebar-border">
-      {/* Header - Linear Style Workspace Switcher */}
-      <SidebarHeader className="bg-white px-3 h-12 flex items-center shrink-0">
-        <Button
-          variant="ghost"
-          className="w-full justify-between px-2 h-9 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group"
-        >
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold tracking-tight text-black">Orion</span>
-          </div>
-        </Button>
+    <Sidebar className="border-0">
+      {/* Header with Logo - aligned with TopBar height */}
+      <SidebarHeader className="!flex-row h-12 px-4 !items-center !justify-start !gap-2 shrink-0">
+        <div className="w-6 h-6 rounded bg-gradient-to-br from-pink-500 to-orange-400 flex items-center justify-center">
+          <span className="text-white text-xs font-bold">O</span>
+        </div>
+        <span className="text-sm font-semibold text-sidebar-foreground">Orion</span>
       </SidebarHeader>
 
-      <SidebarContent className="bg-white">
-        <SidebarGroup className="px-3 py-4">
+      <SidebarContent>
+        <SidebarGroup className="px-2 py-3">
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0.5">
               {/* GRC Dashboard */}
@@ -94,7 +91,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/grc'])
-                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-grc"
@@ -102,7 +99,7 @@ export function AppSidebar() {
                       <div className="flex items-center gap-3 flex-1">
                         <Shield className={`w-4 h-4 ${
                           isInSection(['/grc'])
-                            ? 'text-sidebar-primary'
+                            ? 'text-sidebar-accent-foreground'
                             : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
@@ -110,9 +107,9 @@ export function AppSidebar() {
                         </span>
                       </div>
                       {isGRCOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -123,7 +120,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/grc')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-grc-dashboard"
@@ -134,7 +131,7 @@ export function AppSidebar() {
                           >
                             <BarChart3 className={`w-4 h-4 ${
                               isActiveRoute('/grc')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -158,7 +155,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/chatbot'])
-                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-ai-assistant"
@@ -166,7 +163,7 @@ export function AppSidebar() {
                       <div className="flex items-center gap-3 flex-1">
                         <MessageSquare className={`w-4 h-4 ${
                           isInSection(['/chatbot'])
-                            ? 'text-sidebar-primary'
+                            ? 'text-sidebar-accent-foreground'
                             : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
@@ -174,9 +171,9 @@ export function AppSidebar() {
                         </span>
                       </div>
                       {isAIAssistantOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -187,7 +184,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/chatbot') && !location.includes('/knowledge-bases')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-chatbot-chat"
@@ -198,7 +195,7 @@ export function AppSidebar() {
                           >
                             <MessageSquare className={`w-4 h-4 ${
                               isActiveRoute('/chatbot') && !location.includes('/knowledge-bases')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -212,7 +209,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/mcp-agent')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-mcp-agent"
@@ -233,7 +230,7 @@ export function AppSidebar() {
                               strokeLinejoin="round"
                               className={`w-4 h-4 ${
                                 isActiveRoute('/mcp-agent')
-                                  ? 'text-sidebar-primary'
+                                  ? 'text-sidebar-accent-foreground'
                                   : 'text-muted-foreground'
                               }`}
                             >
@@ -256,7 +253,7 @@ export function AppSidebar() {
                             asChild
                             className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                               isActiveRoute('/chatbot/knowledge-bases')
-                                ? 'bg-sidebar-accent text-sidebar-primary'
+                                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                                 : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                             }`}
                             data-testid="nav-knowledge-bases"
@@ -267,7 +264,7 @@ export function AppSidebar() {
                             >
                               <Database className={`w-4 h-4 ${
                                 isActiveRoute('/chatbot/knowledge-bases')
-                                  ? 'text-sidebar-primary'
+                                  ? 'text-sidebar-accent-foreground'
                                   : 'text-muted-foreground'
                               }`} />
                               <span className="text-sm">
@@ -293,7 +290,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/business-trips', '/kwitansi', '/business-trip-verifications'])
-                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-business-trip"
@@ -301,7 +298,7 @@ export function AppSidebar() {
                       <div className="flex items-center gap-3 flex-1">
                         <Briefcase className={`w-4 h-4 ${
                           isInSection(['/business-trips', '/kwitansi', '/business-trip-verifications'])
-                            ? 'text-sidebar-primary'
+                            ? 'text-sidebar-accent-foreground'
                             : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
@@ -309,9 +306,9 @@ export function AppSidebar() {
                         </span>
                       </div>
                       {isBusinessTripOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -322,7 +319,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/business-trips') && !location.includes('/report')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-business-trip-list"
@@ -333,7 +330,7 @@ export function AppSidebar() {
                           >
                             <Plane className={`w-4 h-4 ${
                               isActiveRoute('/business-trips') && !location.includes('/report')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -347,7 +344,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/business-trips/report')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-business-trip-report"
@@ -358,7 +355,7 @@ export function AppSidebar() {
                           >
                             <BarChart3 className={`w-4 h-4 ${
                               isActiveRoute('/business-trips/report')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -372,7 +369,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/business-trip-verifications')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-business-trip-verifications"
@@ -383,7 +380,7 @@ export function AppSidebar() {
                           >
                             <ClipboardCheck className={`w-4 h-4 ${
                               isActiveRoute('/business-trip-verifications')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -408,7 +405,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures', '/work-paper-topics'])
-                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-work-paper"
@@ -416,7 +413,7 @@ export function AppSidebar() {
                       <div className="flex items-center gap-3 flex-1">
                         <FileText className={`w-4 h-4 ${
                           isInSection(['/work-papers', '/work-paper-items', '/work-paper-signatures', '/work-paper-topics'])
-                            ? 'text-sidebar-primary'
+                            ? 'text-sidebar-accent-foreground'
                             : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
@@ -424,9 +421,9 @@ export function AppSidebar() {
                         </span>
                       </div>
                       {isWorkPaperOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -437,7 +434,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-paper-topics')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-work-paper-topics"
@@ -448,7 +445,7 @@ export function AppSidebar() {
                           >
                             <Tag className={`w-4 h-4 ${
                               isActiveRoute('/work-paper-topics')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -462,7 +459,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-papers') && !location.includes('/create')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-work-paper-list"
@@ -473,7 +470,7 @@ export function AppSidebar() {
                           >
                             <FileText className={`w-4 h-4 ${
                               isActiveRoute('/work-papers') && !location.includes('/create')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -487,7 +484,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-paper-items')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-work-paper-items"
@@ -498,7 +495,7 @@ export function AppSidebar() {
                           >
                             <FileText className={`w-4 h-4 ${
                               isActiveRoute('/work-paper-items')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -512,7 +509,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/work-paper-signatures')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-work-paper-signatures"
@@ -523,7 +520,7 @@ export function AppSidebar() {
                           >
                             <CheckSquare className={`w-4 h-4 ${
                               isActiveRoute('/work-paper-signatures')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -549,7 +546,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       className={`w-full justify-start px-3 py-2 rounded-md group transition-colors duration-150 ${
                         isInSection(['/organization', '/permission', '/users', '/roles', '/pending-users'])
-                          ? 'bg-sidebar-accent text-sidebar-primary'
+                          ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                           : 'text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                       }`}
                       data-testid="nav-settings"
@@ -557,7 +554,7 @@ export function AppSidebar() {
                       <div className="flex items-center gap-3 flex-1">
                         <Settings className={`w-4 h-4 ${
                           isInSection(['/organization', '/permission', '/users', '/roles'])
-                            ? 'text-sidebar-primary'
+                            ? 'text-sidebar-accent-foreground'
                             : 'text-muted-foreground group-hover:text-sidebar-foreground'
                         }`} />
                         <span className="text-sm font-medium">
@@ -565,9 +562,9 @@ export function AppSidebar() {
                         </span>
                       </div>
                       {isSettingsOpen ? (
-                        <ChevronDown className="w-4 h-4 text-gray-400" />
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
                       ) : (
-                        <ChevronRight className="w-4 h-4 text-gray-400" />
+                        <ChevronRight className="w-4 h-4 text-muted-foreground" />
                       )}
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -578,7 +575,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/organization')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-organization"
@@ -589,7 +586,7 @@ export function AppSidebar() {
                           >
                             <Building className={`w-4 h-4 ${
                               isActiveRoute('/organization')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -603,7 +600,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/permission')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-permissions"
@@ -614,7 +611,7 @@ export function AppSidebar() {
                           >
                             <Shield className={`w-4 h-4 ${
                               isActiveRoute('/permission')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -628,7 +625,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/users')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-users"
@@ -639,7 +636,7 @@ export function AppSidebar() {
                           >
                             <Users className={`w-4 h-4 ${
                               isActiveRoute('/users')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -653,7 +650,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/pending-users')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-pending-users"
@@ -664,7 +661,7 @@ export function AppSidebar() {
                           >
                             <UserCheck className={`w-4 h-4 ${
                               isActiveRoute('/pending-users')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -678,7 +675,7 @@ export function AppSidebar() {
                           asChild
                           className={`px-3 py-1.5 rounded-md transition-colors duration-150 ${
                             isActiveRoute('/roles')
-                              ? 'bg-sidebar-accent text-sidebar-primary'
+                              ? 'bg-sidebar-accent text-sidebar-accent-foreground'
                               : 'text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
                           }`}
                           data-testid="nav-roles"
@@ -689,7 +686,7 @@ export function AppSidebar() {
                           >
                             <Shield className={`w-4 h-4 ${
                               isActiveRoute('/roles')
-                                ? 'text-sidebar-primary'
+                                ? 'text-sidebar-accent-foreground'
                                 : 'text-muted-foreground'
                             }`} />
                             <span className="text-sm">
@@ -708,14 +705,14 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="bg-white border-t border-sidebar-border p-3">
+      <SidebarFooter className="p-3">
         <div className="space-y-2">
           <Link
             href="/profile"
-            className="flex items-center gap-3 px-2 py-2 rounded-md hover:bg-sidebar-accent transition-colors cursor-pointer group"
+            className="flex items-center gap-3 px-2 py-2 rounded-lg hover:bg-sidebar-accent transition-colors cursor-pointer group"
           >
             <div 
-              className="w-8 h-8 rounded-full"
+              className="w-8 h-8 rounded-lg"
               style={{
                 background: user?.avatar_gradient_start && user?.avatar_gradient_end
                   ? `linear-gradient(135deg, ${user.avatar_gradient_start} 0%, ${user.avatar_gradient_end} 100%)`

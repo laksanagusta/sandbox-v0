@@ -13,6 +13,15 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Assignee, PaymentType, Transaction } from "@shared/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableFooter,
+} from "@/components/ui/table";
 
 export interface ValidationError {
   index: number;
@@ -93,7 +102,7 @@ export default function EditableTable({
                     ...transaction,
                     total_night: numValue,
                     subtotal: currentAmount * multiplier,
-                 };
+                  };
               }
 
               // Update other fields
@@ -298,7 +307,7 @@ export default function EditableTable({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Nama
               </label>
               <Input
@@ -308,12 +317,12 @@ export default function EditableTable({
                 }
                 disabled={disabled}
                 placeholder="Nama Data Pegawai"
-                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                className="h-9 text-sm border border-border bg-card focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-name-${assigneeIndex}`}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 No. SPD
               </label>
               <Input
@@ -326,12 +335,12 @@ export default function EditableTable({
                 }
                 disabled={disabled}
                 placeholder="No. SPD"
-                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                className="h-9 text-sm border border-border bg-card focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-spd-${assigneeIndex}`}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 NIP
               </label>
               <TooltipProvider>
@@ -349,10 +358,10 @@ export default function EditableTable({
                         }
                         disabled={disabled}
                         placeholder="NIP"
-                        className={`h-9 text-sm border bg-white focus:ring-1 ${
+                        className={`h-9 text-sm border bg-card focus:ring-1 ${
                           getError(assigneeIndex, "employee_number")
                             ? "border-red-500 focus:border-red-500 focus:ring-red-500 pr-10"
-                            : "border-gray-300 focus:border-blue-400 focus:ring-blue-400"
+                            : "border-border focus:border-blue-400 focus:ring-blue-400"
                         }`}
                         data-testid={`input-assignee-employee-number-${assigneeIndex}`}
                       />
@@ -377,7 +386,7 @@ export default function EditableTable({
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Jabatan
               </label>
               <Input
@@ -387,12 +396,12 @@ export default function EditableTable({
                 }
                 disabled={disabled}
                 placeholder="Jabatan"
-                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                className="h-9 text-sm border border-border bg-card focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-position-${assigneeIndex}`}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-foreground mb-1">
                 Golongan
               </label>
               <Input
@@ -402,39 +411,39 @@ export default function EditableTable({
                 }
                 disabled={disabled}
                 placeholder="Golongan"
-                className="h-9 text-sm border border-gray-300 bg-white focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
+                className="h-9 text-sm border border-border bg-card focus:border-blue-400 focus:ring-1 focus:ring-blue-400"
                 data-testid={`input-assignee-rank-${assigneeIndex}`}
               />
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="min-w-[1800px] w-full modern-table">
-              <thead>
-                <tr>
-                  <th className="whitespace-nowrap w-[9%]">Tipe</th>
-                  <th className="whitespace-nowrap w-[10%]">Subtipe</th>
-                  <th className="whitespace-nowrap w-[25%]">Deskripsi</th>
-                  <th className="text-right whitespace-nowrap w-[10%]">
+          <div className="border border-border rounded-lg overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="hover:bg-transparent border-b bg-muted/30">
+                  <TableHead className="whitespace-nowrap w-[9%]">Tipe</TableHead>
+                  <TableHead className="whitespace-nowrap w-[10%]">Subtipe</TableHead>
+                  <TableHead className="whitespace-nowrap w-[25%]">Deskripsi</TableHead>
+                  <TableHead className="text-right whitespace-nowrap w-[10%]">
                     Jumlah (Rp)
-                  </th>
-                  <th className="text-right whitespace-nowrap w-[10%]">
+                  </TableHead>
+                  <TableHead className="text-right whitespace-nowrap w-[10%]">
                     Subtotal (Rp)
-                  </th>
-                  <th className="whitespace-nowrap w-[11%]">Tipe Pembayaran</th>
-                  <th className="whitespace-nowrap w-[10%]">
+                  </TableHead>
+                  <TableHead className="whitespace-nowrap w-[11%]">Tipe Pembayaran</TableHead>
+                  <TableHead className="whitespace-nowrap w-[10%]">
                     Detail Transport
-                  </th>
-                  <th className="text-center whitespace-nowrap w-[5%]">
+                  </TableHead>
+                  <TableHead className="text-center whitespace-nowrap w-[5%]">
                     Hari/Malam
-                  </th>
-                  <th className="text-center whitespace-nowrap w-[5%]">
+                  </TableHead>
+                  <TableHead className="text-center whitespace-nowrap w-[5%]">
                     Valid?
-                  </th>
-                  <th className="text-center whitespace-nowrap w-[5%]">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
+                  </TableHead>
+                  <TableHead className="text-center whitespace-nowrap w-[5%]">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {assignee.transactions.map((transaction, transactionIndex) => {
                   const isTransport =
                     transaction.type.toLowerCase() === "transport";
@@ -446,12 +455,12 @@ export default function EditableTable({
                     isHotel ||
                     isDailyAllowance;
                   return (
-                    <tr
+                    <TableRow
                       key={transactionIndex}
-                      className="transition-colors"
+                      className="transition-colors border-b"
                       data-testid={`assignee-${assigneeIndex}-transaction-${transactionIndex}`}
                     >
-                      <td className="whitespace-nowrap">
+                      <TableCell className="whitespace-nowrap">
                         <Input
                           value={transaction.type}
                           onChange={(e) =>
@@ -467,8 +476,8 @@ export default function EditableTable({
                           className="h-9 text-sm"
                           data-testid={`input-type-${assigneeIndex}-${transactionIndex}`}
                         />
-                      </td>
-                      <td className="whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Input
                           value={transaction.subtype}
                           onChange={(e) =>
@@ -484,8 +493,8 @@ export default function EditableTable({
                           className="h-9 text-sm"
                           data-testid={`input-subtype-${assigneeIndex}-${transactionIndex}`}
                         />
-                      </td>
-                      <td className="whitespace-nowrap w-[300px]">
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap w-[300px]">
                         <Input
                           value={transaction.description}
                           onChange={(e) =>
@@ -501,8 +510,8 @@ export default function EditableTable({
                           className="h-9 text-sm"
                           data-testid={`input-description-${assigneeIndex}-${transactionIndex}`}
                         />
-                      </td>
-                      <td className="whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Input
                           value={
                             transaction.amount === 0
@@ -519,11 +528,11 @@ export default function EditableTable({
                           }
                           disabled={disabled}
                           placeholder="0"
-                          className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
+                          className="h-8 text-sm text-right font-mono border border-transparent hover:border-border focus:border-primary bg-transparent focus:bg-background focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-sm px-2 transition-colors"
                           data-testid={`input-amount-${assigneeIndex}-${transactionIndex}`}
                         />
-                      </td>
-                      <td className="whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {isDailyAllowance ? (
                           <div className="h-8 flex items-center justify-center">
                             <span className="text-sm font-mono text-right w-full pr-2">
@@ -549,12 +558,12 @@ export default function EditableTable({
                             }
                             disabled={disabled}
                             placeholder="0"
-                            className="h-8 text-sm text-right font-mono border-none bg-transparent focus:ring-1 focus:ring-blue-400 rounded-none"
+                            className="h-8 text-sm text-right font-mono border border-transparent hover:border-border focus:border-primary bg-transparent focus:bg-background focus:outline-none focus:ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 rounded-sm px-2 transition-colors"
                             data-testid={`input-subtotal-${assigneeIndex}-${transactionIndex}`}
                           />
                         )}
-                      </td>
-                      <td className="whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         <Select
                           value={transaction.payment_type}
                           onValueChange={(value: PaymentType) =>
@@ -578,8 +587,8 @@ export default function EditableTable({
                             <SelectItem value="rampung">Rampung</SelectItem>
                           </SelectContent>
                         </Select>
-                      </td>
-                      <td className="whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {isTransport ? (
                           <Select
                             value={transaction.transport_detail}
@@ -618,8 +627,8 @@ export default function EditableTable({
                             </span>
                           </div>
                         )}
-                      </td>
-                      <td className="whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">
                         {showTotalNight ? (
                           <Input
                             value={transaction.total_night || ""}
@@ -646,8 +655,8 @@ export default function EditableTable({
                           </div>
                         )}
 
-                      </td>
-                      <td className="text-center whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="text-center whitespace-nowrap">
                         <div className="flex justify-center">
                           <Checkbox
                             checked={transaction.is_valid ?? false}
@@ -663,8 +672,8 @@ export default function EditableTable({
                             data-testid={`checkbox-is-valid-${assigneeIndex}-${transactionIndex}`}
                           />
                         </div>
-                      </td>
-                      <td className="py-2 px-2 text-center whitespace-nowrap">
+                      </TableCell>
+                      <TableCell className="py-2 px-2 text-center whitespace-nowrap">
                         <Button
                           size="icon"
                           variant="ghost"
@@ -677,22 +686,22 @@ export default function EditableTable({
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-              <tfoot>
-                <tr className="bg-gray-50">
-                  <td
+              </TableBody>
+              <TableFooter>
+                <TableRow className="bg-muted/50">
+                  <TableCell
                     colSpan={3}
                     className="py-4 px-4 text-sm font-semibold text-right whitespace-nowrap"
                   >
                     Total Transaksi untuk {assignee.name || "Data Pegawai Baru"}
-                  </td>
-                  <td
+                  </TableCell>
+                  <TableCell
                     colSpan={2}
-                    className="py-4 px-4 text-sm font-bold text-right font-mono whitespace-nowrap text-blue-600"
+                    className="py-4 px-4 text-sm font-bold text-right font-mono whitespace-nowrap text-foreground"
                     data-testid={`text-total-assignee-${assigneeIndex}`}
                   >
                     Rp{" "}
@@ -702,11 +711,11 @@ export default function EditableTable({
                         0
                       )
                     )}
-                  </td>
-                  <td colSpan={5} className="whitespace-nowrap"></td>
-                </tr>
-              </tfoot>
-            </table>
+                  </TableCell>
+                  <TableCell colSpan={5} className="whitespace-nowrap"></TableCell>
+                </TableRow>
+              </TableFooter>
+            </Table>
           </div>
           <div className="flex justify-end mt-4">
             <Button

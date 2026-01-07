@@ -77,7 +77,7 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
       case "status_change":
         return <FileText className="h-4 w-4 text-blue-500" />;
       default:
-        return <Edit2 className="h-4 w-4 text-gray-500" />;
+        return <Edit2 className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -125,10 +125,10 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
                 <div key={item.id} className="relative flex gap-4 pb-4 last:pb-0">
                   {/* Vertical Line */}
                   {index !== history.length - 1 && (
-                    <div className="absolute left-[7px] top-6 h-full w-[2px] bg-gray-200" />
+                    <div className="absolute left-[7px] top-6 h-full w-[2px] bg-border" />
                   )}
 
-                  <div className="mt-1 flex h-4 w-4 flex-none items-center justify-center rounded-full bg-white ring-2 ring-gray-200 z-10">
+                  <div className="mt-1 flex h-4 w-4 flex-none items-center justify-center rounded-lg bg-card ring-2 ring-gray-200 z-10">
                     {getIcon(item.change_type)}
                   </div>
 
@@ -148,11 +148,11 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
                       {item.change_type === "status_change" ? (
                         <div className="flex items-center gap-1 flex-wrap">
                           <span>Mengubah status</span>
-                          <span className="font-medium text-foreground px-1.5 py-0.5 bg-gray-100 rounded text-xs">
+                          <span className="font-medium text-foreground px-1.5 py-0.5 bg-muted rounded text-xs">
                             {formatValue(item.old_value)}
                           </span>
                           <ArrowRight className="h-3 w-3" />
-                          <span className="font-medium text-foreground px-1.5 py-0.5 bg-gray-100 rounded text-xs">
+                          <span className="font-medium text-foreground px-1.5 py-0.5 bg-muted rounded text-xs">
                             {formatValue(item.new_value)}
                           </span>
                         </div>
@@ -160,7 +160,7 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
                         <div>
                           <span className="text-green-600 font-medium">Menyetujui verifikasi</span>
                           {item.notes && (
-                            <div className="mt-1 p-2 bg-gray-50 rounded text-xs italic border border-gray-100">
+                            <div className="mt-1 p-2 bg-muted/50 rounded text-xs italic border border-border/50">
                               "{item.notes}"
                             </div>
                           )}
@@ -169,7 +169,7 @@ export function BusinessTripHistory({ businessTripId }: BusinessTripHistoryProps
                         <div>
                           <span className="text-red-600 font-medium">Menolak verifikasi</span>
                           {item.notes && (
-                            <div className="mt-1 p-2 bg-red-50 rounded text-xs italic border border-red-100 text-red-800">
+                            <div className="mt-1 p-2 bg-red-50 dark:bg-red-900/20 rounded text-xs italic border border-red-100 dark:border-red-900/50 text-red-800 dark:text-red-300">
                               "{item.notes}"
                             </div>
                           )}

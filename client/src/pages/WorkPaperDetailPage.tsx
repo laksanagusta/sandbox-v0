@@ -643,8 +643,8 @@ export default function WorkPaperDetailPage() {
   const getStatusBadge = (status: WorkPaperStatus) => {
     const statusConfig = {
       draft: {
-        bg: "bg-gray-100 hover:bg-gray-200",
-        text: "text-gray-800",
+        bg: "bg-muted hover:bg-border",
+        text: "text-foreground",
         label: "Draft",
       },
       ongoing: {
@@ -699,10 +699,10 @@ export default function WorkPaperDetailPage() {
               })
               .map((nextStatus) => {
                 const nextStatusConfig = {
-                  draft: "bg-gray-100 text-gray-800",
-                  ongoing: "bg-blue-100 text-blue-800",
+                  draft: "bg-muted text-muted-foreground",
+                  ongoing: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
                   ready_to_sign: "bg-orange-100 text-orange-800",
-                  completed: "bg-green-100 text-green-800",
+                  completed: "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
                 };
 
                 const isCompletedDisabled = nextStatus === "completed" && !checkAllSignaturesSigned();
@@ -716,7 +716,7 @@ export default function WorkPaperDetailPage() {
                   >
                     <div className="flex items-center justify-between w-full">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${nextStatusConfig[nextStatus]}`}
+                        className={`px-2 py-1 rounded-lg text-xs font-medium ${nextStatusConfig[nextStatus]}`}
                       >
                         {nextStatus === "ready_to_sign"
                           ? "Ready to Sign"
@@ -724,7 +724,7 @@ export default function WorkPaperDetailPage() {
                             nextStatus.slice(1)}
                       </span>
                       {isCompletedDisabled && (
-                        <span className="text-xs text-gray-500 ml-2">
+                        <span className="text-xs text-muted-foreground ml-2">
                           ⚠️ Semua tanda tangan harus selesai
                         </span>
                       )}
@@ -978,7 +978,7 @@ export default function WorkPaperDetailPage() {
         <div className="mx-auto px-8 py-8">
           <div className="flex items-center justify-center py-12">
             <div className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+              <div className="animate-spin rounded-lg h-6 w-6 border-b-2 border-foreground"></div>
               <span>Loading...</span>
             </div>
           </div>
@@ -1001,32 +1001,31 @@ export default function WorkPaperDetailPage() {
 
   return (
     <>
-      <div className="bg-white flex flex-col h-screen overflow-hidden">
+      <div className="bg-background flex flex-col h-screen overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-card z-10">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setLocation("/work-papers")}
-            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900 flex items-center gap-2"
+            className="p-0 h-auto hover:bg-transparent text-muted-foreground hover:text-foreground flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
-          <div className="h-4 w-px bg-gray-200" />
+          <div className="h-4 w-px bg-border" />
 
           <div className="flex items-center gap-2">
-            <FileText className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-semibold text-gray-900">
+            <span className="text-sm font-semibold text-foreground">
               Detail Work Paper
             </span>
           </div>
 
-          <div className="h-4 w-px bg-gray-200" />
+          <div className="h-4 w-px bg-border" />
 
-          <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+          <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">
             {workPaper.np_waper}
           </span>
         </div>
@@ -1039,7 +1038,7 @@ export default function WorkPaperDetailPage() {
               variant="outline"
               size="sm"
               onClick={handleExportDocx}
-              className="h-8 text-xs bg-white hover:bg-gray-50 text-gray-700 border-gray-200 flex items-center gap-2"
+              className="h-9 text-sm bg-card hover:bg-muted/50 text-foreground border-border flex items-center gap-2"
             >
               <Download className="w-3.5 h-3.5" />
               Export CHR
@@ -1048,7 +1047,7 @@ export default function WorkPaperDetailPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+      <div className="flex-1 overflow-y-auto bg-muted/30 p-6">
         <div className="w-full space-y-6">
             {/* Main Content */}
             <div className="space-y-6">
@@ -1059,13 +1058,13 @@ export default function WorkPaperDetailPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label className="text-sm font-medium text-gray-700">
+                    <Label className="text-sm font-medium text-foreground">
                       Organization
                     </Label>
-                    <div className="mt-1 p-2 bg-gray-50 rounded-md border border-gray-200">
+                    <div className="mt-1 p-2 bg-muted/50 rounded-md border border-border">
                       <OrganizationBadge 
                         organizationId={workPaper.organization_id} 
-                        className="text-gray-900"
+                        className="text-foreground"
                       />
                     </div>
                   </div>
@@ -1073,7 +1072,7 @@ export default function WorkPaperDetailPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Tahun
                       </Label>
                       <Input
@@ -1091,7 +1090,7 @@ export default function WorkPaperDetailPage() {
                       />
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Semester
                       </Label>
                       <select
@@ -1102,7 +1101,7 @@ export default function WorkPaperDetailPage() {
                             semester: parseInt(e.target.value) || 1,
                           })
                         }
-                        className="w-full mt-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                        className="w-full mt-1 px-3 py-2 border border-border rounded-md text-sm"
                       >
                         <option value={1}>Semester 1</option>
                         <option value={2}>Semester 2</option>
@@ -1112,18 +1111,18 @@ export default function WorkPaperDetailPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Dibuat
                       </Label>
-                      <p className="text-sm mt-1 text-gray-500">
+                      <p className="text-sm mt-1 text-muted-foreground">
                         {formatDateTime(workPaper.created_at)}
                       </p>
                     </div>
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Diperbarui
                       </Label>
-                      <p className="text-sm mt-1 text-gray-500">
+                      <p className="text-sm mt-1 text-muted-foreground">
                         {formatDateTime(workPaper.updated_at)}
                       </p>
                     </div>
@@ -1202,7 +1201,7 @@ export default function WorkPaperDetailPage() {
                     ) : (
                       <p className="text-sm">
                         {workPaper.komentar_reviewer || (
-                          <span className="text-gray-400">
+                          <span className="text-muted-foreground">
                             Belum ada komentar
                           </span>
                         )}
@@ -1223,26 +1222,26 @@ export default function WorkPaperDetailPage() {
                       {workPaper.audit_trail?.map((audit) => (
                         <div
                           key={audit.id}
-                          className="flex items-start space-x-3 p-3 bg-gray-50 rounded-lg"
+                          className="flex items-start space-x-3 p-3 bg-muted/50 rounded-lg"
                         >
-                          <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0"></div>
+                          <div className="w-2 h-2 bg-blue-600 rounded-lg mt-2 flex-shrink-0"></div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between">
                               <p className="text-sm font-medium">
                                 {audit.action}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 {formatDateTime(audit.created_at)}
                               </p>
                             </div>
-                            <p className="text-xs text-gray-600 mt-1">
+                            <p className="text-xs text-muted-foreground mt-1">
                               Oleh: {audit.action_by}
                             </p>
                             {audit.old_value && audit.new_value && (
                               <div className="mt-2 text-xs">
                                 <p>
                                   Dari:{" "}
-                                  <span className="line-through text-gray-500">
+                                  <span className="line-through text-muted-foreground">
                                     {audit.old_value}
                                   </span>
                                 </p>
@@ -1269,8 +1268,8 @@ export default function WorkPaperDetailPage() {
                 </CardHeader>
                 <CardContent>
                   {workPaperNotes.length === 0 ? (
-                    <div className="text-center py-8 text-gray-500">
-                      <MessageSquare className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                    <div className="text-center py-8 text-muted-foreground">
+                      <MessageSquare className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                       <p className="text-sm">No notes available</p>
                     </div>
                   ) : (
@@ -1291,7 +1290,7 @@ export default function WorkPaperDetailPage() {
                         <TableBody>
                           {workPaperNotes.map((note, index) => (
                             <TableRow key={note.id}>
-                              <TableCell className="font-medium text-gray-600">
+                              <TableCell className="font-medium text-muted-foreground">
                                 {note.master_item?.number || index + 1}
                               </TableCell>
                               <TableCell className="min-w-[300px] max-w-md">
@@ -1342,7 +1341,7 @@ export default function WorkPaperDetailPage() {
                                           href={note.gdrive_link}
                                           target="_blank"
                                           rel="noopener noreferrer"
-                                          className="text-blue-600 hover:underline text-sm"
+                                          className="text-primary hover:underline text-sm"
                                         >
                                           Open Link
                                         </a>
@@ -1383,7 +1382,7 @@ export default function WorkPaperDetailPage() {
                                   </div>
                                 )}
                               </TableCell>
-                              <TableCell className="text-sm text-gray-500">
+                              <TableCell className="text-sm text-muted-foreground">
                                 {formatDate(note.created_at)}
                               </TableCell>
                               <TableCell className="min-w-[100px] max-w-xs">
@@ -1416,7 +1415,7 @@ export default function WorkPaperDetailPage() {
                                       className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 hover:from-blue-100 hover:to-purple-100 border-blue-200"
                                       title="Generate AI Answer (hanya bisa di Ongoing)"
                                     >
-                                      <Sparkles className="w-3 h-3 text-blue-600" />
+                                      <Sparkles className="w-3 h-3 text-primary" />
                                       <span className="text-blue-700">
                                         {isGeneratingAnswer
                                           ? "Generating..."
@@ -1450,8 +1449,8 @@ export default function WorkPaperDetailPage() {
                   </CardHeader>
                   <CardContent>
                     {workPaperSignatures.length === 0 ? (
-                      <div className="text-center py-8 text-gray-500">
-                        <PenTool className="w-12 h-12 mx-auto mb-4 text-gray-400" />
+                      <div className="text-center py-8 text-muted-foreground">
+                        <PenTool className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
                         <p className="text-sm">
                           Belum ada daftar tanda tangan untuk work paper ini
                         </p>
@@ -1484,7 +1483,7 @@ export default function WorkPaperDetailPage() {
                                   className={
                                     canSign
                                       ? "bg-green-50 hover:bg-green-100"
-                                      : "bg-gray-50"
+                                      : "bg-muted/50"
                                   }
                                 >
                                   <TableCell className="font-medium">
@@ -1508,9 +1507,9 @@ export default function WorkPaperDetailPage() {
                                       }
                                       className={
                                         signature.status === "signed"
-                                          ? "bg-green-100 text-green-800 hover:bg-green-200"
+                                          ? "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800 hover:bg-green-200"
                                           : signature.status === "rejected"
-                                          ? "bg-red-100 text-red-800 hover:bg-red-200"
+                                          ? "bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800 hover:bg-red-200"
                                           : ""
                                       }
                                     >
@@ -1529,7 +1528,7 @@ export default function WorkPaperDetailPage() {
                                       }
                                       className={
                                         signature.signature_type === "digital"
-                                          ? "bg-blue-100 text-blue-800 hover:bg-blue-200"
+                                          ? "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800 hover:bg-blue-200"
                                           : ""
                                       }
                                     >
@@ -1622,7 +1621,7 @@ export default function WorkPaperDetailPage() {
                                         size="sm"
                                         variant="outline"
                                         disabled
-                                        className="text-gray-400"
+                                        className="text-muted-foreground"
                                       >
                                         {signature.status === "signed"
                                           ? "Selesai"

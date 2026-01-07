@@ -20,6 +20,62 @@ export type Message = {
   name?: string;
 };
 
+// Tools that require user confirmation before execution (destructive/write operations)
+const TOOLS_REQUIRING_CONFIRMATION = [
+  // Gmail
+  "send_email",
+  "create_email_draft",
+  "trash_email",
+  "delete_email",
+  "add_label_to_email",
+  "remove_label_from_email",
+  // Drive
+  "create_folder",
+  "move_file",
+  "rename_file",
+  "copy_file",
+  "share_file",
+  "delete_file",
+  // Calendar
+  "create_calendar_event",
+  "update_calendar_event",
+  "delete_calendar_event",
+  // Zoom
+  "create_zoom_meeting",
+  "update_zoom_meeting",
+  "delete_zoom_meeting",
+];
+
+export type PendingToolCall = {
+  id: string;
+  toolName: string;
+  toolArgs: any;
+  description: string;
+};
+
+// Batch confirmation - can contain multiple tool calls
+export type PendingConfirmation = {
+  toolCalls: PendingToolCall[];
+  summary: string; // e.g., "3 actions require confirmation"
+};
+
+export type ConfirmationCallback = (
+  pendingConfirmation: PendingConfirmation
+) => Promise<boolean>;
+
+// Global confirmation callback - will be set by the UI component
+let confirmationCallback: ConfirmationCallback | null = null;
+
+export const setConfirmationCallback = (callback: ConfirmationCallback | null) => {
+  confirmationCallback = callback;
+};
+
+// Get tool description from cached schema
+function getToolSchemaDescription(toolName: string): string {
+  const tool = cachedTools.find(t => t.name === toolName);
+  return tool?.description || `Execute ${toolName}`;
+}
+
 // Fetch tools from the backend proxy
 async function fetchTools() {
   if (cachedTools.length > 0) return cachedTools;
@@ -136,21 +192,69 @@ export const sendMessage = async (
 
   // 2. Check if tool calls are required
   if (responseMessage.tool_calls && responseMessage.tool_calls.length > 0) {
-    for (const toolCall of responseMessage.tool_calls) {
-      const tc = toolCall as any;
-      const toolName = tc.function.name;
-      const toolArgs = JSON.parse(tc.function.arguments);
+    // Parse all tool calls first
+    const parsedToolCalls = responseMessage.tool_calls.map((tc: any) => ({
+      id: tc.id,
+      toolName: tc.function.name,
+      toolArgs: JSON.parse(tc.function.arguments),
+    }));
 
+    // Separate tool calls that need confirmation vs those that don't
+    const toolsNeedingConfirmation = parsedToolCalls.filter(
+      tc => TOOLS_REQUIRING_CONFIRMATION.includes(tc.toolName)
+    );
+    const toolsNotNeedingConfirmation = parsedToolCalls.filter(
+      tc => !TOOLS_REQUIRING_CONFIRMATION.includes(tc.toolName)
+    );
+
+    // If any tools need confirmation, ask once for all of them
+    let shouldExecuteConfirmationTools = true;
+    
+    if (toolsNeedingConfirmation.length > 0 && confirmationCallback) {
+      const pendingCalls: PendingToolCall[] = toolsNeedingConfirmation.map(tc => ({
+        id: tc.id,
+        toolName: tc.toolName,
+        toolArgs: tc.toolArgs,
+        description: getToolSchemaDescription(tc.toolName),
+      }));
+
+      const summary = toolsNeedingConfirmation.length === 1
+        ? `1 action requires confirmation`
+        : `${toolsNeedingConfirmation.length} actions require confirmation`;
+
+      const pendingConfirmation: PendingConfirmation = {
+        toolCalls: pendingCalls,
+        summary,
+      };
+
+      // Wait for user confirmation (single confirmation for all)
+      shouldExecuteConfirmationTools = await confirmationCallback(pendingConfirmation);
+    }
+
+    // Execute all tool calls
+    for (const tc of parsedToolCalls) {
       if (onToolCall) {
-        onToolCall(toolName, toolArgs);
+        onToolCall(tc.toolName, tc.toolArgs);
       }
 
-      // Execute the tool (Via Backend Proxy)
+      const needsConfirmation = TOOLS_REQUIRING_CONFIRMATION.includes(tc.toolName);
+      const shouldExecute = needsConfirmation ? shouldExecuteConfirmationTools : true;
+
       let toolResult;
-      try {
-        toolResult = await executeTool(toolName, toolArgs);
-      } catch (error: any) {
-        toolResult = { error: error.message };
+      
+      if (shouldExecute) {
+        // Execute the tool (Via Backend Proxy)
+        try {
+          toolResult = await executeTool(tc.toolName, tc.toolArgs);
+        } catch (error: any) {
+          toolResult = { error: error.message };
+        }
+      } else {
+        // User cancelled the action
+        toolResult = { 
+          cancelled: true, 
+          message: "Action was cancelled by user" 
+        };
       }
 
       // Add tool result to history
@@ -158,7 +262,7 @@ export const sendMessage = async (
         // @ts-ignore
         role: "tool", 
         content: JSON.stringify(toolResult),
-        tool_call_id: toolCall.id,
+        tool_call_id: tc.id,
       });
     }
 

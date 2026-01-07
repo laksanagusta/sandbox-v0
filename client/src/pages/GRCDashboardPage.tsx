@@ -81,35 +81,33 @@ export default function GRCDashboardPage() {
   const distribution = overviewQuery.data?.data.performance_distribution;
 
   return (
-    <div className="bg-white flex flex-col h-screen overflow-hidden">
-       {/* Header */}
-       <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-semibold text-gray-900">
-              GRC Dashboard
-            </span>
-          </div>
+    <div className="bg-background flex flex-col h-screen overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 h-14 border-b border-border/50 bg-background shrink-0">
+        <div className="flex items-center gap-3">
+
+          <span className="text-sm font-semibold text-foreground">
+            GRC Dashboard
+          </span>
         </div>
         <div className="flex items-center gap-2">
-            {/* Action buttons if needed */}
+          {/* Action buttons if needed */}
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+      <div className="flex-1 overflow-y-auto p-6">
         <div className="w-full space-y-6">
           <Tabs defaultValue="overview" className="space-y-4">
-            <TabsList className="bg-white border p-1 rounded-md mb-2">
+            <TabsList className="bg-muted/50 p-1 rounded-lg">
               <TabsTrigger 
                 value="overview"
-                className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-xs rounded-md"
               >
                 Overview
               </TabsTrigger>
               <TabsTrigger 
                 value="units"
-                className="data-[state=active]:bg-gray-100 data-[state=active]:text-gray-900 text-gray-500"
+                className="data-[state=active]:bg-background data-[state=active]:shadow-xs rounded-md"
               >
                 Unit Analysis
               </TabsTrigger>
@@ -122,34 +120,34 @@ export default function GRCDashboardPage() {
                   title="Total Units"
                   value={stats?.total_units || 0}
                   description="Active Satuan Kerja"
-                  className="shadow-none border border-gray-200"
+                  className="shadow-none border border-border"
                   indicatorColor="bg-blue-600"
                 />
                 <GRCStatisticsCard
                   title="Average Score"
                   value={stats?.average_score?.toFixed(2) || "0.00"}
                   description="National Average"
-                  className="shadow-none border border-gray-200"
+                  className="shadow-none border border-border"
                   indicatorColor="bg-blue-600"
                 />
                 <GRCStatisticsCard
                   title="Median Score"
                   value={stats?.median?.toFixed(2) || "0.00"}
                   description="Median Performance"
-                  className="shadow-none border border-gray-200"
+                  className="shadow-none border border-border"
                   indicatorColor="bg-blue-600"
                 />
                 <GRCStatisticsCard
                   title="Std Deviation"
                   value={stats?.std_deviation?.toFixed(2) || "0.00"}
                   description="Score Variation"
-                  className="shadow-none border border-gray-200"
+                  className="shadow-none border border-border"
                   indicatorColor="bg-purple-600"
                 />
               </div>
 
               {/* Average Score All Units */}
-              <Card className="shadow-none border border-gray-200">
+              <Card className="shadow-none border border-border">
                 <CardHeader>
                   <CardTitle className="text-base font-medium">Average Score by Unit</CardTitle>
                 </CardHeader>
@@ -219,7 +217,7 @@ export default function GRCDashboardPage() {
 
               <div className="grid gap-6 md:grid-cols-2">
                 {/* Performance Distribution Chart */}
-                <Card className="shadow-none border border-gray-200 h-[570px] flex flex-col">
+                <Card className="shadow-none border border-border h-[570px] flex flex-col">
                   <CardHeader>
                     <CardTitle className="text-base font-medium">Performance Distribution</CardTitle>
                   </CardHeader>
@@ -285,17 +283,17 @@ export default function GRCDashboardPage() {
               {/* Weakest Components */}
               <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                     <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wider">Areas for Improvement</h3>
+                     <h3 className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Areas for Improvement</h3>
                   </div>
                   <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                      {overviewQuery.data?.data.weakest_components.map((comp) => (
-                        <Card key={comp.code} className="shadow-none border border-gray-200 bg-white hover:border-gray-300 transition-colors">
+                        <Card key={comp.code} className="shadow-none border border-border bg-card hover:border-border transition-colors">
                           <CardHeader className="pb-2">
                             <div className="flex items-center justify-between">
-                                <CardTitle className="text-sm font-medium text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-1">
+                                <CardTitle className="text-sm font-medium text-foreground group-hover:text-primary transition-colors line-clamp-1">
                                      {comp.name}
                                 </CardTitle>
-                                <span className="text-[10px] font-mono bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded border border-gray-200">
+                                <span className="text-[10px] font-mono bg-muted text-muted-foreground px-1.5 py-0.5 rounded border border-border">
                                     {comp.code}
                                 </span>
                             </div>
@@ -303,16 +301,16 @@ export default function GRCDashboardPage() {
                           <CardContent>
                             <div className="flex justify-between items-end mt-2">
                                 <div>
-                                    <span className="text-2xl font-bold text-gray-900">
+                                    <span className="text-2xl font-bold text-foreground">
                                         {comp.average.toFixed(2)}
                                     </span>
-                                    <span className="text-xs text-gray-500 block">Avg Score</span>
+                                    <span className="text-xs text-muted-foreground block">Avg Score</span>
                                 </div>
                                 <div className="text-right">
                                      <span className="text-base font-semibold text-red-600">
                                         {comp.units_below_80}
                                      </span>
-                                     <span className="text-xs text-gray-500 block">Units &lt; 80</span>
+                                     <span className="text-xs text-muted-foreground block">Units &lt; 80</span>
                                 </div>
                             </div>
                           </CardContent>
@@ -323,7 +321,7 @@ export default function GRCDashboardPage() {
 
               {/* Category Breakdown */}
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-900">Category Breakdown</h3>
+                <h3 className="text-lg font-semibold text-foreground">Category Breakdown</h3>
                 {categoriesQuery.data?.data.categories && (
                   <GRCCategoryBreakdown categories={categoriesQuery.data.data.categories} />
                 )}
@@ -331,20 +329,20 @@ export default function GRCDashboardPage() {
             </TabsContent>
 
             <TabsContent value="units" className="space-y-4">
-              <div className="flex justify-between items-center bg-white p-4 rounded-lg border border-gray-200 shadow-none">
+              <div className="flex justify-between items-center bg-card p-4 rounded-lg border border-border shadow-none">
                  <div className="flex items-center gap-3">
                     <div className="p-2 bg-blue-50 rounded-md">
-                        <Activity className="h-5 w-5 text-blue-600" />
+                        <Activity className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                        <h3 className="font-semibold text-gray-900">Unit Performance List</h3>
-                        <p className="text-sm text-gray-500">View and analyze individual unit performance</p>
+                        <h3 className="font-semibold text-foreground">Unit Performance List</h3>
+                        <p className="text-sm text-muted-foreground">View and analyze individual unit performance</p>
                     </div>
                  </div>
                  <Button 
                     variant="outline" 
                     onClick={() => setHeatmapOpen(true)}
-                    className="border-gray-200 hover:bg-gray-50 text-gray-700 flex items-center gap-2"
+                    className="border-border hover:bg-muted/50 text-foreground flex items-center gap-2"
                  >
                     <BarChart3 className="h-4 w-4" />
                     View Heatmap

@@ -272,34 +272,40 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
   };
 
   return (
-    <div className={`bg-white flex flex-col h-full ${className}`}>
+    <div className={`flex flex-col h-full ${className}`}>
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px]">
-        <div className="flex items-center space-x-4">
-          <span className="text-sm font-semibold text-gray-900">Pending Users</span>
-          <div className="h-4 w-px bg-gray-200" />
-           <div className="relative w-64">
-           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3.5 w-3.5" />
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-card z-10">
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-semibold text-foreground">
+              Pending Users
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Toolbar */}
+      <div className="flex items-center justify-between px-6 pt-4 pb-4">
+        <div className="flex items-center gap-3">
+          <div className="relative w-64">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input
               placeholder="Search user..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8 h-8 text-xs bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+              className="pl-9 h-9 text-sm"
             />
           </div>
-        </div>
-
-        <div className="flex items-center space-x-2 w-full sm:w-auto">
-
         </div>
       </div>
 
       {/* Table */}
-      <div className="w-full flex-1">
-        <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent border-b">
-              <TableHead className="pl-6">
+      <div className="flex-1 px-6 pb-6">
+        <div className="border border-border rounded-lg overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="hover:bg-transparent border-b bg-muted/30">
+                <TableHead className="pl-6">
                 <Button
                   variant="ghost"
                   size="sm"
@@ -417,18 +423,15 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
             )}
           </TableBody>
         </Table>
-      </div>
-
-      {/* Pagination */}
-      {!loading && (
-        <div className="sticky bottom-0 bg-white z-10 flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t gap-4 mt-auto">
-          <div className="text-xs text-muted-foreground order-2 sm:order-1">
-            Showing <strong>{users.length}</strong> of <strong>{pagination.total_count}</strong> requests
-          </div>
-          
-           <div className="flex items-center space-x-6 order-1 sm:order-2">
-               <div className="flex items-center space-x-2">
-                <span className="text-xs text-muted-foreground">Rows per page</span>
+        {/* Pagination inside border container */}
+        {!loading && (
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border">
+            <div className="text-xs text-muted-foreground">
+              Showing <strong>{users.length}</strong> of <strong>{pagination.total_count}</strong> requests
+            </div>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">Show</span>
                 <Select
                   value={limit.toString()}
                   onValueChange={(value) => {
@@ -436,7 +439,7 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
                     setCurrentPage(1);
                   }}
                 >
-                  <SelectTrigger className="h-8 w-[70px]">
+                  <SelectTrigger className="h-7 w-[60px] text-xs">
                     <SelectValue placeholder={limit.toString()} />
                   </SelectTrigger>
                   <SelectContent side="top">
@@ -448,17 +451,18 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
                   </SelectContent>
                 </Select>
               </div>
-
-            {pagination.total_page > 1 && (
-              <Pagination
-                currentPage={pagination.current_page}
-                totalPages={pagination.total_page}
-                onPageChange={handlePageChange}
-              />
-            )}
+              {pagination.total_page > 1 && (
+                <Pagination
+                  currentPage={pagination.current_page}
+                  totalPages={pagination.total_page}
+                  onPageChange={handlePageChange}
+                />
+              )}
+            </div>
           </div>
+        )}
         </div>
-      )}
+      </div>
 
       {/* Confirmation Dialog */}
       <AlertDialog open={!!selectedUser} onOpenChange={(open) => !open && setSelectedUser(null)}>

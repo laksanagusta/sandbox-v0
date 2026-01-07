@@ -106,7 +106,7 @@ const getStatusIcon = (status: string) => {
     case "draft":
       return <AlertCircle className="w-4 h-4 text-yellow-500" />;
     default:
-      return <AlertCircle className="w-4 h-4 text-gray-500" />;
+      return <AlertCircle className="w-4 h-4 text-muted-foreground" />;
   }
 };
 
@@ -127,16 +127,16 @@ const getStatusText = (status: string) => {
 
 const getStatusBadge = (status: string) => {
   const colors = {
-    completed: "bg-green-100 text-green-800",
-    ongoing: "bg-blue-100 text-blue-800",
-    canceled: "bg-red-100 text-red-800",
-    draft: "bg-yellow-100 text-yellow-800",
+    completed: "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+    ongoing: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+    canceled: "bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
+    draft: "bg-yellow-50 text-yellow-700 border border-yellow-200 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-800",
   };
 
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
-        colors[status as keyof typeof colors] || "bg-gray-100 text-gray-800"
+      className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-medium ${
+        colors[status as keyof typeof colors] || "bg-muted text-muted-foreground"
       }`}
     >
       {getStatusIcon(status)}
@@ -144,6 +144,15 @@ const getStatusBadge = (status: string) => {
     </span>
   );
 };
+
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function BusinessTripReportPage() {
   const [startDate, setStartDate] = useState(
@@ -191,10 +200,10 @@ export default function BusinessTripReportPage() {
       <div className="bg-background min-h-screen">
         <div className="mx-auto px-8 py-8">
           <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+            <div className="h-8 bg-border rounded w-1/3"></div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[...Array(8)].map((_, i) => (
-                <div key={i} className="h-32 bg-gray-200 rounded-lg"></div>
+                <div key={i} className="h-32 bg-border rounded-lg"></div>
               ))}
             </div>
           </div>
@@ -205,14 +214,14 @@ export default function BusinessTripReportPage() {
 
   if (error) {
     return (
-      <div className="bg-gray-50/50 min-h-screen">
+      <div className="bg-muted/30 min-h-screen">
         <div className="mx-auto px-8 py-8">
           <div className="text-center">
-            <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            <BarChart3 className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-xl font-semibold text-foreground mb-2">
               Error Loading Dashboard
             </h2>
-            <p className="text-gray-600">
+            <p className="text-muted-foreground">
               Unable to load business trip report data. Please try again later.
             </p>
           </div>
@@ -222,13 +231,12 @@ export default function BusinessTripReportPage() {
   }
 
   return (
-    <div className="bg-white flex flex-col h-screen overflow-hidden">
+    <div className="bg-background flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-card z-10">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-semibold text-gray-900">
+            <span className="text-sm font-semibold text-foreground">
               Business Trip Report
             </span>
           </div>
@@ -238,10 +246,10 @@ export default function BusinessTripReportPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+      <div className="flex-1 overflow-y-auto bg-muted/30 p-6">
         <div className="w-full space-y-6">
           {/* Filter Card */}
-          <Card className="border-border/60 shadow-sm bg-white">
+          <Card className="border-border/60 shadow-xs bg-card">
             <CardContent className="p-4">
               <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
                 <div className="md:col-span-5 space-y-1.5">
@@ -306,16 +314,16 @@ export default function BusinessTripReportPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <Briefcase className="w-5 h-5 text-blue-500" />
                     Total Perjalanan Dinas
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-2xl font-bold text-foreground">
                     {overview.total_business_trips}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Total semua perjalanan
                   </p>
                 </CardContent>
@@ -323,31 +331,31 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <Clock className="w-5 h-5 text-blue-500" />
                     Sedang Berlangsung
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-blue-600">
+                  <div className="text-2xl font-bold text-primary">
                     {overview.ongoing_business_trips}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">Perjalanan aktif</p>
+                  <p className="text-sm text-muted-foreground mt-1">Perjalanan aktif</p>
                 </CardContent>
               </Card>
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <Users className="w-5 h-5 text-green-500" />
                     Total Peserta
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold text-gray-900">
+                  <div className="text-2xl font-bold text-foreground">
                     {overview.total_assignees}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Total pegawai yang terlibat
                   </p>
                 </CardContent>
@@ -355,7 +363,7 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <DollarSign className="w-5 h-5 text-green-500" />
                     Total Biaya
                   </CardTitle>
@@ -364,7 +372,7 @@ export default function BusinessTripReportPage() {
                   <div className="text-2xl font-bold text-green-600">
                     {formatCurrency(overview.total_cost)}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Rata-rata: {formatCurrency(overview.average_cost_per_trip)}
                   </p>
                 </CardContent>
@@ -372,7 +380,7 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-green-500" />
                     Selesai
                   </CardTitle>
@@ -381,7 +389,7 @@ export default function BusinessTripReportPage() {
                   <div className="text-2xl font-bold text-green-600">
                     {overview.completed_business_trips}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Perjalanan selesai
                   </p>
                 </CardContent>
@@ -389,7 +397,7 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <AlertCircle className="w-5 h-5 text-yellow-500" />
                     Draft
                   </CardTitle>
@@ -398,7 +406,7 @@ export default function BusinessTripReportPage() {
                   <div className="text-2xl font-bold text-yellow-600">
                     {overview.draft_business_trips}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Menunggu persetujuan
                   </p>
                 </CardContent>
@@ -406,7 +414,7 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <XCircle className="w-5 h-5 text-red-500" />
                     Dibatalkan
                   </CardTitle>
@@ -415,7 +423,7 @@ export default function BusinessTripReportPage() {
                   <div className="text-2xl font-bold text-red-600">
                     {overview.canceled_business_trips}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     Perjalanan dibatalkan
                   </p>
                 </CardContent>
@@ -423,7 +431,7 @@ export default function BusinessTripReportPage() {
 
               <Card className="bg-card border-border shadow-xs">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium text-gray-600 flex items-center gap-2">
+                  <CardTitle className="text-sm font-medium text-muted-foreground flex items-center gap-2">
                     <TrendingUp className="w-5 h-5 text-purple-500" />
                     Rencana Perjalanan
                   </CardTitle>
@@ -432,7 +440,7 @@ export default function BusinessTripReportPage() {
                   <div className="text-2xl font-bold text-purple-600">
                     {overview.upcoming_business_trps}
                   </div>
-                  <p className="text-sm text-gray-500 mt-1">Akan datang</p>
+                  <p className="text-sm text-muted-foreground mt-1">Akan datang</p>
                 </CardContent>
               </Card>
             </div>
@@ -442,7 +450,7 @@ export default function BusinessTripReportPage() {
             {/* Monthly Statistics */}
             <Card className="bg-card border-border shadow-xs">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-blue-500" />
                   Statistik Bulanan
                 </CardTitle>
@@ -453,22 +461,22 @@ export default function BusinessTripReportPage() {
                     monthlyStats.map((stat: MonthlyStat, index: number) => (
                       <div
                         key={index}
-                        className="border-b border-gray-100 pb-4 last:border-0"
+                        className="border-b border-border/50 pb-4 last:border-0"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <div>
-                            <h4 className="font-medium text-gray-900">
+                            <h4 className="font-medium text-foreground">
                               {stat.month} {stat.year}
                             </h4>
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-muted-foreground">
                               {stat.total_trips} perjalanan
                             </p>
                           </div>
                           <div className="text-right">
-                            <p className="font-semibold text-gray-900">
+                            <p className="font-semibold text-foreground">
                               {formatCurrency(stat.total_cost)}
                             </p>
-                            <p className="text-xs text-gray-500">
+                            <p className="text-xs text-muted-foreground">
                               Rata-rata:{" "}
                               {formatCurrency(stat.average_cost_per_trip)}
                             </p>
@@ -478,12 +486,12 @@ export default function BusinessTripReportPage() {
                           <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
                               <CheckCircle className="w-4 h-4 text-green-500" />
-                              <span className="text-sm text-gray-600">
+                              <span className="text-sm text-muted-foreground">
                                 {stat.completed_trips} selesai
                               </span>
                             </div>
                           </div>
-                          <div className="text-sm text-gray-600">
+                          <div className="text-sm text-muted-foreground">
                             Destinasi teratas:{" "}
                             <span className="font-medium">
                               {stat.top_destination}
@@ -493,7 +501,7 @@ export default function BusinessTripReportPage() {
                       </div>
                     ))
                   ) : (
-                    <p className="text-gray-500 text-center py-4">
+                    <p className="text-muted-foreground text-center py-4">
                       Tidak ada data bulanan tersedia
                     </p>
                   )}
@@ -504,7 +512,7 @@ export default function BusinessTripReportPage() {
             {/* Destination Statistics */}
             <Card className="bg-card border-border shadow-xs">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-green-500" />
                   Statistik Destinasi
                 </CardTitle>
@@ -516,22 +524,22 @@ export default function BusinessTripReportPage() {
                       (stat: DestinationStat, index: number) => (
                         <div
                           key={index}
-                          className="border-b border-gray-100 pb-4 last:border-0"
+                          className="border-b border-border/50 pb-4 last:border-0"
                         >
                           <div className="flex justify-between items-start mb-2">
                             <div>
-                              <h4 className="font-medium text-gray-900">
+                              <h4 className="font-medium text-foreground">
                                 {stat.destination}
                               </h4>
-                              <p className="text-sm text-gray-600">
+                              <p className="text-sm text-muted-foreground">
                                 {stat.total_trips} perjalanan
                               </p>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-gray-900">
+                              <p className="font-semibold text-foreground">
                                 {formatCurrency(stat.total_cost)}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 Rata-rata:{" "}
                                 {formatCurrency(stat.average_cost_per_trip)}
                               </p>
@@ -540,11 +548,11 @@ export default function BusinessTripReportPage() {
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-2">
                               <CheckCircle className="w-4 h-4 text-green-500" />
-                              <span className="text-sm text-gray-600">
+                              <span className="text-sm text-muted-foreground">
                                 {stat.completed_trips} selesai
                               </span>
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-muted-foreground">
                               Terakhir: {formatDate(stat.last_trip_date)}
                             </div>
                           </div>
@@ -552,7 +560,7 @@ export default function BusinessTripReportPage() {
                       )
                     )
                   ) : (
-                    <p className="text-gray-500 text-center py-4">
+                    <p className="text-muted-foreground text-center py-4">
                       Tidak ada data destinasi tersedia
                     </p>
                   )}
@@ -564,85 +572,64 @@ export default function BusinessTripReportPage() {
           {/* Recent Business Trips */}
           <Card className="bg-card border-border shadow-xs">
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
                 <Briefcase className="w-5 h-5 text-purple-500" />
                 Perjalanan Dinas Terkini
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead>
-                    <tr className="border-b border-gray-200">
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                        Nomor
-                      </th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                        Tujuan
-                      </th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                        Tujuan Kegiatan
-                      </th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                        Tanggal
-                      </th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                        Peserta
-                      </th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                        Biaya
-                      </th>
-                      <th className="text-left py-3 px-4 text-sm font-medium text-gray-700">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
+              <div className="border border-border rounded-lg overflow-hidden">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-muted/30 border-b">
+                      <TableHead className="whitespace-nowrap">Nomor</TableHead>
+                      <TableHead className="whitespace-nowrap">Tujuan</TableHead>
+                      <TableHead className="whitespace-nowrap">Tujuan Kegiatan</TableHead>
+                      <TableHead className="whitespace-nowrap">Tanggal</TableHead>
+                      <TableHead className="whitespace-nowrap">Peserta</TableHead>
+                      <TableHead className="whitespace-nowrap">Biaya</TableHead>
+                      <TableHead className="whitespace-nowrap">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
                     {recentTrips.length > 0 ? (
                       recentTrips.map((trip: RecentBusinessTrip) => (
-                        <tr
+                        <TableRow
                           key={trip.id}
-                          className="border-b border-gray-100 hover:bg-gray-50"
+                          className="hover:bg-muted/50 border-b"
                         >
-                          <td className="py-3 px-4 text-sm text-gray-900 font-medium">
+                          <TableCell className="font-medium text-foreground">
                             {trip.business_trip_number}
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-900">
+                          </TableCell>
+                          <TableCell>
                             {trip.destination_city}
-                          </td>
-                          <td
-                            className="py-3 px-4 text-sm text-gray-600 max-w-xs truncate"
-                            title={trip.activity_purpose}
-                          >
+                          </TableCell>
+                          <TableCell className="text-muted-foreground max-w-xs truncate" title={trip.activity_purpose}>
                             {trip.activity_purpose}
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-600">
-                            {formatDate(trip.start_date)} -{" "}
-                            {formatDate(trip.end_date)}
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-600">
+                          </TableCell>
+                          <TableCell className="text-muted-foreground whitespace-nowrap">
+                            {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
+                          </TableCell>
+                          <TableCell className="text-muted-foreground">
                             {trip.assignee_count} orang
-                          </td>
-                          <td className="py-3 px-4 text-sm text-gray-900 font-medium">
+                          </TableCell>
+                          <TableCell className="font-medium text-foreground whitespace-nowrap">
                             {formatCurrency(trip.total_cost)}
-                          </td>
-                          <td className="py-3 px-4">
+                          </TableCell>
+                          <TableCell>
                             {getStatusBadge(trip.status)}
-                          </td>
-                        </tr>
+                          </TableCell>
+                        </TableRow>
                       ))
                     ) : (
-                      <tr>
-                        <td
-                          colSpan={7}
-                          className="py-8 text-center text-gray-500"
-                        >
+                      <TableRow>
+                        <TableCell colSpan={7} className="h-24 text-center">
                           Tidak ada perjalanan dinas ditemukan
-                        </td>
-                      </tr>
+                        </TableCell>
+                      </TableRow>
                     )}
-                  </tbody>
-                </table>
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>

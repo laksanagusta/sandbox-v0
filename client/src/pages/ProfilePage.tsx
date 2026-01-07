@@ -321,7 +321,7 @@ export default function ProfilePage() {
         <div className="w-full mx-auto px-8 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+              <div className="animate-spin rounded-lg h-6 w-6 border-b-2 border-foreground"></div>
               <span>Loading...</span>
             </div>
           </div>
@@ -335,11 +335,11 @@ export default function ProfilePage() {
       <div className="bg-background min-h-screen">
         <div className="w-full mx-auto px-8 py-8">
           <div className="text-center">
-            <User className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-            <h2 className="text-lg font-medium text-gray-900 mb-2">
+            <User className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
+            <h2 className="text-lg font-medium text-foreground mb-2">
               Profile tidak ditemukan
             </h2>
-            <p className="text-gray-500 mb-4">
+            <p className="text-muted-foreground mb-4">
               Profile Anda tidak dapat dimuat
             </p>
           </div>
@@ -360,7 +360,7 @@ export default function ProfilePage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <User className="w-8 h-8 text-gray-600" />
+
               <h1 className="text-2xl font-semibold">Profile Saya</h1>
             </div>
             <div className="flex items-center space-x-2">
@@ -481,7 +481,7 @@ export default function ProfilePage() {
                       disabled
                       type="email"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Email tidak dapat diubah
                     </p>
                   </div>
@@ -497,7 +497,7 @@ export default function ProfilePage() {
                       className="mt-1"
                       disabled
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Hasil dari nama depan + belakang
                     </p>
                   </div>
@@ -507,8 +507,8 @@ export default function ProfilePage() {
                 <div className="border-t pt-4 mt-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <h4 className="font-medium text-gray-900">Keamanan</h4>
-                      <p className="text-sm text-gray-500">Kelola password Anda</p>
+                      <h4 className="font-medium text-foreground">Keamanan</h4>
+                      <p className="text-sm text-muted-foreground">Kelola password Anda</p>
                     </div>
                     <Dialog open={showChangePassword} onOpenChange={setShowChangePassword}>
                       <DialogTrigger asChild>
@@ -548,9 +548,9 @@ export default function ProfilePage() {
                                 }
                               >
                                 {showPasswords.old ? (
-                                  <EyeOff className="h-4 w-4 text-gray-400" />
+                                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                                 ) : (
-                                  <Eye className="h-4 w-4 text-gray-400" />
+                                  <Eye className="h-4 w-4 text-muted-foreground" />
                                 )}
                               </button>
                             </div>
@@ -575,9 +575,9 @@ export default function ProfilePage() {
                                 }
                               >
                                 {showPasswords.new ? (
-                                  <EyeOff className="h-4 w-4 text-gray-400" />
+                                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                                 ) : (
-                                  <Eye className="h-4 w-4 text-gray-400" />
+                                  <Eye className="h-4 w-4 text-muted-foreground" />
                                 )}
                               </button>
                             </div>
@@ -602,9 +602,9 @@ export default function ProfilePage() {
                                 }
                               >
                                 {showPasswords.confirm ? (
-                                  <EyeOff className="h-4 w-4 text-gray-400" />
+                                  <EyeOff className="h-4 w-4 text-muted-foreground" />
                                 ) : (
-                                  <Eye className="h-4 w-4 text-gray-400" />
+                                  <Eye className="h-4 w-4 text-muted-foreground" />
                                 )}
                               </button>
                             </div>
@@ -668,12 +668,12 @@ export default function ProfilePage() {
                       <div key={role.uuid} className="space-y-3 border rounded-lg p-4">
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-200">
+                            <Badge className="bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800 hover:bg-purple-200">
                               {role.name}
                             </Badge>
                           </div>
                           {role.description && (
-                            <p className="text-sm text-gray-600">
+                            <p className="text-sm text-muted-foreground">
                               {role.description}
                             </p>
                           )}
@@ -681,7 +681,7 @@ export default function ProfilePage() {
                         
                         {role.permissions && role.permissions.length > 0 && (
                           <div className="border-t pt-3">
-                            <p className="text-xs font-medium text-gray-500 mb-2">Permissions:</p>
+                            <p className="text-xs font-medium text-muted-foreground mb-2">Permissions:</p>
                             <div className="flex flex-wrap gap-2">
                               {role.permissions.map((permission: Permission) => (
                                 <Badge 
@@ -701,8 +701,8 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <Shield className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-                    <p className="text-gray-500 text-sm">
+                    <Shield className="mx-auto h-8 w-8 text-muted-foreground/50 mb-2" />
+                    <p className="text-muted-foreground text-sm">
                       Tidak ada role yang ditetapkan
                     </p>
                   </div>
@@ -720,15 +720,15 @@ export default function ProfilePage() {
               <CardContent>
                 {profile.organization ? (
                   <div className="flex items-center space-x-2">
-                    <Building className="w-4 h-4 text-gray-500" />
+                    <Building className="w-4 h-4 text-muted-foreground" />
                     <p className="font-medium">
                       {profile.organization.name}
                     </p>
                   </div>
                 ) : (
                   <div className="text-center py-4">
-                    <Building className="mx-auto h-8 w-8 text-gray-300 mb-2" />
-                    <p className="text-gray-500 text-sm">
+                    <Building className="mx-auto h-8 w-8 text-muted-foreground/50 mb-2" />
+                    <p className="text-muted-foreground text-sm">
                       Tidak ada organisasi yang ditetapkan
                     </p>
                   </div>

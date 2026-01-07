@@ -200,7 +200,7 @@ export default function UploadForm({ onUploaded }: UploadFormProps) {
         >
           {uploading ? (
             <>
-              <span className="inline-block w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-full animate-spin" />
+              <span className="inline-block w-4 h-4 border-2 border-primary-foreground border-t-transparent rounded-lg animate-spin" />
               Mengupload...
             </>
           ) : (

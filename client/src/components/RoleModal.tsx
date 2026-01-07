@@ -294,7 +294,7 @@ export function RoleModal({
                           >
                             {perm ? perm.name : id.substring(0, 8) + "..."}
                             <div
-                              className="cursor-pointer ml-1 rounded-full hover:bg-destructive hover:text-destructive-foreground p-0.5"
+                              className="cursor-pointer ml-1 rounded-lg hover:bg-destructive hover:text-destructive-foreground p-0.5"
                               onClick={(e) => {
                                 e.stopPropagation();
                                 togglePermission(id);

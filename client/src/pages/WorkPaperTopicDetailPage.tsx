@@ -292,12 +292,12 @@ export default function WorkPaperTopicDetailPage() {
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+      return <ArrowUpDown className="w-4 h-4 text-muted-foreground" />;
     }
     return sortOrder === "asc" ? (
-      <ArrowUp className="w-4 h-4 text-blue-600" />
+      <ArrowUp className="w-4 h-4 text-primary" />
     ) : (
-      <ArrowDown className="w-4 h-4 text-blue-600" />
+      <ArrowDown className="w-4 h-4 text-primary" />
     );
   };
 
@@ -308,9 +308,9 @@ export default function WorkPaperTopicDetailPage() {
       C: { bg: "bg-purple-100", text: "text-purple-800", label: "Type C" },
       Q: { bg: "bg-orange-100", text: "text-orange-800", label: "Type Q" },
     };
-    const config = typeConfig[type] || { bg: "bg-gray-100", text: "text-gray-800", label: `Type ${type}` };
+    const config = typeConfig[type] || { bg: "bg-muted", text: "text-foreground", label: `Type ${type}` };
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+      <span className={`px-2 py-1 rounded-lg text-xs font-medium ${config.bg} ${config.text}`}>
         {config.label}
       </span>
     );
@@ -614,10 +614,10 @@ export default function WorkPaperTopicDetailPage() {
 
   if (loadingTopic) {
     return (
-      <div className="bg-white flex flex-col h-screen overflow-hidden">
+      <div className="bg-background flex flex-col h-screen overflow-hidden">
         <div className="flex items-center justify-center flex-1">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p>Memuat data...</p>
           </div>
         </div>
@@ -627,11 +627,11 @@ export default function WorkPaperTopicDetailPage() {
 
   if (!topic) {
     return (
-      <div className="bg-white flex flex-col h-screen overflow-hidden">
+      <div className="bg-background flex flex-col h-screen overflow-hidden">
         <div className="flex items-center justify-center flex-1">
           <div className="text-center">
-            <Tag className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500">Topic tidak ditemukan</p>
+            <Tag className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+            <p className="text-muted-foreground">Topic tidak ditemukan</p>
           </div>
         </div>
       </div>
@@ -639,25 +639,24 @@ export default function WorkPaperTopicDetailPage() {
   }
 
   return (
-    <div className="bg-white flex flex-col h-screen overflow-hidden">
+    <div className="bg-background flex flex-col h-screen overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-card z-10">
         <div className="flex items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setLocation("/work-paper-topics")}
-            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900 flex items-center gap-2"
+            className="p-0 h-auto hover:bg-transparent text-muted-foreground hover:text-foreground flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
-          <div className="h-4 w-px bg-gray-200" />
+          <div className="h-4 w-px bg-border" />
 
           <div className="flex items-center gap-2">
-            <Tag className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-semibold text-gray-900">
+            <span className="text-sm font-semibold text-foreground">
               {topic.name}
             </span>
           </div>
@@ -665,8 +664,8 @@ export default function WorkPaperTopicDetailPage() {
           <Badge
             className={`${
               topic.is_active
-                ? "bg-green-100 text-green-800"
-                : "bg-gray-100 text-gray-800"
+                ? "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800"
+                : "bg-muted text-muted-foreground"
             } border-0`}
           >
             {topic.is_active ? "Active" : "Inactive"}
@@ -677,7 +676,7 @@ export default function WorkPaperTopicDetailPage() {
           <Button
             onClick={handleCreateItem}
             size="sm"
-            className="h-8 text-xs bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
+            className="h-9 text-sm bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2"
           >
             <Plus className="w-3.5 h-3.5" />
             Add Item
@@ -686,7 +685,7 @@ export default function WorkPaperTopicDetailPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto bg-gray-50/50">
+      <div className="flex-1 overflow-y-auto bg-muted/30">
         {/* Topic Info Card */}
         <div className="p-6 pb-4">
           <Card>
@@ -700,7 +699,7 @@ export default function WorkPaperTopicDetailPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="topic-name" className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 block">
+                    <Label htmlFor="topic-name" className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block">
                       Nama Topic <span className="text-red-500">*</span>
                     </Label>
                     <Input
@@ -712,7 +711,7 @@ export default function WorkPaperTopicDetailPage() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="is-active" className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 block">
+                    <Label htmlFor="is-active" className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block">
                       Status
                     </Label>
                     <div className="flex items-center gap-2 mt-2">
@@ -729,7 +728,7 @@ export default function WorkPaperTopicDetailPage() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="topic-desc" className="text-xs font-medium text-gray-500 uppercase tracking-wider mb-1.5 block">
+                  <Label htmlFor="topic-desc" className="text-xs font-medium text-muted-foreground uppercase tracking-wider mb-1.5 block">
                     Description
                   </Label>
                   <Textarea
@@ -740,13 +739,13 @@ export default function WorkPaperTopicDetailPage() {
                     rows={4}
                     className="resize-none"
                   />
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Deskripsi ini akan membantu memberikan konteks pada penggunaan topic.
                   </p>
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="bg-gray-50/50 border-t py-3 flex justify-end">
+            <CardFooter className="bg-muted/30 border-t py-3 flex justify-end">
               <Button 
                 onClick={handleSaveTopic} 
                 disabled={saving || !isDirty} 
@@ -788,16 +787,16 @@ export default function WorkPaperTopicDetailPage() {
             <CardContent>
               <div className="space-y-4">
                 {topic.template_path ? (
-                  <div className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg shadow-sm">
+                  <div className="flex items-center justify-between p-4 bg-card border border-border rounded-lg shadow-xs">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-primary/10 rounded-lg">
                         <FileSpreadsheet className="w-6 h-6 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-foreground">
                           {topic.template_path.split('/').pop()}
                         </p>
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-muted-foreground">
                           Version {topic.template_version}
                         </p>
                       </div>
@@ -811,9 +810,9 @@ export default function WorkPaperTopicDetailPage() {
                         className="h-8 border-primary/20 text-primary hover:bg-primary/10 hover:text-primary"
                       >
                         {downloadingTemplate ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (
-                          <Download className="h-3.5 w-3.5" />
+                          <Download className="h-4 w-4" />
                         )}
                         <span className="ml-2">Download</span>
                       </Button>
@@ -829,15 +828,15 @@ export default function WorkPaperTopicDetailPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-center p-8 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg hover:bg-gray-100/50 transition-colors">
+                  <div className="flex items-center justify-center p-8 bg-muted/50 border-2 border-dashed border-border rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="text-center max-w-sm">
-                      <div className="bg-white p-3 rounded-full shadow-sm inline-block mb-3">
-                        <FileSpreadsheet className="mx-auto h-8 w-8 text-gray-400" />
+                      <div className="bg-card p-3 rounded-lg shadow-xs inline-block mb-3">
+                        <FileSpreadsheet className="mx-auto h-8 w-8 text-muted-foreground" />
                       </div>
-                      <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                      <h3 className="text-sm font-semibold text-foreground mb-1">
                         Belum ada template referensi
                       </h3>
-                      <p className="text-xs text-gray-500 mb-4 px-4 leading-relaxed">
+                      <p className="text-xs text-muted-foreground mb-4 px-4 leading-relaxed">
                         Upload file Excel (.xlsx) yang sudah diformat sebagai acuan baku bagi auditor saat mengerjakan kertas kerja topik ini.
                       </p>
                     </div>
@@ -846,17 +845,17 @@ export default function WorkPaperTopicDetailPage() {
 
                 {/* Upload Section */}
                 <div className="pt-2 border-t mt-4">
-                  <Label htmlFor="template-upload" className="flex justify-between items-center text-xs font-medium text-gray-500 uppercase tracking-wider mb-3">
+                  <Label htmlFor="template-upload" className="flex justify-between items-center text-xs font-medium text-muted-foreground uppercase tracking-wider mb-3">
                     <span>{topic.template_path ? "Perbarui File Template" : "Upload File"}</span>
-                    {topic.template_path && <span className="text-xs text-gray-400 font-normal">File sebelumnya akan ditimpa</span>}
+                    {topic.template_path && <span className="text-xs text-muted-foreground font-normal">File sebelumnya akan ditimpa</span>}
                   </Label>
                   <div className="mt-2">
                     <label
                       htmlFor="template-upload"
                       className={`flex items-center justify-center w-full px-4 py-3 border border-dashed rounded-lg cursor-pointer transition-all ${
                         uploadingTemplate
-                          ? "bg-gray-50 border-gray-300 cursor-not-allowed"
-                          : "border-gray-300 hover:bg-primary/5 hover:border-primary/30"
+                          ? "bg-muted/50 border-border cursor-not-allowed"
+                          : "border-border hover:bg-primary/5 hover:border-primary/30"
                       }`}
                     >
                       {uploadingTemplate ? (
@@ -882,7 +881,7 @@ export default function WorkPaperTopicDetailPage() {
                       className="hidden"
                     />
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">Maksimal 10MB, format .xlsx atau .xls</p>
+                  <p className="text-xs text-muted-foreground mt-1">Maksimal 10MB, format .xlsx atau .xls</p>
                 </div>
               </div>
             </CardContent>
@@ -892,8 +891,8 @@ export default function WorkPaperTopicDetailPage() {
         {/* Items Table */}
         <div className="px-6 pb-6 mt-8">
           <div className="mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Struktur Operasional</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="text-lg font-semibold text-foreground">Struktur Operasional</h2>
+            <p className="text-sm text-muted-foreground">
               Bagian ini mengatur logika dan item penilaian sebenarnya yang akan muncul di sistem.
             </p>
           </div>
@@ -910,12 +909,12 @@ export default function WorkPaperTopicDetailPage() {
                 </CardTitle>
                 <div className="flex items-center space-x-2">
                   <div className="relative w-64">
-                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 h-3.5 w-3.5" />
+                    <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                     <Input
                       placeholder="Search items..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-8 h-8 text-xs bg-gray-50 border-gray-200 focus:bg-white transition-colors"
+                      className="pl-8 h-9 text-sm bg-muted/50 border-border focus:bg-card transition-colors"
                     />
                   </div>
 
@@ -990,15 +989,15 @@ export default function WorkPaperTopicDetailPage() {
                     <TableRow>
                       <TableCell colSpan={7} className="text-center py-8">
                         <div className="flex items-center justify-center space-x-2">
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-900"></div>
+                          <div className="animate-spin rounded-lg h-4 w-4 border-b-2 border-foreground"></div>
                           <span>Loading...</span>
                         </div>
                       </TableCell>
                     </TableRow>
                   ) : items.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                        <FileText className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                        <FileText className="mx-auto h-12 w-12 text-muted-foreground/50 mb-2" />
                         <p>Belum ada items untuk topic ini</p>
                         <Button
                           onClick={handleCreateItem}
@@ -1016,8 +1015,8 @@ export default function WorkPaperTopicDetailPage() {
 
                       <TableRow
                         key={item.id}
-                        className={`group hover:bg-gray-50/80 cursor-pointer transition-colors border-b ${
-                          draggedItem?.id === item.id ? "opacity-50 bg-gray-50" : ""
+                        className={`group hover:bg-muted/50/80 cursor-pointer transition-colors border-b ${
+                          draggedItem?.id === item.id ? "opacity-50 bg-muted/50" : ""
                         }`}
                         onClick={() => handleEditItem(item)}
                         draggable={sortField === "sequence"}
@@ -1029,16 +1028,16 @@ export default function WorkPaperTopicDetailPage() {
                         <TableCell className="w-[50px] text-center">
                           {sortField === "sequence" && (
                             <div 
-                              className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-200 inline-block"
+                              className="cursor-grab active:cursor-grabbing p-1 rounded hover:bg-border inline-block"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <GripVertical className="h-4 w-4 text-gray-400" />
+                              <GripVertical className="h-4 w-4 text-muted-foreground" />
                             </div>
                           )}
                         </TableCell>
                         <TableCell className="pl-6">
                           <div className="flex items-center space-x-2">
-                            {item.parent_id && <ChevronRight className="h-3 w-3 text-gray-400" />}
+                            {item.parent_id && <ChevronRight className="h-3 w-3 text-muted-foreground" />}
                             <span className="text-sm font-medium">{item.number}</span>
                           </div>
                         </TableCell>
@@ -1051,8 +1050,8 @@ export default function WorkPaperTopicDetailPage() {
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
-                            <User className="h-4 w-4 text-gray-500" />
-                            <span className="text-xs text-gray-500">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
                               {formatDateTime(item.created_at)}
                             </span>
                           </div>
@@ -1060,13 +1059,13 @@ export default function WorkPaperTopicDetailPage() {
                         <TableCell>
                           {item.expected_folder_name ? (
                             <div className="flex items-center gap-1.5">
-                              <FolderOpen className="h-3.5 w-3.5 text-amber-600" />
-                              <span className="text-xs font-mono text-gray-700">
+                              <FolderOpen className="h-4 w-4 text-amber-600" />
+                              <span className="text-xs font-mono text-foreground">
                                 {item.expected_folder_name}
                               </span>
                             </div>
                           ) : (
-                            <span className="text-xs text-gray-400">-</span>
+                            <span className="text-xs text-muted-foreground">-</span>
                           )}
                         </TableCell>
                       </TableRow>
@@ -1205,7 +1204,7 @@ export default function WorkPaperTopicDetailPage() {
             </div>
             <div className="grid gap-2">
               <Label htmlFor="item_expected_folder_name" className="flex items-center gap-1.5">
-                <FolderOpen className="h-3.5 w-3.5 text-amber-600" />
+                <FolderOpen className="h-4 w-4 text-amber-600" />
                 Expected Folder Name
               </Label>
               <Input
@@ -1217,7 +1216,7 @@ export default function WorkPaperTopicDetailPage() {
                 placeholder="Eksistensi_LK"
                 className="font-mono"
               />
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-muted-foreground">
                 Nama folder di Google Drive yang akan di-match saat sync
               </p>
             </div>

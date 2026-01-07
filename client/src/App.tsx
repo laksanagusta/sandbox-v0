@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { queryClient } from "./lib/queryClient";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
+import { TopBar } from "@/components/TopBar";
 import KwitansiPage from "@/pages/KwitansiPage";
 import BusinessTripListPage from "@/pages/BusinessTripListPage";
 import WorkPaperListPage from "@/pages/WorkPaperListPage";
@@ -54,12 +55,15 @@ function AuthenticatedLayout() {
 
   return (
     <SidebarProvider style={style as React.CSSProperties}>
-      <div className="flex h-screen w-full bg-gray-50/50">
-        <AppSidebar />
-        <div className="flex flex-col flex-1 min-w-0">
-
-          <main className="flex-1 overflow-auto">
-            <div className="w-full space-y-6 animate-in fade-in duration-500 slide-in-from-bottom-4">
+      <div className="flex flex-col h-screen w-full">
+        {/* Global TopBar */}
+        <TopBar />
+        
+        {/* Main layout with sidebar and content */}
+        <div className="flex flex-1 min-h-0 bg-sidebar">
+          <AppSidebar />
+          <div className="flex flex-col flex-1 min-w-0 pb-2 pr-2">
+            <main className="flex-1 overflow-auto bg-background rounded-xl border border-border/50">
               <Switch>
                 <Route path="/kwitansi" component={KwitansiPage} />
                 <Route path="/kwitansi/:id" component={KwitansiPage} />
@@ -93,13 +97,16 @@ function AuthenticatedLayout() {
                 <Route path="/mcp-agent" component={McpClientPage} />
                 <Route component={NotFound} />
               </Switch>
-            </div>
-          </main>
+            </main>
+          </div>
         </div>
       </div>
     </SidebarProvider>
   );
 }
+
+
+
 
 export default function App() {
   return (

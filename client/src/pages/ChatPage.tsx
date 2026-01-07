@@ -112,7 +112,7 @@ const ChatMessageBubble = ({
     >
       <div
         className={cn(
-          "shrink-0 w-8 h-8 rounded-full flex items-center justify-center",
+          "shrink-0 w-8 h-8 rounded-lg flex items-center justify-center",
           isUser
             ? "bg-primary text-primary-foreground"
             : "bg-gradient-to-br from-violet-500 to-purple-600 text-white"
@@ -128,18 +128,18 @@ const ChatMessageBubble = ({
             "rounded-2xl px-4 py-2.5",
             isUser
               ? "bg-primary text-primary-foreground rounded-tr-md"
-              : "bg-card border border-border shadow-sm rounded-tl-md"
+              : "bg-card border border-border shadow-xs rounded-tl-md"
           )}
         >
           {isTyping ? (
             <div className="flex gap-1.5 py-1">
-              <span className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce" />
+              <span className="w-2 h-2 bg-muted-foreground/60 rounded-lg animate-bounce" />
               <span
-                className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"
+                className="w-2 h-2 bg-muted-foreground/60 rounded-lg animate-bounce"
                 style={{ animationDelay: "0.1s" }}
               />
               <span
-                className="w-2 h-2 bg-muted-foreground/60 rounded-full animate-bounce"
+                className="w-2 h-2 bg-muted-foreground/60 rounded-lg animate-bounce"
                 style={{ animationDelay: "0.2s" }}
               />
             </div>
@@ -190,7 +190,7 @@ const EmptyState = ({
   action?: React.ReactNode;
 }) => (
   <div className="flex flex-col items-center justify-center h-full text-center p-8">
-    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+    <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center mb-4">
       <Icon className="w-8 h-8 text-muted-foreground" />
     </div>
     <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
@@ -389,14 +389,14 @@ export default function ChatPage() {
   }, [messages]);
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-full bg-background">
       {/* Sidebar - Chat Sessions */}
       <div className="w-72 border-r border-border bg-card flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-border">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-sm font-semibold text-foreground flex items-center gap-2">
-              <MessageSquare className="w-4 h-4" />
+
               Chat Sessions
             </h2>
             <Button 
@@ -445,7 +445,7 @@ export default function ChatPage() {
                   className={cn(
                     "group flex flex-col gap-1.5 p-3 rounded-lg cursor-pointer transition-all border",
                     selectedSession?.id === session.id
-                      ? "bg-primary/5 border-primary/20 shadow-sm"
+                      ? "bg-primary/5 border-primary/20 shadow-xs"
                       : "bg-transparent border-transparent hover:bg-muted/50"
                   )}
                   onClick={() => setSelectedSession(session)}
@@ -537,7 +537,7 @@ export default function ChatPage() {
                       i % 2 === 0 ? "flex-row-reverse" : "flex-row"
                     )}
                   >
-                    <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+                    <Skeleton className="w-8 h-8 rounded-lg shrink-0" />
                     <Skeleton className="h-16 w-64" />
                   </div>
                 ))}

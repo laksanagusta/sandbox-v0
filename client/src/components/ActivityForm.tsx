@@ -53,11 +53,11 @@ export default function ActivityForm({
             type="text"
             value={activity.businessTripNumber || ""}
             disabled
-            className="w-full bg-gray-50 text-gray-700 font-mono"
+            className="w-full bg-muted/50 text-foreground font-mono"
             placeholder="BT-0000"
             data-testid="input-business-trip-number"
           />
-          <p className="text-xs text-gray-500">Nomor business trip digenerate otomatis oleh sistem</p>
+          <p className="text-xs text-muted-foreground">Nomor business trip digenerate otomatis oleh sistem</p>
         </div>
 
         <div className="space-y-2">
@@ -70,7 +70,7 @@ export default function ActivityForm({
             value={activity.assignmentLetterNumber || ""}
             onChange={(e) => handleChange("assignmentLetterNumber", e.target.value)}
             disabled={disabled}
-            className="w-full bg-white text-gray-700 font-mono"
+            className="w-full bg-card text-foreground font-mono"
             placeholder="ST-0000"
             data-testid="input-assignment-letter-number"
           />
@@ -284,7 +284,7 @@ export default function ActivityForm({
         )}
         {activity.documentLink && (
           <div className="flex items-center space-x-2">
-            <span className="text-sm text-blue-600 hover:text-blue-800">
+            <span className="text-sm text-primary hover:text-blue-800">
               <a
                 href={activity.documentLink}
                 target="_blank"

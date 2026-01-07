@@ -49,9 +49,9 @@ export function TopicSelector({
 
   if (loading) {
     return (
-      <div className={`flex items-center space-x-2 h-10 px-3 py-2 border rounded-md bg-gray-50 ${className}`}>
-        <Loader2 className="h-4 w-4 animate-spin text-gray-400" />
-        <span className="text-sm text-gray-500">Loading topics...</span>
+      <div className={`flex items-center space-x-2 h-10 px-3 py-2 border rounded-md bg-muted/50 ${className}`}>
+        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        <span className="text-sm text-muted-foreground">Loading topics...</span>
       </div>
     );
   }
@@ -84,7 +84,7 @@ export function TopicSelector({
             <div className="flex flex-col">
               <span>{topic.name}</span>
               {topic.description && (
-                <span className="text-xs text-gray-500 truncate max-w-[200px]">
+                <span className="text-xs text-muted-foreground truncate max-w-[200px]">
                   {topic.description}
                 </span>
               )}

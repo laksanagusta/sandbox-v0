@@ -177,7 +177,7 @@ const FileUploadZone = ({
       {isUploading ? (
         <div className="space-y-3">
           <Loader2 className="w-8 h-8 mx-auto text-primary animate-spin" />
-          <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-muted rounded-lg h-2 overflow-hidden">
             <div
               className="bg-primary h-full transition-all duration-300"
               style={{ width: `${uploadProgress}%` }}
@@ -215,7 +215,7 @@ const EmptyState = ({
   action?: React.ReactNode;
 }) => (
   <div className="flex flex-col items-center justify-center h-64 text-center p-8">
-    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4">
+    <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center mb-4">
       <Icon className="w-8 h-8 text-muted-foreground" />
     </div>
     <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
@@ -469,16 +469,16 @@ export default function KnowledgeBaseManagementPage() {
   // If not Super Admin, show unauthorized message
   if (!isSuperAdmin) {
     return (
-      <div className="bg-white flex flex-col h-screen overflow-hidden">
-        <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+      <div className="bg-background flex flex-col h-screen overflow-hidden">
+        <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-card z-10">
           <div className="flex items-center space-x-2">
-            <Database className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-semibold text-gray-900">
+
+            <span className="text-sm font-semibold text-foreground">
               Knowledge Base Management
             </span>
           </div>
         </div>
-        <div className="flex-1 overflow-y-auto bg-gray-50/50">
+        <div className="flex-1 overflow-y-auto bg-muted/30">
           <EmptyState
             icon={Database}
             title="Access Restricted"
@@ -495,18 +495,18 @@ export default function KnowledgeBaseManagementPage() {
   }
 
   return (
-    <div className="bg-white flex flex-col h-screen overflow-hidden">
+    <div className="bg-background flex flex-col h-screen overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-card z-10">
         <div className="flex items-center space-x-2">
-          <Database className="w-4 h-4 text-gray-500" />
-          <span className="text-sm font-semibold text-gray-900">
+
+          <span className="text-sm font-semibold text-foreground">
             Knowledge Base Management
           </span>
         </div>
         <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
           <DialogTrigger asChild>
-            <Button className="gap-2">
+            <Button className="gap-2" variant="outline">
               <Plus className="w-4 h-4" />
               Create Knowledge Base
             </Button>
@@ -555,7 +555,7 @@ export default function KnowledgeBaseManagementPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+      <div className="flex-1 overflow-y-auto bg-muted/30 p-6">
         {isLoadingKBs ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (

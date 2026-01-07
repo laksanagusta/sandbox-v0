@@ -176,13 +176,13 @@ export function SourceFolderConfig({
     <Card className="border-blue-100 bg-gradient-to-br from-blue-50/50 to-indigo-50/30">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <FolderOpen className="w-5 h-5 text-blue-600" />
+          <FolderOpen className="w-5 h-5 text-primary" />
           <span>Google Drive Source Folder</span>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="source-folder-link" className="text-sm font-medium text-gray-700">
+          <Label htmlFor="source-folder-link" className="text-sm font-medium text-foreground">
             Folder Link
           </Label>
           <div className="flex gap-2">
@@ -236,12 +236,12 @@ export function SourceFolderConfig({
         </div>
 
         <div className="flex items-center justify-between pt-2 border-t border-blue-100">
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Info className="w-4 h-4 text-blue-500" />
             {lastFolderSyncAt ? (
               <span>Terakhir sync: {formatDateTime(lastFolderSyncAt)}</span>
             ) : (
-              <span className="text-gray-400">Belum pernah di-sync</span>
+              <span className="text-muted-foreground">Belum pernah di-sync</span>
             )}
           </div>
           <div className="flex items-center gap-2">
@@ -250,7 +250,7 @@ export function SourceFolderConfig({
                 variant="ghost"
                 size="sm"
                 onClick={() => window.open(sourceFolderLink, "_blank")}
-                className="text-gray-600 hover:text-blue-600"
+                className="text-muted-foreground hover:text-primary"
               >
                 <ExternalLink className="w-4 h-4 mr-1" />
                 <span>Open Folder</span>

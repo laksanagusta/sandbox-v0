@@ -241,20 +241,20 @@ export function ClickUpCalendar({
           {monthOffset === 0 && (
             <button
               onClick={goToPreviousMonth}
-              className="absolute left-4 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="absolute left-4 p-1.5 rounded-lg hover:bg-muted dark:hover:bg-gray-800 transition-colors"
             >
-              <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <ChevronLeft className="w-5 h-5 text-muted-foreground dark:text-muted-foreground" />
             </button>
           )}
-          <span className="text-base font-semibold text-gray-900 dark:text-white">
+          <span className="text-base font-semibold text-foreground dark:text-white">
             {format(monthDate, "MMMM yyyy", { locale: id })}
           </span>
           {monthOffset === numberOfMonths - 1 && (
             <button
               onClick={goToNextMonth}
-              className="absolute right-4 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+              className="absolute right-4 p-1.5 rounded-lg hover:bg-muted dark:hover:bg-gray-800 transition-colors"
             >
-              <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <ChevronRight className="w-5 h-5 text-muted-foreground dark:text-muted-foreground" />
             </button>
           )}
         </div>
@@ -264,7 +264,7 @@ export function ClickUpCalendar({
           {DAYS_OF_WEEK.map((day) => (
             <div
               key={day}
-              className="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-2"
+              className="text-center text-xs font-medium text-muted-foreground dark:text-muted-foreground py-2"
             >
               {day}
             </div>
@@ -303,17 +303,17 @@ export function ClickUpCalendar({
                   onMouseLeave={() => setHoverDate(null)}
                   disabled={!isCurrentMonth}
                   className={cn(
-                    "relative z-10 w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-all duration-150",
+                    "relative z-10 w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-150",
                     // Base states
-                    !isCurrentMonth && "text-gray-300 dark:text-gray-600 cursor-not-allowed",
-                    isCurrentMonth && "text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900/50 cursor-pointer",
+                    !isCurrentMonth && "text-muted-foreground/50 dark:text-muted-foreground cursor-not-allowed",
+                    isCurrentMonth && "text-foreground dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900/50 cursor-pointer",
                     // Today indicator
                     isTodayDate && !isSelectedDay && "ring-2 ring-blue-500 ring-inset",
                     // Selected day
                     isSelectedDay && "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600",
                     // Range start/end rounded
-                    isStart && "rounded-full",
-                    isEnd && "rounded-full"
+                    isStart && "rounded-lg",
+                    isEnd && "rounded-lg"
                   )}
                 >
                   {format(day, "d")}
@@ -333,14 +333,14 @@ export function ClickUpCalendar({
   return (
     <div
       className={cn(
-        "bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden",
+        "bg-card dark:bg-gray-900 rounded-xl shadow-xl border border-border dark:border-gray-700 overflow-hidden",
         className
       )}
     >
       <div className="flex">
         {/* Quick Selectors Sidebar */}
         {showQuickSelectors && (
-          <div className="w-44 border-r border-gray-200 dark:border-gray-700 p-3 bg-gray-50 dark:bg-gray-800/50">
+          <div className="w-44 border-r border-border dark:border-gray-700 p-3 bg-muted/50 dark:bg-gray-800/50">
             <div className="space-y-1">
               {quickSelectors.map((selector, idx) => (
                 <button
@@ -348,7 +348,7 @@ export function ClickUpCalendar({
                   onClick={() => handleQuickSelect(selector)}
                   className={cn(
                     "w-full text-left px-3 py-2 text-sm rounded-lg transition-all duration-150",
-                    "text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:text-blue-700 dark:hover:text-blue-300",
+                    "text-foreground dark:text-muted-foreground/50 hover:bg-blue-100 dark:hover:bg-blue-900/50 hover:text-blue-700 dark:hover:text-blue-300",
                     // Active state (optional, could compare with current selection)
                   )}
                 >
@@ -366,7 +366,7 @@ export function ClickUpCalendar({
               <React.Fragment key={i}>
                 {renderMonth(i)}
                 {i < numberOfMonths - 1 && (
-                  <div className="w-px bg-gray-200 dark:bg-gray-700 self-stretch my-4" />
+                  <div className="w-px bg-border dark:bg-gray-700 self-stretch my-4" />
                 )}
               </React.Fragment>
             ))}
@@ -374,17 +374,17 @@ export function ClickUpCalendar({
 
           {/* Footer with selected range display and helper text */}
           {mode === "range" && (
-            <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="mt-4 pt-4 border-t border-border dark:border-gray-700 flex items-center justify-between">
+              <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                 {pendingRange ? (
                   <>
-                    <span className="font-medium text-gray-900 dark:text-white">
+                    <span className="font-medium text-foreground dark:text-white">
                       {format(pendingRange.from, "d MMM yyyy", { locale: id })}
                     </span>
                     <span className="mx-2">→</span>
                     <span className={cn(
                       "font-medium",
-                      isSelectingEnd ? "text-blue-600 dark:text-blue-400" : "text-gray-900 dark:text-white"
+                      isSelectingEnd ? "text-primary dark:text-blue-400" : "text-foreground dark:text-white"
                     )}>
                       {isSelectingEnd && isSameDay(pendingRange.from, pendingRange.to)
                         ? "Pilih tanggal akhir"
@@ -393,12 +393,12 @@ export function ClickUpCalendar({
                     </span>
                   </>
                 ) : (
-                  <span className="text-gray-500">Pilih tanggal mulai</span>
+                  <span className="text-muted-foreground">Pilih tanggal mulai</span>
                 )}
               </div>
               {/* Helper text for current state */}
               {isSelectingEnd && (
-                <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                <span className="text-xs text-primary dark:text-blue-400 font-medium">
                   Klik tanggal akhir untuk menerapkan filter
                 </span>
               )}
@@ -463,12 +463,12 @@ export function ClickUpDatePicker({
   return (
     <div
       className={cn(
-        "bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden w-[320px]",
+        "bg-card dark:bg-gray-900 rounded-xl shadow-xl border border-border dark:border-gray-700 overflow-hidden w-[320px]",
         className
       )}
     >
       {/* Quick Date Selectors */}
-      <div className="flex gap-2 p-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+      <div className="flex gap-2 p-3 border-b border-border dark:border-gray-700 bg-muted/50 dark:bg-gray-800/50">
         {quickDates.map((item) => (
           <button
             key={item.label}
@@ -477,7 +477,7 @@ export function ClickUpDatePicker({
               "flex-1 px-3 py-1.5 text-xs font-medium rounded-lg transition-all duration-150",
               selectedQuick === item.label || (value && isSameDay(value, item.date))
                 ? "bg-blue-600 text-white"
-                : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-blue-100 dark:hover:bg-blue-900/50"
+                : "bg-muted dark:bg-gray-700 text-foreground dark:text-muted-foreground/50 hover:bg-blue-100 dark:hover:bg-blue-900/50"
             )}
           >
             {item.label}
@@ -490,18 +490,18 @@ export function ClickUpDatePicker({
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={goToPreviousMonth}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-muted dark:hover:bg-gray-800 transition-colors"
           >
-            <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <ChevronLeft className="w-5 h-5 text-muted-foreground dark:text-muted-foreground" />
           </button>
-          <span className="text-sm font-semibold text-gray-900 dark:text-white">
+          <span className="text-sm font-semibold text-foreground dark:text-white">
             {format(currentMonth, "MMMM yyyy", { locale: id })}
           </span>
           <button
             onClick={goToNextMonth}
-            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            className="p-1.5 rounded-lg hover:bg-muted dark:hover:bg-gray-800 transition-colors"
           >
-            <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <ChevronRight className="w-5 h-5 text-muted-foreground dark:text-muted-foreground" />
           </button>
         </div>
 
@@ -510,7 +510,7 @@ export function ClickUpDatePicker({
           {DAYS_OF_WEEK.map((day) => (
             <div
               key={day}
-              className="text-center text-xs font-medium text-gray-500 dark:text-gray-400 py-2"
+              className="text-center text-xs font-medium text-muted-foreground dark:text-muted-foreground py-2"
             >
               {day}
             </div>
@@ -530,9 +530,9 @@ export function ClickUpDatePicker({
                 onClick={() => handleDateClick(day)}
                 disabled={!isCurrentMonth}
                 className={cn(
-                  "h-9 w-9 flex items-center justify-center rounded-full text-sm font-medium transition-all duration-150",
-                  !isCurrentMonth && "text-gray-300 dark:text-gray-600 cursor-not-allowed",
-                  isCurrentMonth && "text-gray-700 dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900/50 cursor-pointer",
+                  "h-9 w-9 flex items-center justify-center rounded-lg text-sm font-medium transition-all duration-150",
+                  !isCurrentMonth && "text-muted-foreground/50 dark:text-muted-foreground cursor-not-allowed",
+                  isCurrentMonth && "text-foreground dark:text-gray-200 hover:bg-blue-100 dark:hover:bg-blue-900/50 cursor-pointer",
                   isTodayDate && !isSelectedDay && "ring-2 ring-blue-500 ring-inset",
                   isSelectedDay && "bg-blue-600 text-white hover:bg-blue-700"
                 )}

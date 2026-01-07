@@ -58,16 +58,16 @@ export function OrganizationBadge({
   if (loading) {
     return (
       <div className={`flex items-center space-x-2 ${className}`}>
-        {showIcon && <div className="w-4 h-4 bg-gray-200 rounded animate-pulse" />}
-        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse" />
+        {showIcon && <div className="w-4 h-4 bg-border rounded animate-pulse" />}
+        <div className="h-4 w-24 bg-border rounded animate-pulse" />
       </div>
     );
   }
 
   return (
     <div className={`flex items-center space-x-2 ${className}`}>
-      {showIcon && <Building className="w-4 h-4 text-gray-500" />}
-      <span className="font-medium text-sm text-gray-700">
+      {showIcon && <Building className="w-4 h-4 text-muted-foreground" />}
+      <span className="font-medium text-sm text-foreground">
         {organizationName}
       </span>
     </div>

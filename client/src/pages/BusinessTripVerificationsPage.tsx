@@ -296,10 +296,10 @@ export default function BusinessTripVerificationsPage() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <CheckSquare className="w-8 h-8 text-blue-600" />
+
               <div>
                 <h1 className="text-2xl font-semibold">Business Trip Verifications</h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-muted-foreground">
                   Daftar verifikasi perjalanan dinas yang perlu persetujuan
                 </p>
               </div>
@@ -314,11 +314,11 @@ export default function BusinessTripVerificationsPage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  <label className="text-sm font-medium text-foreground mb-1 block">
                     Pencarian
                   </label>
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                     <Input
                       placeholder="Cari nama atau employee number..."
                       value={filters.search}
@@ -331,7 +331,7 @@ export default function BusinessTripVerificationsPage() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-gray-700 mb-1 block">
+                  <label className="text-sm font-medium text-foreground mb-1 block">
                     Status
                   </label>
                   <Select
@@ -360,13 +360,13 @@ export default function BusinessTripVerificationsPage() {
             <CardContent className="p-0">
               {loading ? (
                 <div className="flex items-center justify-center py-12">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+                  <div className="animate-spin rounded-lg h-6 w-6 border-b-2 border-foreground"></div>
                   <span className="ml-2">Loading...</span>
                 </div>
               ) : verifications.length === 0 ? (
                 <div className="text-center py-12">
-                  <CheckSquare className="w-12 h-12 mx-auto mb-4 text-gray-400" />
-                  <p className="text-gray-500">Tidak ada data verifikasi</p>
+                  <CheckSquare className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
+                  <p className="text-muted-foreground">Tidak ada data verifikasi</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
@@ -375,7 +375,7 @@ export default function BusinessTripVerificationsPage() {
                       <TableRow>
                         <TableHead className="w-[80px]">No</TableHead>
                         <TableHead
-                          className="cursor-pointer hover:bg-gray-50"
+                          className="cursor-pointer hover:bg-muted/50"
                           onClick={() => handleSort("user_name")}
                         >
                           <div className="flex items-center space-x-1">
@@ -384,7 +384,7 @@ export default function BusinessTripVerificationsPage() {
                           </div>
                         </TableHead>
                         <TableHead
-                          className="cursor-pointer hover:bg-gray-50"
+                          className="cursor-pointer hover:bg-muted/50"
                           onClick={() => handleSort("employee_number")}
                         >
                           <div className="flex items-center space-x-1">
@@ -419,7 +419,7 @@ export default function BusinessTripVerificationsPage() {
                           <TableCell className="font-medium">
                             <div>
                               <p>{verification.user_name}</p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-muted-foreground">
                                 {verification.position}
                               </p>
                             </div>
@@ -428,7 +428,7 @@ export default function BusinessTripVerificationsPage() {
                           <TableCell>{verification.position}</TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-2">
-                              <FileText className="w-4 h-4 text-gray-500" />
+                              <FileText className="w-4 h-4 text-muted-foreground" />
                               <span className="font-mono text-sm">
                                 {verification.business_trip.business_trip_number}
                               </span>
@@ -436,7 +436,7 @@ export default function BusinessTripVerificationsPage() {
                           </TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-2">
-                              <MapPin className="w-4 h-4 text-gray-500" />
+                              <MapPin className="w-4 h-4 text-muted-foreground" />
                               <span>{verification.business_trip.destination_city}</span>
                             </div>
                           </TableCell>
@@ -446,7 +446,7 @@ export default function BusinessTripVerificationsPage() {
                                 <Calendar className="w-3 h-3 inline" />
                                 {formatDate(verification.business_trip.start_date)}
                               </div>
-                              <div className="text-gray-500">
+                              <div className="text-muted-foreground">
                                 s/d {formatDate(verification.business_trip.end_date)}
                               </div>
                             </div>
@@ -480,13 +480,13 @@ export default function BusinessTripVerificationsPage() {
                                 </>
                               )}
                               {verification.status === "approved" && (
-                                <Badge className="bg-green-100 text-green-800">
+                                <Badge className="bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
                                   <CheckSquare className="w-3 h-3" />
                                   Disetujui
                                 </Badge>
                               )}
                               {verification.status === "rejected" && (
-                                <Badge className="bg-red-100 text-red-800">
+                                <Badge className="bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800">
                                   <AlertCircle className="w-3 h-3" />
                                   Ditolak
                                 </Badge>

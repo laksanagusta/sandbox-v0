@@ -44,7 +44,7 @@ export function Pagination({
   return (
     <div className={`flex items-center justify-between px-2 ${className}`}>
       <div className="flex items-center space-x-2">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-muted-foreground">
           Halaman {currentPage} dari {totalPages}
         </p>
       </div>
@@ -64,7 +64,7 @@ export function Pagination({
           {getVisiblePages().map((page, index) => (
             <div key={index}>
               {page === '...' ? (
-                <span className="px-3 py-1 text-sm text-gray-500">...</span>
+                <span className="px-3 py-1 text-sm text-muted-foreground">...</span>
               ) : (
                 <Button
                   variant={currentPage === page ? "default" : "outline"}

@@ -288,8 +288,8 @@ export default function KwitansiPage() {
   const getStatusBadge = (status: BusinessTripStatus) => {
     const statusConfig = {
       draft: {
-        bg: "bg-gray-100 hover:bg-gray-200",
-        text: "text-gray-800",
+        bg: "bg-muted hover:bg-border",
+        text: "text-foreground",
         label: "Draft",
       },
       ongoing: {
@@ -338,11 +338,11 @@ export default function KwitansiPage() {
               .filter((s) => s !== status) // Remove current status
               .map((nextStatus) => {
                 const nextStatusConfig = {
-                  draft: "bg-gray-100 text-gray-800",
-                  ongoing: "bg-blue-100 text-blue-800",
-                  ready_to_verify: "bg-purple-100 text-purple-800",
-                  completed: "bg-green-100 text-green-800",
-                  canceled: "bg-red-100 text-red-800",
+                  draft: "bg-muted text-muted-foreground",
+                  ongoing: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+                  ready_to_verify: "bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800",
+                  completed: "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+                  canceled: "bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
                 };
 
                 return (
@@ -353,7 +353,7 @@ export default function KwitansiPage() {
                   >
                     <div className="flex items-center w-full">
                       <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${nextStatusConfig[nextStatus]}`}
+                        className={`px-2 py-1 rounded-lg text-xs font-medium ${nextStatusConfig[nextStatus]}`}
                       >
                         {nextStatus.charAt(0).toUpperCase() +
                           nextStatus.slice(1)}
@@ -1198,7 +1198,7 @@ export default function KwitansiPage() {
     return (
       <div className="bg-background min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p>Memuat data kwitansi...</p>
         </div>
       </div>
@@ -1214,33 +1214,32 @@ export default function KwitansiPage() {
     savedStatus === "canceled";
 
   return (
-    <div className="bg-white flex flex-col h-screen overflow-hidden">
+    <div className="bg-background flex flex-col h-full overflow-hidden">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-white z-10">
+      <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-2 border-b space-y-4 sm:space-y-0 min-h-[52px] flex-shrink-0 bg-card z-10">
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setLocation("/business-trips")}
-            className="p-0 h-auto hover:bg-transparent text-gray-500 hover:text-gray-900"
+            className="p-0 h-auto hover:bg-transparent text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm font-medium">Back</span>
           </Button>
 
-          <div className="h-4 w-px bg-gray-200" />
+          <div className="h-4 w-px bg-border" />
 
           <div className="flex items-center space-x-2">
-            <FileText className="w-4 h-4 text-gray-500" />
-            <span className="text-sm font-semibold text-gray-900">
+            <span className="text-sm font-semibold text-foreground">
               {isEditMode ? "Edit Business Trip" : "New Business Trip"}
             </span>
           </div>
 
           {isEditMode && kwitansiData.businessTripNumber && (
             <>
-              <div className="h-4 w-px bg-gray-200" />
-              <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+              <div className="h-4 w-px bg-border" />
+              <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 rounded">
                 {kwitansiData.businessTripNumber}
               </span>
             </>
@@ -1257,7 +1256,7 @@ export default function KwitansiPage() {
              onClick={handleSaveExport}
              variant="outline"
              size="sm"
-             className="h-8 text-xs"
+             className="h-9 text-sm"
              data-testid="button-save-export"
            >
              <Save className="w-3.5 h-3.5" />
@@ -1268,7 +1267,7 @@ export default function KwitansiPage() {
              onClick={handleSave}
              disabled={!hasChanges || isSaving}
              size="sm"
-             className="h-8 text-xs bg-blue-600 hover:bg-blue-700 text-white"
+             className="h-9 text-sm bg-blue-600 hover:bg-blue-700 text-white"
              data-testid="button-save"
            >
              <Save className="w-3.5 h-3.5" />
@@ -1277,7 +1276,7 @@ export default function KwitansiPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto bg-gray-50/50 p-6">
+      <div className="flex-1 overflow-y-auto bg-muted/30 p-6">
         <div className="w-full space-y-6">
           {!isEditMode && <LLMDisclaimer className="mb-6" />}
 
@@ -1320,7 +1319,7 @@ export default function KwitansiPage() {
                   {verificators.map((verificator, index) => (
                     <div
                       key={verificator.id}
-                      className="border rounded-lg p-4 space-y-4 bg-gray-50"
+                      className="border rounded-lg p-4 space-y-4 bg-muted/50"
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
@@ -1340,7 +1339,7 @@ export default function KwitansiPage() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
-                          <Label className="text-sm font-medium text-gray-700">
+                          <Label className="text-sm font-medium text-foreground">
                             Pilih User
                           </Label>
                           <SearchableSelect
@@ -1373,7 +1372,7 @@ export default function KwitansiPage() {
                         </div>
 
                         <div>
-                          <Label className="text-sm font-medium text-gray-700">
+                          <Label className="text-sm font-medium text-foreground">
                             Nama Lengkap
                           </Label>
                           <Input
@@ -1388,7 +1387,7 @@ export default function KwitansiPage() {
                         </div>
 
                         <div>
-                          <Label className="text-sm font-medium text-gray-700">
+                          <Label className="text-sm font-medium text-foreground">
                             Employee Number
                           </Label>
                           <Input
@@ -1405,7 +1404,7 @@ export default function KwitansiPage() {
                         </div>
 
                         <div>
-                          <Label className="text-sm font-medium text-gray-700">
+                          <Label className="text-sm font-medium text-foreground">
                             Position
                           </Label>
                           <Input

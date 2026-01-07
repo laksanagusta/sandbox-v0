@@ -59,7 +59,7 @@ export function SyncResultModal({ isOpen, onClose, syncResult }: SyncResultModal
             <CheckCircle className="w-5 h-5 text-green-600" />
             <span>Sinkronisasi Folder Selesai</span>
           </DialogTitle>
-          <DialogDescription className="text-sm text-gray-500">
+          <DialogDescription className="text-sm text-muted-foreground">
             Waktu sync: {formatDateTime(syncResult.synced_at)}
           </DialogDescription>
         </DialogHeader>
@@ -67,11 +67,11 @@ export function SyncResultModal({ isOpen, onClose, syncResult }: SyncResultModal
         <div className="space-y-4 py-4">
           {/* Summary Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-3 bg-gray-50 rounded-lg border">
-              <div className="text-2xl font-bold text-gray-900">
+            <div className="text-center p-3 bg-muted/50 rounded-lg border">
+              <div className="text-2xl font-bold text-foreground">
                 {syncResult.total_notes}
               </div>
-              <div className="text-xs text-gray-500 mt-1">Total Notes</div>
+              <div className="text-xs text-muted-foreground mt-1">Total Notes</div>
             </div>
             <div className="text-center p-3 bg-green-50 rounded-lg border border-green-100">
               <div className="text-2xl font-bold text-green-700 flex items-center justify-center gap-1">
@@ -92,12 +92,12 @@ export function SyncResultModal({ isOpen, onClose, syncResult }: SyncResultModal
           {/* Progress Bar */}
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-600">Success Rate</span>
-              <span className="font-medium text-gray-900">{successRate}%</span>
+              <span className="text-muted-foreground">Success Rate</span>
+              <span className="font-medium text-foreground">{successRate}%</span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2.5">
+            <div className="w-full bg-border rounded-lg h-2.5">
               <div
-                className="bg-gradient-to-r from-green-500 to-green-600 h-2.5 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-green-500 to-green-600 h-2.5 rounded-lg transition-all duration-500"
                 style={{ width: `${successRate}%` }}
               ></div>
             </div>
@@ -118,7 +118,7 @@ export function SyncResultModal({ isOpen, onClose, syncResult }: SyncResultModal
                   >
                     <FolderOpen className="w-4 h-4 text-amber-600 flex-shrink-0" />
                     <span className="font-medium">{note.expected_folder_name}</span>
-                    <Badge variant="outline" className="text-xs bg-white border-amber-200">
+                    <Badge variant="outline" className="text-xs bg-card border-amber-200">
                       Note {note.master_item_number}
                     </Badge>
                   </div>

@@ -36,13 +36,13 @@ export function TreeNode({ organization, level, expandedNodes, onToggleNode, isL
 
   const getTypeBadge = (type: string) => {
     const colors: Record<string, string> = {
-      directorate: "bg-blue-100 text-blue-800",
-      division: "bg-green-100 text-green-800",
-      department: "bg-purple-100 text-purple-800",
+      directorate: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+      division: "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+      department: "bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950 dark:text-purple-300 dark:border-purple-800",
       unit: "bg-orange-100 text-orange-800",
     };
 
-    const colorClass = colors[type] || "bg-gray-100 text-gray-800";
+    const colorClass = colors[type] || "bg-muted text-muted-foreground";
     return (
       <Badge variant="outline" className={`${colorClass} ml-2 border-0 font-normal`}>
         {type}
@@ -60,12 +60,12 @@ export function TreeNode({ organization, level, expandedNodes, onToggleNode, isL
           <>
             {/* Vertical Line */}
             <div 
-              className={`absolute border-l border-gray-300 w-px ${isLast ? 'h-[50%] top-0' : 'h-full top-0'}`} 
+              className={`absolute border-l border-border w-px ${isLast ? 'h-[50%] top-0' : 'h-full top-0'}`} 
               style={{ left: '-11px' }} 
             />
             {/* Horizontal Line */}
             <div 
-              className="absolute border-t border-gray-300 h-px w-[12px]" 
+              className="absolute border-t border-border h-px w-[12px]" 
               style={{ left: '-11px', top: '50%', transform: 'translateY(-50%)' }} 
             />
           </>
@@ -73,7 +73,7 @@ export function TreeNode({ organization, level, expandedNodes, onToggleNode, isL
 
         <div className="flex items-center space-x-2">
           {/* Expander */}
-          <div className="relative z-10 bg-background rounded-full">
+          <div className="relative z-10 bg-background rounded-lg">
             {hasChildren ? (
               <button
                 type="button"
@@ -81,7 +81,7 @@ export function TreeNode({ organization, level, expandedNodes, onToggleNode, isL
                   e.stopPropagation();
                   onToggleNode(organization.id);
                 }}
-                className="flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors bg-white rounded-full"
+                className="flex items-center justify-center text-muted-foreground hover:text-muted-foreground transition-colors bg-card rounded-lg"
               >
                 {isExpanded ? (
                   <MinusCircle className="w-4 h-4" />
@@ -102,17 +102,17 @@ export function TreeNode({ organization, level, expandedNodes, onToggleNode, isL
             onClick={() => hasChildren && onToggleNode(organization.id)}
           >
             {/* Icon */}
-            <div className="mr-2 text-gray-500">
+            <div className="mr-2 text-muted-foreground">
              {level === 0 ? (
-                <LayoutDashboard className="w-5 h-5 text-blue-600" />
+                <LayoutDashboard className="w-5 h-5 text-primary" />
              ) : hasChildren ? (
                 isExpanded ? <FolderOpen className="w-4 h-4 text-blue-500" /> : <Folder className="w-4 h-4 text-blue-500" />
              ) : (
-                <FileText className="w-4 h-4 text-gray-400" />
+                <FileText className="w-4 h-4 text-muted-foreground" />
              )}
             </div>
 
-            <span className={`text-sm ${level === 0 ? "font-semibold text-gray-900" : "text-gray-700"}`}>
+            <span className={`text-sm ${level === 0 ? "font-semibold text-foreground" : "text-foreground"}`}>
               {organization.name}
             </span>
           </div>

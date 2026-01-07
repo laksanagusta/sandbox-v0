@@ -169,7 +169,7 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
 
     const config = statusConfig[status] || statusConfig.pending;
     return (
-      <span className={`px-2 py-1 rounded-full text-xs font-medium ${config.bg} ${config.text}`}>
+      <span className={`px-2 py-1 rounded-lg text-xs font-medium ${config.bg} ${config.text}`}>
         {config.label}
       </span>
     );
@@ -190,12 +190,12 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
       <CardContent>
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+            <div className="animate-spin rounded-lg h-6 w-6 border-b-2 border-foreground"></div>
             <span className="ml-2">Loading...</span>
           </div>
         ) : verificators.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <CheckSquare className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+          <div className="text-center py-8 text-muted-foreground">
+            <CheckSquare className="mx-auto h-12 w-12 text-muted-foreground/50 mb-2" />
             <p>Tidak ada verificator</p>
           </div>
         ) : (
@@ -238,18 +238,18 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
                     <TableCell>
                       {getStatusBadge(verificator.status)}
                     </TableCell>
-                    <TableCell className="text-sm text-gray-500">
+                    <TableCell className="text-sm text-muted-foreground">
                       {verificator.verified_at ? (
                         <div className="flex flex-col">
                           <span>{formatDateTime(verificator.verified_at)}</span>
                           {verificator.status !== "pending" && (
-                            <span className="text-xs text-gray-400 mt-1">
+                            <span className="text-xs text-muted-foreground mt-1">
                               {verificator.status === "approved" ? "✓ Approved" : "✗ Rejected"}
                             </span>
                           )}
                         </div>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-muted-foreground">-</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -275,17 +275,17 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
                           </Button>
                         </div>
                       ) : verificator.status === "approved" ? (
-                        <Badge className="bg-green-100 text-green-800">
+                        <Badge className="bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
                           <CheckSquare className="w-3 h-3" />
                           Disetujui
                         </Badge>
                       ) : verificator.status === "rejected" ? (
-                        <Badge className="bg-red-100 text-red-800">
+                        <Badge className="bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800">
                           <AlertCircle className="w-3 h-3" />
                           Ditolak
                         </Badge>
                       ) : (
-                        <Badge className="bg-gray-100 text-gray-800">
+                        <Badge className="bg-muted text-muted-foreground">
                           <User className="w-3 h-3" />
                           Menunggu
                         </Badge>
@@ -322,7 +322,7 @@ export function VerificatorsSection({ businessTripId, businessTripStatus, onVeri
                 rows={4}
                 className="resize-none"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Catatan ini wajib diisi dan akan tersimpan dalam sistem.
               </p>
             </div>

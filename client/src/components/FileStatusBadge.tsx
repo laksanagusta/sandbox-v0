@@ -41,9 +41,9 @@ export function FileStatusBadge({ status, filesCount, className }: FileStatusBad
     pending: {
       icon: <Clock className="w-3 h-3" />,
       label: "Pending",
-      bgColor: "bg-gray-50",
-      textColor: "text-gray-600",
-      borderColor: "border-gray-200",
+      bgColor: "bg-muted/50",
+      textColor: "text-muted-foreground",
+      borderColor: "border-border",
     },
   };
 

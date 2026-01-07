@@ -150,7 +150,7 @@ export default function PermissionDetailPage() {
         <div className="w-full mx-auto px-8 py-8">
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="flex items-center space-x-2">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-900"></div>
+              <div className="animate-spin rounded-lg h-6 w-6 border-b-2 border-foreground"></div>
               <span>Loading...</span>
             </div>
           </div>
@@ -164,9 +164,9 @@ export default function PermissionDetailPage() {
       <div className="bg-background min-h-screen">
         <div className="w-full mx-auto px-8 py-8">
           <div className="text-center">
-            <Shield className="mx-auto h-16 w-16 text-gray-300 mb-4" />
-            <h2 className="text-lg font-medium text-gray-900 mb-2">Permission tidak ditemukan</h2>
-            <p className="text-gray-500 mb-4">Permission yang Anda cari tidak ditemukan atau telah dihapus</p>
+            <Shield className="mx-auto h-16 w-16 text-muted-foreground/50 mb-4" />
+            <h2 className="text-lg font-medium text-foreground mb-2">Permission tidak ditemukan</h2>
+            <p className="text-muted-foreground mb-4">Permission yang Anda cari tidak ditemukan atau telah dihapus</p>
             <Button onClick={() => setLocation("/permission")}>
               <ArrowLeft className="w-4 h-4" />
               Kembali ke Daftar
@@ -179,13 +179,13 @@ export default function PermissionDetailPage() {
 
   const getActionBadge = (action: string) => {
     const colors: Record<string, string> = {
-      read: "bg-blue-100 text-blue-800",
-      write: "bg-green-100 text-green-800",
-      update: "bg-yellow-100 text-yellow-800",
-      delete: "bg-red-100 text-red-800",
+      read: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
+      write: "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+      update: "bg-yellow-50 text-yellow-700 border border-yellow-200 dark:bg-yellow-950 dark:text-yellow-300 dark:border-yellow-800",
+      delete: "bg-red-50 text-red-700 border border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
     };
 
-    const colorClass = colors[action] || "bg-gray-100 text-gray-800";
+    const colorClass = colors[action] || "bg-muted text-muted-foreground";
     return (
       <Badge className={colorClass}>
         {action}
@@ -199,7 +199,7 @@ export default function PermissionDetailPage() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Shield className="w-8 h-8 text-gray-600" />
+              <Shield className="w-8 h-8 text-muted-foreground" />
               <h1 className="text-2xl font-semibold">Detail Permission</h1>
             </div>
             <div className="flex items-center space-x-2">
@@ -279,7 +279,7 @@ export default function PermissionDetailPage() {
 
                 {/* Display Current Action Badge */}
                 <div>
-                  <Label className="text-sm text-gray-600">Current Action</Label>
+                  <Label className="text-sm text-muted-foreground">Current Action</Label>
                   <div className="mt-1">
                     {getActionBadge(permission.action)}
                   </div>

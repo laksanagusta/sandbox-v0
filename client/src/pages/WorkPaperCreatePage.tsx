@@ -294,9 +294,9 @@ export default function WorkPaperCreatePage() {
   };
 
   const signatureTypeColors = {
-    digital: "bg-blue-100 text-blue-800",
+    digital: "bg-blue-50 text-blue-700 border border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
     manual: "bg-orange-100 text-orange-800",
-    approval: "bg-green-100 text-green-800",
+    approval: "bg-green-50 text-green-700 border border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
   };
 
   return (
@@ -309,13 +309,13 @@ export default function WorkPaperCreatePage() {
               <Button
                 variant="outline"
                 onClick={() => setLocation("/work-papers")}
-                className="flex items-center gap-2 hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 hover:bg-muted transition-colors"
               >
                 <ArrowLeft className="w-4 h-4" />
                 <span>Kembali</span>
               </Button>
               <div className="flex items-center gap-3">
-                <FileText className="w-8 h-8 text-gray-600" />
+                <FileText className="w-8 h-8 text-muted-foreground" />
                 <div>
                   <h1 className="text-2xl font-semibold">
                     Buat Work Paper Baru
@@ -363,7 +363,7 @@ export default function WorkPaperCreatePage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-sm font-medium text-foreground">
                     Topik
                   </Label>
                   <div className="mt-1">
@@ -373,7 +373,7 @@ export default function WorkPaperCreatePage() {
                       placeholder="Pilih topik work paper..."
                       className="w-full"
                     />
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Work paper notes akan dibuat otomatis berdasarkan items
                       dari topik yang dipilih.
                     </p>
@@ -381,7 +381,7 @@ export default function WorkPaperCreatePage() {
                 </div>
 
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-sm font-medium text-foreground">
                     Organisasi
                   </Label>
                   <SearchableSelect
@@ -415,7 +415,7 @@ export default function WorkPaperCreatePage() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-sm font-medium text-foreground">
                     Tahun
                   </Label>
                   <Input
@@ -434,7 +434,7 @@ export default function WorkPaperCreatePage() {
                   />
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-sm font-medium text-foreground">
                     Semester
                   </Label>
                   <Select
@@ -453,7 +453,7 @@ export default function WorkPaperCreatePage() {
                   </Select>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-gray-700">
+                  <Label className="text-sm font-medium text-foreground">
                     Nama (Optional)
                   </Label>
                   <Input
@@ -481,7 +481,7 @@ export default function WorkPaperCreatePage() {
               {signers.map((signer, index) => (
                 <div
                   key={signer.id}
-                  className="border rounded-lg p-4 space-y-4 bg-gray-50"
+                  className="border rounded-lg p-4 space-y-4 bg-muted/50"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
@@ -500,7 +500,7 @@ export default function WorkPaperCreatePage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Pilih User
                       </Label>
                       <SearchableSelect
@@ -533,7 +533,7 @@ export default function WorkPaperCreatePage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Nama Lengkap
                       </Label>
                       <Input
@@ -547,7 +547,7 @@ export default function WorkPaperCreatePage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Email
                       </Label>
                       <Input
@@ -564,7 +564,7 @@ export default function WorkPaperCreatePage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Role/Jabatan
                       </Label>
                       <Input
@@ -580,7 +580,7 @@ export default function WorkPaperCreatePage() {
 
                   <div className="flex items-end">
                     <div className="flex-1">
-                      <Label className="text-sm font-medium text-gray-700">
+                      <Label className="text-sm font-medium text-foreground">
                         Tipe Tanda Tangan
                       </Label>
                       <Select
@@ -609,7 +609,7 @@ export default function WorkPaperCreatePage() {
                     </div>
                     <div className="ml-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`px-3 py-1 rounded-lg text-xs font-medium ${
                           signatureTypeColors[signer.signature_type]
                         }`}
                       >
@@ -654,7 +654,7 @@ export default function WorkPaperCreatePage() {
                         ).map(([type, count]) => (
                           <span
                             key={type}
-                            className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            className={`px-2 py-1 rounded-lg text-xs font-medium ${
                               signatureTypeColors[
                                 type as keyof typeof signatureTypeColors
                               ]
