@@ -68,8 +68,8 @@ export function GRCHeatmapSection({ open, onOpenChange }: GRCHeatmapSectionProps
   }, [units]);
 
   const getCellColor = (score: number | undefined) => {
-    if (score === undefined || score === null) return "bg-gray-100";
-    if (score === 0) return "bg-gray-100"; // No activity/score
+    if (score === undefined || score === null) return "bg-muted";
+    if (score === 0) return "bg-muted"; // No activity/score
     
     // Scale for performance scores (typically 0-100)
     // Darker blue = Higher score (Linear-like theme)
@@ -78,7 +78,7 @@ export function GRCHeatmapSection({ open, onOpenChange }: GRCHeatmapSectionProps
     if (score >= 60) return "bg-blue-400"; // Average
     if (score > 0) return "bg-blue-200";   // Low
     
-    return "bg-gray-100";
+    return "bg-muted";
   };
 
   const formatUnitName = (name: string) => {
@@ -98,22 +98,22 @@ export function GRCHeatmapSection({ open, onOpenChange }: GRCHeatmapSectionProps
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-fit sm:max-w-none overflow-y-auto bg-white p-6 sm:p-8">
+      <SheetContent className="w-fit sm:max-w-none overflow-y-auto bg-card p-6 sm:p-8">
         <SheetHeader className="mb-6 space-y-4">
           <div className="flex items-center justify-between gap-8">
             <div>
-                <SheetTitle className="text-xl font-bold text-gray-900">Activity Heatmap</SheetTitle>
-                <SheetDescription className="text-gray-500">Unit Performance Overview across all components</SheetDescription>
+                <SheetTitle className="text-xl font-bold text-foreground">Activity Heatmap</SheetTitle>
+                <SheetDescription className="text-muted-foreground">Unit Performance Overview across all components</SheetDescription>
             </div>
           </div>
         </SheetHeader>
 
         {isLoading ? (
           <div className="flex h-[200px] items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : units.length === 0 ? (
-          <p className="text-center py-10 text-gray-500">
+          <p className="text-center py-10 text-muted-foreground">
             No data available
           </p>
         ) : (
@@ -122,7 +122,7 @@ export function GRCHeatmapSection({ open, onOpenChange }: GRCHeatmapSectionProps
              <div className="flex ml-[220px] gap-[3px] mb-2">
                 {scoreKeys.map((key) => (
                     <div key={key} className="w-4 flex justify-center">
-                        <span className="text-[10px] text-gray-400 font-medium uppercase rotate-0 writing-mode-vertical" style={{ writingMode: 'vertical-rl' }}>
+                        <span className="text-[10px] text-muted-foreground font-medium uppercase rotate-0 writing-mode-vertical" style={{ writingMode: 'vertical-rl' }}>
                             {key}
                         </span>
                     </div>
@@ -135,7 +135,7 @@ export function GRCHeatmapSection({ open, onOpenChange }: GRCHeatmapSectionProps
                     {units.map((unit) => (
                         <div key={unit.id} className="flex items-center group">
                             {/* Unit Label (Left) */}
-                            <div className="w-[220px] pr-4 text-xs font-medium text-gray-500 group-hover:text-gray-900 transition-colors text-right truncate" title={unit.name}>
+                            <div className="w-[220px] pr-4 text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors text-right truncate" title={unit.name}>
                                 {formatUnitName(unit.name)}
                             </div>
                             
@@ -151,12 +151,12 @@ export function GRCHeatmapSection({ open, onOpenChange }: GRCHeatmapSectionProps
                                                     className={`w-4 h-4 rounded-[2px] cursor-pointer transition-colors ${colorClass} hover:opacity-80`}
                                                 />
                                             </HoverCardTrigger>
-                                            <HoverCardContent className="w-auto p-3 z-50 border-gray-200 shadow-lg">
-                                                <div className="font-bold mb-1 text-sm text-gray-900">{unit.name}</div>
-                                                <div className="text-xs text-gray-500 mb-2">Rank #{unit.rank}</div>
-                                                <div className="flex items-center justify-between gap-4 border-t border-gray-100 pt-2">
-                                                    <span className="uppercase text-xs font-medium text-gray-500">{key}</span>
-                                                    <span className="font-bold text-base text-gray-900">{score}</span>
+                                            <HoverCardContent className="w-auto p-3 z-50 border-border shadow-lg">
+                                                <div className="font-bold mb-1 text-sm text-foreground">{unit.name}</div>
+                                                <div className="text-xs text-muted-foreground mb-2">Rank #{unit.rank}</div>
+                                                <div className="flex items-center justify-between gap-4 border-t border-border pt-2">
+                                                    <span className="uppercase text-xs font-medium text-muted-foreground">{key}</span>
+                                                    <span className="font-bold text-base text-foreground">{score}</span>
                                                 </div>
                                             </HoverCardContent>
                                         </HoverCard>

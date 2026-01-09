@@ -50,24 +50,24 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
     if (score >= 90) return "bg-blue-600 text-white hover:bg-blue-700";
     if (score >= 75) return "bg-blue-500 text-white hover:bg-blue-600";
     if (score >= 60) return "bg-blue-100 text-blue-700 hover:bg-blue-200";
-    return "bg-gray-100 text-gray-700 hover:bg-gray-200";
+    return "bg-muted text-muted-foreground hover:bg-muted/80";
   };
 
   return (
     <div className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-4 justify-between">
           <div className="relative w-full sm:max-w-xs">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search units..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-8 bg-white"
+              className="pl-8 bg-card"
             />
           </div>
           <div className="flex gap-2">
             <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[160px] bg-white">
+                <SelectTrigger className="w-[160px] bg-card">
                 <SelectValue placeholder="Category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -80,7 +80,7 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
                 </SelectContent>
             </Select>
             <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="w-[140px] bg-white">
+                <SelectTrigger className="w-[140px] bg-card">
                 <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
                 <SelectContent>
@@ -92,10 +92,10 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
           </div>
         </div>
 
-        <div className="rounded-md border bg-white">
+        <div className="rounded-md border bg-card">
           <Table>
             <TableHeader>
-              <TableRow className="bg-gray-50/50 hover:bg-gray-50/50">
+              <TableRow className="bg-muted/50 hover:bg-muted/50">
                 <TableHead className="w-[80px]">Rank</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Category</TableHead>
@@ -106,13 +106,13 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center h-24 text-gray-500">
+                  <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : filteredUnits?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center h-24 text-gray-500">
+                  <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                     No results found.
                   </TableCell>
                 </TableRow>
@@ -120,20 +120,20 @@ export function GRCUnitList({ onUnitClick }: GRCUnitListProps) {
                 filteredUnits?.map((unit) => (
                   <TableRow
                     key={unit.id}
-                    className="cursor-pointer hover:bg-gray-50 transition-colors"
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
                     onClick={() => onUnitClick(unit.id)}
                   >
-                    <TableCell className="font-medium text-gray-500">#{unit.rank}</TableCell>
-                    <TableCell className="font-medium text-gray-900">{unit.name}</TableCell>
+                    <TableCell className="font-medium text-muted-foreground">#{unit.rank}</TableCell>
+                    <TableCell className="font-medium text-foreground">{unit.name}</TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="font-normal text-gray-500 border-gray-200">{unit.category}</Badge>
+                      <Badge variant="outline" className="font-normal text-muted-foreground border-border">{unit.category}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <Badge className={`${getScoreColor(unit.average)} shadow-none border-0`}>
                         {unit.average.toFixed(2)}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-right text-gray-500">
+                    <TableCell className="text-right text-muted-foreground">
                       {unit.percentile.toFixed(1)}%
                     </TableCell>
                   </TableRow>

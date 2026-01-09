@@ -177,7 +177,7 @@ export function WorkPaperSignaturesTable({
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+      return <ArrowUpDown className="w-4 h-4 text-muted-foreground" />;
     }
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 text-blue-600" />
@@ -374,9 +374,9 @@ export function WorkPaperSignaturesTable({
               <TableRow>
                 <TableCell
                   colSpan={7}
-                  className="text-center py-8 text-gray-500"
+                  className="text-center py-8 text-muted-foreground"
                 >
-                  <FileText className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                  <FileText className="mx-auto h-12 w-12 text-muted-foreground/50 mb-2" />
                   <p>Tidak ada data signature</p>
                   {debouncedSearchTerm && (
                     <p className="text-sm">Coba kata kunci pencarian lain</p>
@@ -387,12 +387,12 @@ export function WorkPaperSignaturesTable({
               filteredSignatures?.map((signature) => (
                 <TableRow
                   key={signature.id}
-                  className="cursor-pointer hover:bg-gray-50 border-b"
+                  className="cursor-pointer hover:bg-muted/50 border-b"
                   onClick={() => handleRowClick(signature)}
                 >
                   <TableCell className="pl-6">
                     <button className="flex items-center space-x-2 hover:text-blue-600 transition-colors group">
-                      <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0" />
+                      <FileText className="h-4 w-4 text-muted-foreground group-hover:text-blue-600 transition-colors flex-shrink-0" />
                       <span className="font-mono text-sm">
                         {signature.work_paper_id}
                       </span>
@@ -400,7 +400,7 @@ export function WorkPaperSignaturesTable({
                   </TableCell>
                   <TableCell className="font-medium">
                     <div className="flex items-center space-x-2">
-                      <User className="h-4 w-4 text-gray-500" />
+                      <User className="h-4 w-4 text-muted-foreground" />
                       <span>{signature.user_name}</span>
                     </div>
                   </TableCell>
@@ -408,7 +408,7 @@ export function WorkPaperSignaturesTable({
                     <span className="text-sm">{signature.user_email}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-gray-600">
+                    <span className="text-sm text-muted-foreground">
                       {signature.user_role}
                     </span>
                   </TableCell>
@@ -419,8 +419,8 @@ export function WorkPaperSignaturesTable({
                   <TableCell>
                     <div className="space-y-1">
                       <div className="flex items-center space-x-2">
-                        <Calendar className="h-3 w-3 text-gray-500" />
-                        <span className="text-xs text-gray-500">
+                        <Calendar className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">
                           {formatDateTime(signature.created_at)}
                         </span>
                       </div>

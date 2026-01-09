@@ -191,7 +191,7 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+      return <ArrowUpDown className="w-4 h-4 text-muted-foreground" />;
     }
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 text-blue-600" />
@@ -346,8 +346,8 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
               </TableRow>
             ) : users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                  <User className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                  <User className="mx-auto h-12 w-12 text-muted-foreground/50 mb-2" />
                   <p>Tidak ada user pending</p>
                   {debouncedSearchTerm && (
                     <p className="text-sm">Coba kata kunci pencarian lain</p>
@@ -356,13 +356,13 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
               </TableRow>
             ) : (
               users.map((user) => (
-                <TableRow key={user.id} className="group hover:bg-gray-50/80 cursor-pointer transition-colors border-b">
+                <TableRow key={user.id} className="group hover:bg-muted/50 cursor-pointer transition-colors border-b">
                   <TableCell className="pl-6 font-medium">
                     <button
                       onClick={() => setLocation(`/users/${user.id}`)}
                       className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                     >
-                      <User className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
+                      <User className="h-4 w-4 text-muted-foreground group-hover:text-blue-600 transition-colors" />
                       <span>{user.username}</span>
                     </button>
                   </TableCell>
@@ -375,25 +375,25 @@ export function PendingUserTable({ className = "" }: PendingUserTableProps) {
                   <TableCell>
                     {user.organizations ? (
                       <div className="flex items-center space-x-2">
-                        <Building className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                        <Building className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <span className="text-sm">{user.organizations.name}</span>
                       </div>
                     ) : (
-                      <span className="text-gray-400 text-sm">-</span>
+                      <span className="text-muted-foreground text-sm">-</span>
                     )}
                   </TableCell>
                   <TableCell>
                     {user.phone_number ? (
                       <div className="flex items-center space-x-2">
-                        <Phone className="h-4 w-4 text-gray-500 flex-shrink-0" />
+                        <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <span className="text-sm">{user.phone_number}</span>
                       </div>
                     ) : (
-                      <span className="text-gray-400 text-sm">-</span>
+                      <span className="text-muted-foreground text-sm">-</span>
                     )}
                   </TableCell>
                   <TableCell>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                       {formatDate(user.created_at)}
                     </div>
                   </TableCell>

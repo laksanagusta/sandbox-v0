@@ -170,7 +170,7 @@ export function PermissionTable({ className = "", onCreate }: PermissionTablePro
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+      return <ArrowUpDown className="w-4 h-4 text-muted-foreground" />;
     }
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 text-blue-600" />
@@ -323,8 +323,8 @@ export function PermissionTable({ className = "", onCreate }: PermissionTablePro
               </TableRow>
             ) : permissions.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-gray-500">
-                  <Shield className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <Shield className="mx-auto h-12 w-12 text-muted-foreground/50 mb-2" />
                   <p>Tidak ada data permission</p>
                   {debouncedSearchTerm && (
                     <p className="text-sm">Coba kata kunci pencarian lain</p>
@@ -333,25 +333,25 @@ export function PermissionTable({ className = "", onCreate }: PermissionTablePro
               </TableRow>
             ) : (
               permissions.map((permission) => (
-                <TableRow key={permission.id} className="group hover:bg-gray-50/80 cursor-pointer transition-colors border-b">
+                <TableRow key={permission.id} className="group hover:bg-muted/50 cursor-pointer transition-colors border-b">
                   <TableCell className="pl-6 font-medium">
                     <button
                       onClick={() => setLocation(`/permission/${permission.id}`)}
                       className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                     >
-                      <Shield className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
+                      <Shield className="h-4 w-4 text-muted-foreground group-hover:text-blue-600 transition-colors" />
                       <span>{permission.name}</span>
                     </button>
                   </TableCell>
                   <TableCell>{getActionBadge(permission.action)}</TableCell>
                   <TableCell>
-                    <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">
+                    <span className="font-mono text-sm bg-muted px-2 py-1 rounded">
                       {permission.resource}
                     </span>
                   </TableCell>
                   <TableCell>{permission.created_by}</TableCell>
                   <TableCell>
-                    <div className="text-sm text-gray-600">
+                    <div className="text-sm text-muted-foreground">
                       {formatDate(permission.created_at)}
                     </div>
                   </TableCell>
@@ -364,7 +364,7 @@ export function PermissionTable({ className = "", onCreate }: PermissionTablePro
                         handleEdit(permission);
                       }}
                     >
-                      <Pencil className="w-4 h-4 text-gray-500 hover:text-blue-600" />
+                      <Pencil className="w-4 h-4 text-muted-foreground hover:text-blue-600" />
                     </Button>
                   </TableCell>
                 </TableRow>

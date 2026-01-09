@@ -187,7 +187,7 @@ export function BusinessTripVerificationTable({
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+      return <ArrowUpDown className="w-4 h-4 text-muted-foreground" />;
     }
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 text-blue-600" />
@@ -397,9 +397,9 @@ export function BusinessTripVerificationTable({
               <TableRow>
                 <TableCell
                   colSpan={9}
-                  className="text-center py-8 text-gray-500"
+                  className="text-center py-8 text-muted-foreground"
                 >
-                  <CheckSquare className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                  <CheckSquare className="mx-auto h-12 w-12 text-muted-foreground/50 mb-2" />
                   <p>Tidak ada data verifikasi</p>
                   {debouncedSearchTerm && (
                     <p className="text-sm">Coba kata kunci pencarian lain</p>
@@ -413,7 +413,7 @@ export function BusinessTripVerificationTable({
                     onClick={() => setLocation(`/kwitansi/${verification.business_trip_id}?action=verify`)}
                     className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                   >
-                    <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors" />
+                    <FileText className="h-4 w-4 text-muted-foreground group-hover:text-blue-600 transition-colors" />
                     <span className="font-mono text-sm">
                       {verification.business_trip.business_trip_number}
                     </span>
@@ -422,7 +422,7 @@ export function BusinessTripVerificationTable({
                 <TableCell className="font-medium">
                   <div>
                     <p>{verification.user_name}</p>
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-muted-foreground">
                       {verification.position}
                     </p>
                   </div>
@@ -431,7 +431,7 @@ export function BusinessTripVerificationTable({
                 <TableCell>{verification.position}</TableCell>
                 <TableCell>
                   <div className="flex items-center space-x-2">
-                    <MapPin className="h-4 w-4 text-gray-500" />
+                    <MapPin className="h-4 w-4 text-muted-foreground" />
                     <span>{verification.business_trip.destination_city}</span>
                   </div>
                 </TableCell>
@@ -442,7 +442,7 @@ export function BusinessTripVerificationTable({
                       {formatDate(verification.business_trip.start_date)} -{" "}
                       {formatDate(verification.business_trip.end_date)}
                     </div>
-                    <div className="text-xs text-gray-500">
+                    <div className="text-xs text-muted-foreground">
                       SPD: {formatDate(verification.business_trip.spd_date)}
                     </div>
                   </div>
@@ -519,7 +519,7 @@ export function BusinessTripVerificationTable({
                 rows={4}
                 className="resize-none"
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-muted-foreground">
                 Catatan ini wajib diisi dan akan tersimpan dalam sistem.
               </p>
             </div>

@@ -254,7 +254,7 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+      return <ArrowUpDown className="w-4 h-4 text-muted-foreground" />;
     }
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 text-blue-600" />
@@ -492,7 +492,7 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
                 </TableRow>
               ) : !businessTrips || businessTrips.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={9} className="h-24 text-center text-gray-500">
+                  <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
                     No business trips found.
                   </TableCell>
                 </TableRow>
@@ -507,7 +507,7 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
                         onClick={() => setLocation(`/kwitansi/${trip.id}`)}
                         className="flex items-center space-x-2 hover:text-blue-600 transition-colors group"
                       >
-                        <FileText className="h-4 w-4 text-gray-500 group-hover:text-blue-600 transition-colors flex-shrink-0" />
+                        <FileText className="h-4 w-4 text-muted-foreground group-hover:text-blue-600 transition-colors flex-shrink-0" />
                         <span className="font-mono text-sm">
                           {trip.business_trip_number}
                         </span>
@@ -520,7 +520,7 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <MapPin className="h-4 w-4 text-gray-500" />
+                        <MapPin className="h-4 w-4 text-muted-foreground" />
                         <span>{trip.destination_city}</span>
                       </div>
                     </TableCell>
@@ -530,7 +530,7 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
                           <Calendar className="inline h-3 w-3" />
                           {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-muted-foreground">
                           SPD: {formatDate(trip.spd_date)}
                         </div>
                       </div>
@@ -551,7 +551,7 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
                           <span className="text-sm">View</span>
                         </a>
                       ) : (
-                        <span className="text-gray-400 text-sm">No doc</span>
+                        <span className="text-muted-foreground text-sm">No doc</span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -561,8 +561,8 @@ export function BusinessTripTable({ className = "", onCreate }: BusinessTripTabl
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
-                        <User className="h-3 w-3 text-gray-500" />
-                        <span className="text-xs text-gray-500">
+                        <User className="h-3 w-3 text-muted-foreground" />
+                        <span className="text-xs text-muted-foreground">
                           {formatDateTime(trip.created_at)}
                         </span>
                       </div>

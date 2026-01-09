@@ -20,14 +20,14 @@ export function GRCStatisticsCard({
   indicatorColor,
 }: GRCStatisticsCardProps) {
   return (
-    <Card className={cn("overflow-hidden relative bg-white hover:border-gray-300 transition-colors", className)}>
+    <Card className={cn("overflow-hidden relative bg-card hover:border-border transition-colors", className)}>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium text-gray-500">{title}</CardTitle>
-        {Icon && <Icon className="h-4 w-4 text-gray-400" />}
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
       </CardHeader>
       <CardContent>
         <div className="flex items-center gap-2">
-            <div className="text-2xl font-semibold tracking-tight text-gray-900">{value}</div>
+            <div className="text-2xl font-semibold tracking-tight text-foreground">{value}</div>
         </div>
         
         {description && (
@@ -35,7 +35,7 @@ export function GRCStatisticsCard({
              {indicatorColor && (
                 <div className={cn("h-1.5 w-1.5 rounded-full", indicatorColor)} />
              )}
-             <p className="text-xs text-gray-500 font-medium">
+             <p className="text-xs text-muted-foreground font-medium">
                 {description}
              </p>
           </div>

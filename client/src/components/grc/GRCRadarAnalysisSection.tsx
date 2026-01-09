@@ -69,17 +69,17 @@ export function GRCRadarAnalysisSection() {
   }, [unitDetail]);
 
   return (
-    <Card className="col-span-1 shadow-none border border-gray-200 h-[570px] flex flex-col">
+    <Card className="col-span-1 shadow-none border border-border h-[570px] flex flex-col">
       <CardHeader>
         <div className="flex items-center justify-between">
             <div>
                 <CardTitle className="text-base font-medium">Deep Dive Analysis</CardTitle>
-                <CardDescription className="text-gray-500">Analyze component performance vs national average</CardDescription>
+                <CardDescription className="text-muted-foreground">Analyze component performance vs national average</CardDescription>
             </div>
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger>
-                         <HelpCircle className="h-4 w-4 text-gray-400" />
+                         <HelpCircle className="h-4 w-4 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>Select a unit to view its detailed component scores</p>
@@ -103,7 +103,7 @@ export function GRCRadarAnalysisSection() {
       <CardContent className="flex-1">
         {isLoadingDetail ? (
           <div className="flex h-[300px] items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+            <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
           </div>
         ) : selectedUnitId && unitDetail?.data ? (
           <div className="space-y-6">
@@ -112,9 +112,9 @@ export function GRCRadarAnalysisSection() {
             </div>
             
             <div className="grid grid-cols-2 gap-3 text-sm">
-                 <div className="p-3 bg-white rounded border border-gray-100 shadow-sm">
-                     <span className="text-gray-500 text-xs block mb-1">Strongest Component</span>
-                     <div className="font-semibold text-gray-900 flex items-center gap-1">
+                 <div className="p-3 bg-card rounded border border-border shadow-sm">
+                     <span className="text-muted-foreground text-xs block mb-1">Strongest Component</span>
+                     <div className="font-semibold text-foreground flex items-center gap-1">
                         <ArrowUp className="h-3 w-3 text-emerald-500" />
                         <span className="truncate">{unitDetail.data.strength.component}</span>
                      </div>
@@ -122,9 +122,9 @@ export function GRCRadarAnalysisSection() {
                         {unitDetail.data.strength.value} (+{unitDetail.data.strength.gap_from_average.toFixed(1)})
                      </span>
                  </div>
-                 <div className="p-3 bg-white rounded border border-gray-100 shadow-sm">
-                     <span className="text-gray-500 text-xs block mb-1">Weakest Component</span>
-                     <div className="font-semibold text-gray-900 flex items-center gap-1">
+                 <div className="p-3 bg-card rounded border border-border shadow-sm">
+                     <span className="text-muted-foreground text-xs block mb-1">Weakest Component</span>
+                     <div className="font-semibold text-foreground flex items-center gap-1">
                         <ArrowDown className="h-3 w-3 text-red-500" />
                         <span className="truncate">{unitDetail.data.weakness.component}</span>
                      </div>
@@ -135,7 +135,7 @@ export function GRCRadarAnalysisSection() {
             </div>
           </div>
         ) : (
-          <div className="flex h-full flex-col items-center justify-center text-gray-400 bg-gray-50 rounded-md border border-dashed border-gray-200">
+          <div className="flex h-full flex-col items-center justify-center text-muted-foreground bg-muted rounded-md border border-dashed border-border">
             <p className="text-center text-sm">Select a unit above to view the analysis</p>
           </div>
         )}

@@ -161,7 +161,7 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
 
   const getSortIcon = (field: string) => {
     if (sortField !== field) {
-      return <ArrowUpDown className="w-4 h-4 text-gray-400" />;
+      return <ArrowUpDown className="w-4 h-4 text-muted-foreground" />;
     }
     return sortOrder === "asc" ? (
       <ArrowUp className="w-4 h-4 text-blue-600" />
@@ -300,8 +300,8 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
               </TableRow>
             ) : organizations.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center py-8 text-gray-500">
-                  <Building className="mx-auto h-12 w-12 text-gray-300 mb-2" />
+                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
+                  <Building className="mx-auto h-12 w-12 text-muted-foreground/50 mb-2" />
                   <p>Tidak ada data organization</p>
                   {debouncedSearchTerm && (
                     <p className="text-sm">Coba kata kunci pencarian lain</p>
@@ -310,7 +310,7 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
               </TableRow>
             ) : (
               organizations.map((org) => (
-                <TableRow key={org.id} className="group hover:bg-gray-50/80 cursor-pointer transition-colors border-b">
+                <TableRow key={org.id} className="group hover:bg-muted/50 cursor-pointer transition-colors border-b">
                   <TableCell className="pl-6 font-medium">
                     <button
                       onClick={() => setLocation(`/organization/${org.id}`)}
@@ -323,18 +323,18 @@ export function OrganizationTable({ className = "", onCreate }: OrganizationTabl
                   <TableCell>
                     {org.latitude !== null && org.longitude !== null ? (
                       <div className="flex items-center space-x-2">
-                        <MapPin className="h-4 w-4 text-xs text-gray-500 flex-shrink-0" />
-                        <span className="text-gray-600 font-mono text-xs">
+                        <MapPin className="h-4 w-4 text-xs text-muted-foreground flex-shrink-0" />
+                        <span className="text-muted-foreground font-mono text-xs">
                           {Number(org.latitude).toFixed(6)}, {Number(org.longitude).toFixed(6)}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <span className="text-muted-foreground">-</span>
                     )}
                   </TableCell>
                     <TableCell>
                     <div className="flex items-center space-x-2">
-                      <Calendar className="h-4 w-4 text-gray-500" />
+                      <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span className="text-sm">{formatDate(org.created_at)}</span>
                     </div>
                   </TableCell>
